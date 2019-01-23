@@ -1,0 +1,24 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appPrefix": {
+      "value": "samsapp"
+    },
+    "environment": {
+      "value": "test"
+    },
+    "locationShort": {
+      "value": "eu"
+    },
+    "databaseName": {
+      "value": "samsdb"
+    },
+    "userPrincipalId": {
+      "value": "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8" 
+    },
+    "azureDevOpsPrincipalId": {
+      "value": "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+    }
+  }
+}
