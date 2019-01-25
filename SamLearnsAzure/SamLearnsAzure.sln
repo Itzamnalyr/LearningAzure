@@ -5,7 +5,16 @@ VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "SamLearnsAzure.Environment.ARMTemplate", "SamLearnsAzure.Environment.ARMTemplate\SamLearnsAzure.Environment.ARMTemplate.deployproj", "{64BB855B-6EAA-4A27-9BA6-CA801FBB6930}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamLearnsAzure.Service", "SamLearnsAzure.Service\SamLearnsAzure.Service.csproj", "{9A7B0546-3C3C-4730-B4C1-FFE50D5A9B78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamLearnsAzure.Service", "SamLearnsAzure.Service\SamLearnsAzure.Service.csproj", "{9A7B0546-3C3C-4730-B4C1-FFE50D5A9B78}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build YAML", "Build YAML", "{99984B31-6A92-4578-ACBE-4F3419629BB3}"
+	ProjectSection(SolutionItems) = preProject
+		..\azure-pipelines.yml = ..\azure-pipelines.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure as Code", "Infrastructure as Code", "{EBCBEFCC-3FD6-40C2-A4E7-F39FD1D6E8DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web application", "Web application", "{B307C0F9-E5A1-4486-9700-9F03FC1AF6B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +33,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{64BB855B-6EAA-4A27-9BA6-CA801FBB6930} = {EBCBEFCC-3FD6-40C2-A4E7-F39FD1D6E8DC}
+		{9A7B0546-3C3C-4730-B4C1-FFE50D5A9B78} = {B307C0F9-E5A1-4486-9700-9F03FC1AF6B7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE0C1147-8732-43B2-9F0E-E52D337C8BA3}
