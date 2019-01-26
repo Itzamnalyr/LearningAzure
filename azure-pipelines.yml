@@ -40,3 +40,9 @@ steps:
      **/SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     zipAfterPublish: true
+
+# Publish the artifacts
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
