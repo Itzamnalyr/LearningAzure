@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SamLearnsAzure.Service
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Program
     {
         public static void Main(string[] args)

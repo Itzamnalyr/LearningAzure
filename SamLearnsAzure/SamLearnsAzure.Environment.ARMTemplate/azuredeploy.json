@@ -471,18 +471,6 @@
           "properties": {
 
           }
-        },
-        {
-          "apiVersion": "2015-08-01",
-          "type": "slots",
-          "name": "LastKnownGood",
-          "dependsOn": [
-            "[concat('Microsoft.Web/Sites/', variables('serviceAPIName'))]"
-          ],
-          "location": "[resourceGroup().location]",
-          "properties": {
-
-          }
         }
       ]
     },
@@ -592,18 +580,6 @@
           "apiVersion": "2015-08-01",
           "type": "slots",
           "name": "Staging",
-          "dependsOn": [
-            "[concat('Microsoft.Web/Sites/', variables('webSiteName'))]"
-          ],
-          "location": "[resourceGroup().location]",
-          "properties": {
-
-          }
-        },
-        {
-          "apiVersion": "2015-08-01",
-          "type": "slots",
-          "name": "LastKnownGood",
           "dependsOn": [
             "[concat('Microsoft.Web/Sites/', variables('webSiteName'))]"
           ],

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace SamLearnsAzure.Service
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Startup
     {
         public Startup(IConfiguration configuration)
