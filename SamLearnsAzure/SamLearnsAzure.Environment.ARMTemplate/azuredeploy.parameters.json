@@ -19,6 +19,9 @@
     },
     "azureDevOpsPrincipalId": {
       "value": "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+    },
+    "integrationTestsPrincipalId": {
+      "value": "5e95ed33-76ce-456a-8aaf-c75fd142ad41"
     }
   }
 }

@@ -54,11 +54,10 @@ namespace SamLearnsAzure.Tests.UnitTests
             string body = "data";
 
             //Act
-            controller.Post(body);
+            bool result = controller.Post(body);
 
             //Assert
-            //Assert.IsTrue(item != null);
-            //Assert.IsTrue(item == "value");
+            Assert.IsTrue(result == true);
         }
 
 
@@ -72,11 +71,10 @@ namespace SamLearnsAzure.Tests.UnitTests
             string body = "data";
 
             //Act
-            controller.Put(id, body);
+            bool result = controller.Put(id, body);
 
             //Assert
-            //Assert.IsTrue(item != null);
-            //Assert.IsTrue(item == "value");
+            Assert.IsTrue(result == true);
         }
 
 
@@ -89,11 +87,10 @@ namespace SamLearnsAzure.Tests.UnitTests
             int id = 1;
 
             //Act
-            controller.Delete(id);
+            bool result = controller.Delete(id);
 
             //Assert
-            //Assert.IsTrue(item != null);
-            //Assert.IsTrue(item == "value");
+            Assert.IsTrue(result == true);
         }
 
     }

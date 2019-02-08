@@ -111,6 +111,12 @@
         "description": "Object Id of the service principal that will have Azure DevOps access to the vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
       }
     },
+    "integrationTestsPrincipalId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the service principal that is used to run integration tests. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
+      }
+    },
     "vaultAdminSecretsPermissions": {
       "type": "array",
       "defaultValue": [ "all" ],
@@ -702,6 +708,15 @@
           {
             "tenantId": "[subscription().tenantid]",
             "objectId": "[parameters('azureDevOpsPrincipalId')]",
+            "permissions": {
+              "keys": [],
+              "secrets": "[parameters('vaultUserSecretsPermissions')]",
+              "certificates": []
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantid]",
+            "objectId": "[parameters('integrationTestsPrincipalId')]",
             "permissions": {
               "keys": [],
               "secrets": "[parameters('vaultUserSecretsPermissions')]",
