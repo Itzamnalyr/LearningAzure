@@ -22,7 +22,7 @@ steps:
     command: restore
     projects: |
      **/SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-     **/SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Web.csproj
+     **/SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
      **/SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
      **/SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
 
@@ -32,7 +32,7 @@ steps:
     command: build
     projects: |
      **/SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-     **/SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Web.csproj
+     **/SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
      **/SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
      **/SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
     arguments: '--configuration $(BuildConfiguration)'
@@ -52,7 +52,7 @@ steps:
     publishWebProjects: false
     projects: |
      **/SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-     **/SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Web.csproj
+     **/SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     zipAfterPublish: true
 
