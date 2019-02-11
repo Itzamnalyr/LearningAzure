@@ -11,7 +11,9 @@ namespace SamLearnsAzure.FunctionalTests
     {
         private ChromeDriver _driver;
         private TestContext _testContextInstance;
-        private string _samLearnsAzureServiceUrl = null;
+        private string _serviceUrl = null;
+        private string _webUrl = null;
+        private string _environment = null;
 
         [TestMethod]
         [TestCategory("SkipWhenLiveUnitTesting")]
@@ -22,15 +24,36 @@ namespace SamLearnsAzure.FunctionalTests
             bool serviceLoaded = false;
 
             //Act
-            string serviceURL = _samLearnsAzureServiceUrl + "api/values";
+            string serviceURL = _serviceUrl + "api/values";
             _driver.Navigate().GoToUrl(serviceURL);
             serviceLoaded = (_driver.Url == serviceURL);
-            //OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/pre");
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/pre");
             //System.Diagnostics.Debug.WriteLine(data.ToString());
 
             //Assert
             Assert.IsTrue(serviceLoaded);
-            //Assert.IsTrue(data != null);
+            Assert.IsTrue(data != null);
+        }
+
+        [TestMethod]
+        [TestCategory("SkipWhenLiveUnitTesting")]
+        [TestCategory("SmokeTest")]
+        public void GotoSamLearnsAzureWebTest()
+        {
+            //Arrange
+            bool webLoaded = false;
+
+            //Act
+            string webURL = _webUrl + "home";
+            _driver.Navigate().GoToUrl(webURL);
+            webLoaded = (_driver.Url == webURL);
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/h2");
+            //System.Diagnostics.Debug.WriteLine(data.ToString());
+
+            //Assert
+            Assert.IsTrue(webLoaded);
+            Assert.IsTrue(data != null);
+            Assert.AreEqual(data.Text, "Environment: " + _environment);
         }
 
         [TestInitialize]
@@ -39,14 +62,18 @@ namespace SamLearnsAzure.FunctionalTests
             ChromeOptions chromeOptions = new ChromeOptions();
             chromeOptions.AddArguments("headless");
             _driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), chromeOptions);
-            
+
             if (TestContext.Properties == null || TestContext.Properties.Count == 0)
             {
-                _samLearnsAzureServiceUrl = "https://samsapp-dev-eu-web.azurewebsites.net/";
+                _serviceUrl = "https://samsapp-dev-eu-service.azurewebsites.net/";
+                _webUrl = "https://samsapp-dev-eu-web.azurewebsites.net/";
+                _environment = "dev";
             }
             else
             {
-                _samLearnsAzureServiceUrl = TestContext.Properties["SamLearnsAzureServiceUrl"].ToString();
+                _serviceUrl = TestContext.Properties["ServiceUrl"].ToString();
+                _webUrl = TestContext.Properties["WebUrl"].ToString();
+                _environment = TestContext.Properties["TestEnvironment"].ToString();
             }
         }
 

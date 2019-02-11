@@ -3,7 +3,9 @@
 
   <!-- Parameters used by tests at runtime -->
   <TestRunParameters>
-    <Parameter name="SamLearnsAzureServiceUrl" value="https://samsapp-dev-eu-web.azurewebsites.net/" />
+    <Parameter name="ServiceUrl" value="https://samsapp-dev-eu-service.azurewebsites.net/" />
+    <Parameter name="WebUrl" value="https://samsapp-dev-eu-web.azurewebsites.net/" />
+    <Parameter name="TestEnvironment" value="dev" />
   </TestRunParameters>
 
 </RunSettings>
