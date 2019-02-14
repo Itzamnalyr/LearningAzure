@@ -15,26 +15,53 @@ variables:
 
 steps:
 
-#Dotnet Core build items
+# DotNet Framework build items
+- task: NuGetToolInstaller@0
+  displayName: 'Use NuGet 4.4.1'
+  inputs:
+    versionSpec: 4.4.1
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    projects: |
+     SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
+
+- task: VSBuild@1
+  displayName: 'Build database project'
+  inputs:
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    solution: SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
+
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Database\bin\Output'
+    Contents: '*'
+    TargetFolder: '$(build.artifactstagingdirectory)\Database'
+
+# Dotnet Core build items
 - task: DotNetCoreCLI@2
   displayName: 'Restore dotnet core projects'
   inputs:
     command: restore
     projects: |
-     **/SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-     **/SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
-     **/SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-     **/SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
+     SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
+     SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
+     SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+     SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
 
 - task: DotNetCoreCLI@2
   displayName: 'Build dotnet core projects'
   inputs:
     command: build
     projects: |
-     **/SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-     **/SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
-     **/SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-     **/SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
+     SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
+     SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
+     SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+     SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
     arguments: '--configuration $(BuildConfiguration)'
  
 - task: DotNetCoreCLI@2
@@ -42,7 +69,7 @@ steps:
   inputs:
     command: test
     projects: |
-     **/SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+     SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
     arguments: '--configuration $(BuildConfiguration) --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
 
 - task: DotNetCoreCLI@2
@@ -51,8 +78,8 @@ steps:
     command: publish
     publishWebProjects: false
     projects: |
-     **/SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-     **/SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
+     SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
+     SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     zipAfterPublish: true
 
@@ -62,7 +89,7 @@ steps:
     command: publish
     publishWebProjects: false
     projects: |
-     **/SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
+     SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/FunctionalTests'
     zipAfterPublish: false
 
