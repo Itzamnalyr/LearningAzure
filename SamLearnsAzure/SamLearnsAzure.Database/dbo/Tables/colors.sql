@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[lego_colors]
+﻿CREATE TABLE [dbo].[colors]
 (
 	[id] INT NOT NULL PRIMARY KEY, 
     [name] VARCHAR(200) NULL, 

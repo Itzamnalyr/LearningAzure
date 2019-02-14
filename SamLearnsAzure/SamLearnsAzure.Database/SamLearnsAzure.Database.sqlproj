@@ -63,17 +63,17 @@
     <Folder Include="dbo\Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Tables\lego_colors.sql" />
-    <Build Include="dbo\Tables\lego_inventories.sql" />
-    <Build Include="dbo\Tables\lego_inventory_parts.sql" />
-    <Build Include="dbo\Tables\lego_inventory_sets.sql" />
-    <Build Include="dbo\Tables\lego_owner_sets.sql" />
-    <Build Include="dbo\Tables\lego_owners.sql" />
-    <Build Include="dbo\Tables\lego_part_categories.sql" />
-    <Build Include="dbo\Tables\lego_part_relationships.sql" />
-    <Build Include="dbo\Tables\lego_parts.sql" />
-    <Build Include="dbo\Tables\lego_sets.sql" />
-    <Build Include="dbo\Tables\lego_themes.sql" />
+    <Build Include="dbo\Tables\colors.sql" />
+    <Build Include="dbo\Tables\inventories.sql" />
+    <Build Include="dbo\Tables\inventory_parts.sql" />
+    <Build Include="dbo\Tables\inventory_sets.sql" />
+    <Build Include="dbo\Tables\owner_sets.sql" />
+    <Build Include="dbo\Tables\owners.sql" />
+    <Build Include="dbo\Tables\part_categories.sql" />
+    <Build Include="dbo\Tables\part_relationships.sql" />
+    <Build Include="dbo\Tables\parts.sql" />
+    <Build Include="dbo\Tables\sets.sql" />
+    <Build Include="dbo\Tables\themes.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

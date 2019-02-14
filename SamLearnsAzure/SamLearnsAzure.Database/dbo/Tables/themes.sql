@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[lego_themes]
+﻿CREATE TABLE [dbo].[themes]
 (
 	[id] INT NOT NULL PRIMARY KEY,
 	[name] VARCHAR(100) NULL,
