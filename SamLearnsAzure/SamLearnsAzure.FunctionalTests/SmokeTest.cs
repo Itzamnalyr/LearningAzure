@@ -37,31 +37,32 @@ namespace SamLearnsAzure.FunctionalTests
             //Assert
             Assert.IsTrue(serviceLoaded);
             Assert.IsTrue(data != null);
+            Assert.AreEqual(data.Text, "[\"value1\",\"value2\"]");
         }
 
-        //[TestMethod]
-        //[TestCategory("SkipWhenLiveUnitTesting")]
-        //[TestCategory("SmokeTest")]
-        //public void GotoSamLearnsAzureServiceOwnersTest()
-        //{
-        //    //Arrange
-        //    bool serviceLoaded = false;
+        [TestMethod]
+        [TestCategory("SkipWhenLiveUnitTesting")]
+        [TestCategory("SmokeTest")]
+        public void GotoSamLearnsAzureServiceOwnersTest()
+        {
+            //Arrange
+            bool serviceLoaded = false;
 
-        //    //Act
-        //    string serviceURL = _serviceUrl + "api/owners/getowners";
-        //    _driver.Navigate().GoToUrl(serviceURL);
-        //    serviceLoaded = (_driver.Url == serviceURL);
-        //    OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/pre");
+            //Act
+            string serviceURL = _serviceUrl + "api/owners/getowners";
+            _driver.Navigate().GoToUrl(serviceURL);
+            serviceLoaded = (_driver.Url == serviceURL);
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/pre");
 
-        //    //Assert
-        //    Assert.IsTrue(serviceLoaded);
-        //    Assert.IsTrue(data != null);
-        //    //Convert the JSON to the owners model
-        //    IEnumerable<Owners> owners = JsonConvert.DeserializeObject<IEnumerable<Owners>>(data.Text);
-        //    Assert.IsTrue(owners.Count() > 0); //There is more than one owner
-        //    Assert.IsTrue(owners.FirstOrDefault().Id > 0); //The first owner has an id
-        //    Assert.IsTrue(owners.FirstOrDefault().OwnerName.Length > 0); //The first owner has an name
-        //}
+            //Assert
+            Assert.IsTrue(serviceLoaded);
+            Assert.IsTrue(data != null);
+            //Convert the JSON to the owners model
+            IEnumerable<Owners> owners = JsonConvert.DeserializeObject<IEnumerable<Owners>>(data.Text);
+            Assert.IsTrue(owners.Count() > 0); //There is more than one owner
+            Assert.IsTrue(owners.FirstOrDefault().Id > 0); //The first owner has an id
+            Assert.IsTrue(owners.FirstOrDefault().OwnerName.Length > 0); //The first owner has an name
+        }
 
         [TestMethod]
         [TestCategory("SkipWhenLiveUnitTesting")]
