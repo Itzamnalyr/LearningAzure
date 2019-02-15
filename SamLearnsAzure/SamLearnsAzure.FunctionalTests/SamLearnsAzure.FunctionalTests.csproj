@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SamLearnsAzure.Service\SamLearnsAzure.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="test.runsettings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

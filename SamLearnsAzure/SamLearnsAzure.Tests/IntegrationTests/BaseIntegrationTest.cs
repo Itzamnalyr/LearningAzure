@@ -8,6 +8,7 @@ using System.Net.Http;
 
 namespace SamLearnsAzure.Tests.IntegrationTests
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class BaseIntegrationTest
     {
         private TestServer _server;
