@@ -30,9 +30,10 @@ namespace SamLearnsAzure.Tests.IntegrationTests
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() == 0); //There is more than one owner
-            //Assert.IsTrue(items.FirstOrDefault().PartRelationshipId > 0); //The first item has an id
-            //Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
+            Assert.IsTrue(items.Count() > 0); //There is more than one
+            Assert.IsTrue(items.FirstOrDefault().PartRelationshipId > 0); //The first item has an id
+            Assert.IsTrue(items.FirstOrDefault().ChildPartNum.Length > 0); //The child item has an name
+            Assert.IsTrue(items.FirstOrDefault().ParentPartNum.Length > 0); //The parent item has an name
         }
         
     }

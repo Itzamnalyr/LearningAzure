@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "factoryName": {
+      "value": "samsapp-core-eu-datafactory"
+    },
+    "SamLearnsAzureBlobStorage_connectionString": {
+      "value": ""
+    },
+    "SamLearnsAzureSqlDatabase_connectionString": {
+      "value": ""
+    },
+    "Source_properties_typeProperties_folderPath": {
+      "value": "csvfiles"
+    },
+    "SourceThemes_properties_typeProperties_fileName": {
+      "value": "themes.csv"
+    },
+    "SourceColors_properties_typeProperties_fileName": {
+      "value": "colors.csv"
+    },
+    "SourceParts_properties_typeProperties_fileName": {
+      "value": "parts.csv"
+    },
+    "SourceInventories_properties_typeProperties_fileName": {
+      "value": "inventories.csv"
+    },
+    "SourcePartCategories_properties_typeProperties_fileName": {
+      "value": "part_categories.csv"
+    },
+    "SourceInventoryParts_properties_typeProperties_fileName": {
+      "value": "inventory_parts.csv"
+    },
+    "SourceInventorySets_properties_typeProperties_fileName": {
+      "value": "inventory_sets.csv"
+    },
+    "SourcePartRelationships_properties_typeProperties_fileName": {
+      "value": "part_relationships.csv"
+    },
+    "SourceSets_properties_typeProperties_fileName": {
+      "value": "sets.csv"
+    }
+  }
+}

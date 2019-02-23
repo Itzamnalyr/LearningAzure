@@ -1,0 +1,187 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appPrefix": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 15
+    },
+    "environment": {
+      "type": "string",
+      "allowedValues": [
+        "core",
+        "test"
+      ]
+    },
+    "locationShort": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 3,
+      "metadata": {
+        "description": "Two to three character value that identifies the region into which the resources are deployed. Should map to the resource group's location."
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "SamLearnsAzureBlobStorage_connectionString": {
+      "type": "secureString",
+      "metadata": "Secure string for 'connectionString' of 'SamLearnsAzureBlobStorageConnection'"
+    },
+    "SamLearnsAzureSqlDatabase_connectionString": {
+      "type": "secureString",
+      "metadata": "Secure string for 'connectionString' of 'SamLearnsAzureSqlDatabaseConnection'"
+    },
+    "Source_properties_typeProperties_folderPath": {
+      "type": "string",
+      "defaultValue": "csvfiles"
+    },
+    "SourceThemes_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "themes.csv"
+    },
+    "SourceColors_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "colors.csv"
+    },
+    "SourceParts_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "parts.csv"
+    },
+    "SourceInventories_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "inventories.csv"
+    },
+    "SourcePartCategories_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "part_categories.csv"
+    },
+    "SourceInventoryParts_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "inventory_parts.csv"
+    },
+    "SourceInventorySets_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "inventory_sets.csv"
+    },
+    "SourcePartRelationships_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "part_relationships.csv"
+    },
+    "SourceSets_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "sets.csv"
+    },
+    "containerUri": {
+      "type": "string",
+      "metadata": "URI to storage account containing linked ARM templates"
+    },
+    "containerSasToken": {
+      "type": "string",
+      "metadata": "Sas Token to storage account containing linked ARM templates"
+    }
+  },
+  "variables": {
+    "storageAccountName": "[concat(parameters('appPrefix'), parameters('environment'), parameters('locationShort'), 'storage')]",
+    "factoryName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-datafactory')]",
+    "factoryId": "[concat('Microsoft.DataFactory/factories/', variables('factoryName'))]"
+  },
+  "resources": [
+    {
+      "name": "[variables('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Storage Account"
+      },
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "name": "ArmTemplate_FactoryDependencies",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-02-01",
+      "properties": {
+        "mode": "incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('containerUri'), '/ArmTemplate_FactoryDependencies.json', parameters('containerSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "factoryName": {
+            "value": "[variables('factoryName')]"
+          },
+          "SamLearnsAzureBlobStorage_connectionString": {
+            "value": "[parameters('SamLearnsAzureBlobStorage_connectionString')]"
+          },
+          "SamLearnsAzureSqlDatabase_connectionString": {
+            "value": "[parameters('SamLearnsAzureSqlDatabase_connectionString')]"
+          },
+          "Source_properties_typeProperties_folderPath": {
+            "value": "[parameters('Source_properties_typeProperties_folderPath')]"
+          },
+          "SourceThemes_properties_typeProperties_fileName": {
+            "value": "[parameters('SourceThemes_properties_typeProperties_fileName')]"
+          },
+          "SourceColors_properties_typeProperties_fileName": {
+            "value": "[parameters('SourceColors_properties_typeProperties_fileName')]"
+          },
+          "SourceParts_properties_typeProperties_fileName": {
+            "value": "[parameters('SourceParts_properties_typeProperties_fileName')]"
+          },
+          "SourceInventories_properties_typeProperties_fileName": {
+            "value": "[parameters('SourceInventories_properties_typeProperties_fileName')]"
+          },
+          "SourcePartCategories_properties_typeProperties_fileName": {
+            "value": "[parameters('SourcePartCategories_properties_typeProperties_fileName')]"
+          },
+          "SourceInventoryParts_properties_typeProperties_fileName": {
+            "value": "[parameters('SourceInventoryParts_properties_typeProperties_fileName')]"
+          },
+          "SourceInventorySets_properties_typeProperties_fileName": {
+            "value": "[parameters('SourceInventorySets_properties_typeProperties_fileName')]"
+          },
+          "SourcePartRelationships_properties_typeProperties_fileName": {
+            "value": "[parameters('SourcePartRelationships_properties_typeProperties_fileName')]"
+          },
+          "SourceSets_properties_typeProperties_fileName": {
+            "value": "[parameters('SourceSets_properties_typeProperties_fileName')]"
+          }
+        }
+      },
+      "dependsOn": []
+    },
+    {
+      "name": "ArmTemplate_FactoryPipeline",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-02-01",
+      "properties": {
+        "mode": "incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('containerUri'), '/ArmTemplate_FactoryPipeline.json', parameters('containerSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "factoryName": {
+            "value": "[variables('factoryName')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_FactoryDependencies')]"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,546 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory Name",
+            "defaultValue": "samsapp-core-eu-datafactory"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('factoryName'), '/SamLearnsAzurePipeline')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "Clear Database",
+                        "type": "SqlServerStoredProcedure",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "storedProcedureName": "dbo.[ClearDataFromTables]"
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+                            "type": "LinkedServiceReference"
+                        }
+                    },
+                    {
+                        "name": "Copy Themes",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "Clear Database",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "BlobSource",
+                                "recursive": true
+                            },
+                            "sink": {
+                                "type": "SqlSink",
+                                "writeBatchSize": 10000
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "columnMappings": {
+                                    "id": "id",
+                                    "name": "name",
+                                    "parent_id\r": "parent_id"
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourceThemes",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationThemes",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Copy Sets",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "Copy Themes",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "BlobSource",
+                                "recursive": true
+                            },
+                            "sink": {
+                                "type": "SqlSink",
+                                "writeBatchSize": 10000
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "columnMappings": {
+                                    "set_num": "set_num",
+                                    "name": "name",
+                                    "year": "year",
+                                    "theme_id": "theme_id",
+                                    "num_parts": "num_parts"
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourceSets",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationSets",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Copy Inventories",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "Copy Sets",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "BlobSource",
+                                "recursive": true
+                            },
+                            "sink": {
+                                "type": "SqlSink",
+                                "writeBatchSize": 10000
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "columnMappings": {
+                                    "id": "id",
+                                    "version": "version",
+                                    "set_num": "set_num"
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourceInventories",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationInventories",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Copy Colors",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "Clear Database",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "BlobSource",
+                                "recursive": true
+                            },
+                            "sink": {
+                                "type": "SqlSink",
+                                "writeBatchSize": 10000
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "columnMappings": {
+                                    "id": "id",
+                                    "name": "name",
+                                    "rgb": "rgb",
+                                    "is_trans": "is_trans"
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourceColors",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationColors",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Copy Inventory Sets",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "Copy Inventories",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "BlobSource",
+                                "recursive": true
+                            },
+                            "sink": {
+                                "type": "SqlSink",
+                                "writeBatchSize": 10000
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "columnMappings": {
+                                    "inventory_id": "inventory_id",
+                                    "set_num": "set_num",
+                                    "quantity\r": "quantity"
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourceInventorySets",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationInventorySets",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Copy Parts",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "Copy Part Categories",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "BlobSource",
+                                "recursive": true
+                            },
+                            "sink": {
+                                "type": "SqlSink",
+                                "writeBatchSize": 10000
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "columnMappings": {
+                                    "part_num": "part_num",
+                                    "name": "name",
+                                    "part_cat_id": "part_cat_id"
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourceParts",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationParts",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Copy Part Categories",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "Clear Database",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "BlobSource",
+                                "recursive": true
+                            },
+                            "sink": {
+                                "type": "SqlSink",
+                                "writeBatchSize": 10000
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "columnMappings": {
+                                    "id": "id",
+                                    "name": "name"
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourcePartCategories",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationPartCategories",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Copy Inventory Parts",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "Copy Colors",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            },
+                            {
+                                "activity": "Copy Parts",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            },
+                            {
+                                "activity": "Copy Inventories",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "BlobSource",
+                                "recursive": true
+                            },
+                            "sink": {
+                                "type": "SqlSink",
+                                "writeBatchSize": 10000
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "columnMappings": {
+                                    "inventory_id": "inventory_id",
+                                    "part_num": "part_num",
+                                    "color_id": "color_id",
+                                    "quantity": "quantity",
+                                    "is_spare\r": "is_spare"
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourceInventoryParts",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationInventoryParts",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Copy Part Relationships",
+                        "type": "Copy",
+                        "dependsOn": [
+                            {
+                                "activity": "Copy Inventory Sets",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            },
+                            {
+                                "activity": "Copy Inventory Parts",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "BlobSource",
+                                "recursive": true
+                            },
+                            "sink": {
+                                "type": "SqlSink",
+                                "writeBatchSize": 10000
+                            },
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "columnMappings": {
+                                    "rel_type": "rel_type",
+                                    "child_part_num": "child_part_num",
+                                    "parent_part_num": "parent_part_num"
+                                }
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "SourcePartRelationships",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "DestinationPartRelationships",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    }
+                ],
+                "annotations": []
+            },
+            "dependsOn": []
+        }
+    ]
+}

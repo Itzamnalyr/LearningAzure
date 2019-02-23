@@ -38,6 +38,7 @@ if (!$BacpacFilename)
 {
 	Write-Error "BACPAC does not exist in container $StorageContainerName. Import aborted"
 }
+Write-Host "Importing file " + $BacpacFilename.Name
 $BacpacUri = $StorageUri + $StorageContainerName + "/" + $BacpacFilename.Name
 
 # Remove the current database, if it exists

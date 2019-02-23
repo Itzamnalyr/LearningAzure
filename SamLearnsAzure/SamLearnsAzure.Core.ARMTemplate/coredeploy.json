@@ -1,0 +1,1408 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appPrefix": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 15
+    },
+    "environment": {
+      "type": "string",
+      "allowedValues": [
+        "core",
+        "test"
+      ]
+    },
+    "locationShort": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 3,
+      "metadata": {
+        "description": "Two to three character value that identifies the region into which the resources are deployed. Should map to the resource group's location."
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "SamLearnsAzureBlobStorage_connectionString": {
+      "type": "secureString",
+      "metadata": "Secure string for 'connectionString' of 'SamLearnsAzureSqlDatabaseConnection'"
+    },
+    "SamLearnsAzureSqlDatabase_connectionString": {
+      "type": "secureString",
+      "metadata": "Secure string for 'connectionString' of 'SamLearnsAzureSqlDatabaseConnection'"
+    },
+    "Source_properties_typeProperties_folderPath": {
+      "type": "string",
+      "defaultValue": "csvfiles"
+    },
+    "SourceThemes_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "themes.csv"
+    },
+    "SourceColors_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "colors.csv"
+    },
+    "SourceParts_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "parts.csv"
+    },
+    "SourceInventories_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "inventories.csv"
+    },
+    "SourcePartCategories_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "part_categories.csv"
+    },
+    "SourceInventoryParts_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "inventory_parts.csv"
+    },
+    "SourceInventorySets_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "inventory_sets.csv"
+    },
+    "SourcePartRelationships_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "part_relationships.csv"
+    },
+    "SourceSets_properties_typeProperties_fileName": {
+      "type": "string",
+      "defaultValue": "sets.csv"
+    }
+  },
+  "variables": {
+    "storageAccountName": "[concat(parameters('appPrefix'), parameters('environment'), parameters('locationShort'), 'storage')]",
+    "factoryName":  "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-datafactory')]",
+    "factoryId": "[concat('Microsoft.DataFactory/factories/', variables('factoryName'))]"
+  },
+  "resources": [
+    {
+      "name": "[variables('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Storage Account"
+      },
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SamLearnsAzurePipeline')]",
+      "type": "Microsoft.DataFactory/factories/pipelines",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "activities": [
+          {
+            "name": "Clear Database",
+            "type": "SqlServerStoredProcedure",
+            "dependsOn": [],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "storedProcedureName": "dbo.[ClearDataFromTables]"
+            },
+            "linkedServiceName": {
+              "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+              "type": "LinkedServiceReference"
+            }
+          },
+          {
+            "name": "Copy Themes",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Clear Database",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "BlobSource",
+                "recursive": true
+              },
+              "sink": {
+                "type": "SqlSink",
+                "writeBatchSize": 10000
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "columnMappings": {
+                  "id": "id",
+                  "name": "name",
+                  "parent_id\r": "parent_id"
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "SourceThemes",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DestinationThemes",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Copy Sets",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Copy Themes",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "BlobSource",
+                "recursive": true
+              },
+              "sink": {
+                "type": "SqlSink",
+                "writeBatchSize": 10000
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "columnMappings": {
+                  "set_num": "set_num",
+                  "name": "name",
+                  "year": "year",
+                  "theme_id": "theme_id",
+                  "num_parts": "num_parts"
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "SourceSets",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DestinationSets",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Copy Inventories",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Copy Sets",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "BlobSource",
+                "recursive": true
+              },
+              "sink": {
+                "type": "SqlSink",
+                "writeBatchSize": 10000
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "columnMappings": {
+                  "id": "id",
+                  "version": "version",
+                  "set_num": "set_num"
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "SourceInventories",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DestinationInventories",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Copy Colors",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Clear Database",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "BlobSource",
+                "recursive": true
+              },
+              "sink": {
+                "type": "SqlSink",
+                "writeBatchSize": 10000
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "columnMappings": {
+                  "id": "id",
+                  "name": "name",
+                  "rgb": "rgb",
+                  "is_trans": "is_trans"
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "SourceColors",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DestinationColors",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Copy Inventory Sets",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Copy Inventories",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "BlobSource",
+                "recursive": true
+              },
+              "sink": {
+                "type": "SqlSink",
+                "writeBatchSize": 10000
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "columnMappings": {
+                  "inventory_id": "inventory_id",
+                  "set_num": "set_num",
+                  "quantity\r": "quantity"
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "SourceInventorySets",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DestinationInventorySets",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Copy Parts",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Copy Part Categories",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "BlobSource",
+                "recursive": true
+              },
+              "sink": {
+                "type": "SqlSink",
+                "writeBatchSize": 10000
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "columnMappings": {
+                  "part_num": "part_num",
+                  "name": "name",
+                  "part_cat_id": "part_cat_id"
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "SourceParts",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DestinationParts",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Copy Part Categories",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Clear Database",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "BlobSource",
+                "recursive": true
+              },
+              "sink": {
+                "type": "SqlSink",
+                "writeBatchSize": 10000
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "columnMappings": {
+                  "id": "id",
+                  "name": "name"
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "SourcePartCategories",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DestinationPartCategories",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Copy Inventory Parts",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Copy Colors",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              },
+              {
+                "activity": "Copy Parts",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              },
+              {
+                "activity": "Copy Inventories",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "BlobSource",
+                "recursive": true
+              },
+              "sink": {
+                "type": "SqlSink",
+                "writeBatchSize": 10000
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "columnMappings": {
+                  "inventory_id": "inventory_id",
+                  "part_num": "part_num",
+                  "color_id": "color_id",
+                  "quantity": "quantity",
+                  "is_spare\r": "is_spare"
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "SourceInventoryParts",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DestinationInventoryParts",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          },
+          {
+            "name": "Copy Part Relationships",
+            "type": "Copy",
+            "dependsOn": [
+              {
+                "activity": "Copy Inventory Sets",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              },
+              {
+                "activity": "Copy Inventory Parts",
+                "dependencyConditions": [
+                  "Succeeded"
+                ]
+              }
+            ],
+            "policy": {
+              "timeout": "7.00:00:00",
+              "retry": 0,
+              "retryIntervalInSeconds": 30,
+              "secureOutput": false,
+              "secureInput": false
+            },
+            "userProperties": [],
+            "typeProperties": {
+              "source": {
+                "type": "BlobSource",
+                "recursive": true
+              },
+              "sink": {
+                "type": "SqlSink",
+                "writeBatchSize": 10000
+              },
+              "enableStaging": false,
+              "translator": {
+                "type": "TabularTranslator",
+                "columnMappings": {
+                  "rel_type": "rel_type",
+                  "child_part_num": "child_part_num",
+                  "parent_part_num": "parent_part_num"
+                }
+              }
+            },
+            "inputs": [
+              {
+                "referenceName": "SourcePartRelationships",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ],
+            "outputs": [
+              {
+                "referenceName": "DestinationPartRelationships",
+                "type": "DatasetReference",
+                "parameters": {}
+              }
+            ]
+          }
+        ],
+        "annotations": []
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]",
+        "[concat(variables('factoryId'), '/datasets/SourceThemes')]",
+        "[concat(variables('factoryId'), '/datasets/DestinationThemes')]",
+        "[concat(variables('factoryId'), '/datasets/SourceSets')]",
+        "[concat(variables('factoryId'), '/datasets/DestinationSets')]",
+        "[concat(variables('factoryId'), '/datasets/SourceInventories')]",
+        "[concat(variables('factoryId'), '/datasets/DestinationInventories')]",
+        "[concat(variables('factoryId'), '/datasets/SourceColors')]",
+        "[concat(variables('factoryId'), '/datasets/DestinationColors')]",
+        "[concat(variables('factoryId'), '/datasets/SourceInventorySets')]",
+        "[concat(variables('factoryId'), '/datasets/DestinationInventorySets')]",
+        "[concat(variables('factoryId'), '/datasets/SourceParts')]",
+        "[concat(variables('factoryId'), '/datasets/DestinationParts')]",
+        "[concat(variables('factoryId'), '/datasets/SourcePartCategories')]",
+        "[concat(variables('factoryId'), '/datasets/DestinationPartCategories')]",
+        "[concat(variables('factoryId'), '/datasets/SourceInventoryParts')]",
+        "[concat(variables('factoryId'), '/datasets/DestinationInventoryParts')]",
+        "[concat(variables('factoryId'), '/datasets/SourcePartRelationships')]",
+        "[concat(variables('factoryId'), '/datasets/DestinationPartRelationships')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SamLearnsAzureSqlDatabaseConnection')]",
+      "type": "Microsoft.DataFactory/factories/linkedServices",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "annotations": [],
+        "type": "AzureBlobStorage",
+        "typeProperties": {
+          "connectionString": "[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+          //"connectionString": "[parameters('SamLearnsAzureBlobStorage_connectionString')]"
+        }
+      },
+      "dependsOn": []
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SamLearnsAzureSqlDatabaseConnection')]",
+      "type": "Microsoft.DataFactory/factories/linkedServices",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "annotations": [],
+        "type": "AzureSqlDatabase",
+        "typeProperties": {
+          "connectionString": "[parameters('SamLearnsAzureSqlDatabase_connectionString')]"
+        }
+      },
+      "dependsOn": []
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SourceThemes')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureBlob",
+        "structure": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          },
+          {
+            "name": "parent_id\r",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "format": {
+            "type": "TextFormat",
+            "columnDelimiter": ",",
+            "rowDelimiter": "",
+            "quoteChar": "\"",
+            "nullValue": "",
+            "treatEmptyAsNull": true,
+            "skipLineCount": 0,
+            "firstRowAsHeader": true
+          },
+          "fileName": "[parameters('SourceThemes_properties_typeProperties_fileName')]",
+          "folderPath": "[parameters('Source_properties_typeProperties_folderPath')]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SourceColors')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureBlob",
+        "structure": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          },
+          {
+            "name": "rgb",
+            "type": "String"
+          },
+          {
+            "name": "is_trans",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "format": {
+            "type": "TextFormat",
+            "columnDelimiter": ",",
+            "rowDelimiter": "",
+            "quoteChar": "\"",
+            "nullValue": "/N",
+            "treatEmptyAsNull": true,
+            "skipLineCount": 0,
+            "firstRowAsHeader": true
+          },
+          "fileName": "[parameters('SourceColors_properties_typeProperties_fileName')]",
+          "folderPath": "[parameters('Source_properties_typeProperties_folderPath')]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SourceParts')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureBlob",
+        "structure": [
+          {
+            "name": "part_num",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          },
+          {
+            "name": "part_cat_id",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "format": {
+            "type": "TextFormat",
+            "columnDelimiter": ",",
+            "rowDelimiter": "",
+            "quoteChar": "\"",
+            "nullValue": "\\N",
+            "treatEmptyAsNull": true,
+            "skipLineCount": 0,
+            "firstRowAsHeader": true
+          },
+          "fileName": "[parameters('SourceParts_properties_typeProperties_fileName')]",
+          "folderPath": "[parameters('Source_properties_typeProperties_folderPath')]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SourceInventories')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureBlob",
+        "structure": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "version",
+            "type": "String"
+          },
+          {
+            "name": "set_num",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "format": {
+            "type": "TextFormat",
+            "columnDelimiter": ",",
+            "rowDelimiter": "",
+            "quoteChar": "\"",
+            "nullValue": "",
+            "treatEmptyAsNull": true,
+            "skipLineCount": 0,
+            "firstRowAsHeader": true
+          },
+          "fileName": "[parameters('SourceInventories_properties_typeProperties_fileName')]",
+          "folderPath": "[parameters('Source_properties_typeProperties_folderPath')]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SourcePartCategories')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureBlob",
+        "structure": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "format": {
+            "type": "TextFormat",
+            "columnDelimiter": ",",
+            "rowDelimiter": "",
+            "quoteChar": "\"",
+            "nullValue": "\\N",
+            "treatEmptyAsNull": true,
+            "skipLineCount": 0,
+            "firstRowAsHeader": true
+          },
+          "fileName": "[parameters('SourcePartCategories_properties_typeProperties_fileName')]",
+          "folderPath": "[parameters('Source_properties_typeProperties_folderPath')]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SourceInventoryParts')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureBlob",
+        "structure": [
+          {
+            "name": "inventory_id",
+            "type": "String"
+          },
+          {
+            "name": "part_num",
+            "type": "String"
+          },
+          {
+            "name": "color_id",
+            "type": "String"
+          },
+          {
+            "name": "quantity",
+            "type": "String"
+          },
+          {
+            "name": "is_spare\r",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "format": {
+            "type": "TextFormat",
+            "columnDelimiter": ",",
+            "rowDelimiter": "\n",
+            "quoteChar": "\"",
+            "nullValue": "",
+            "treatEmptyAsNull": true,
+            "skipLineCount": 0,
+            "firstRowAsHeader": true
+          },
+          "fileName": "[parameters('SourceInventoryParts_properties_typeProperties_fileName')]",
+          "folderPath": "[parameters('Source_properties_typeProperties_folderPath')]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SourceInventorySets')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureBlob",
+        "structure": [
+          {
+            "name": "inventory_id",
+            "type": "String"
+          },
+          {
+            "name": "set_num",
+            "type": "String"
+          },
+          {
+            "name": "quantity\r",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "format": {
+            "type": "TextFormat",
+            "columnDelimiter": ",",
+            "rowDelimiter": "\n",
+            "quoteChar": "\"",
+            "nullValue": "\\N",
+            "treatEmptyAsNull": true,
+            "skipLineCount": 0,
+            "firstRowAsHeader": true
+          },
+          "fileName": "[parameters('SourceInventorySets_properties_typeProperties_fileName')]",
+          "folderPath": "[parameters('Source_properties_typeProperties_folderPath')]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SourcePartRelationships')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureBlob",
+        "structure": [
+          {
+            "name": "rel_type",
+            "type": "String"
+          },
+          {
+            "name": "child_part_num",
+            "type": "String"
+          },
+          {
+            "name": "parent_part_num",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "format": {
+            "type": "TextFormat",
+            "columnDelimiter": ",",
+            "rowDelimiter": "",
+            "quoteChar": "\"",
+            "nullValue": "",
+            "treatEmptyAsNull": true,
+            "skipLineCount": 0,
+            "firstRowAsHeader": true
+          },
+          "fileName": "[parameters('SourcePartRelationships_properties_typeProperties_fileName')]",
+          "folderPath": "[parameters('Source_properties_typeProperties_folderPath')]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/SourceSets')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureBlob",
+        "structure": [
+          {
+            "name": "set_num",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          },
+          {
+            "name": "year",
+            "type": "String"
+          },
+          {
+            "name": "theme_id",
+            "type": "String"
+          },
+          {
+            "name": "num_parts",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "format": {
+            "type": "TextFormat",
+            "columnDelimiter": ",",
+            "rowDelimiter": "",
+            "quoteChar": "\"",
+            "nullValue": "\\N",
+            "treatEmptyAsNull": true,
+            "skipLineCount": 0,
+            "firstRowAsHeader": true
+          },
+          "fileName": "[parameters('SourceSets_properties_typeProperties_fileName')]",
+          "folderPath": "[parameters('Source_properties_typeProperties_folderPath')]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/DestinationColors')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "structure": [
+          {
+            "name": "id",
+            "type": "Int32"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          },
+          {
+            "name": "rgb",
+            "type": "String"
+          },
+          {
+            "name": "is_trans",
+            "type": "Boolean"
+          }
+        ],
+        "typeProperties": {
+          "tableName": "dbo.[colors]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/DestinationInventories')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "structure": [
+          {
+            "name": "id",
+            "type": "Int32"
+          },
+          {
+            "name": "version",
+            "type": "Int32"
+          },
+          {
+            "name": "set_num",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "tableName": "dbo.[inventories]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/DestinationInventoryParts')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "structure": [
+          {
+            "name": "inventory_id",
+            "type": "Int32"
+          },
+          {
+            "name": "part_num",
+            "type": "String"
+          },
+          {
+            "name": "color_id",
+            "type": "Int32"
+          },
+          {
+            "name": "quantity",
+            "type": "Int32"
+          },
+          {
+            "name": "is_spare",
+            "type": "Boolean"
+          }
+        ],
+        "typeProperties": {
+          "tableName": "dbo.[inventory_parts]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/DestinationInventorySets')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "structure": [
+          {
+            "name": "inventory_id",
+            "type": "Int32"
+          },
+          {
+            "name": "set_num",
+            "type": "String"
+          },
+          {
+            "name": "quantity",
+            "type": "Int32"
+          }
+        ],
+        "typeProperties": {
+          "tableName": "dbo.[inventory_sets]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/DestinationPartCategories')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "structure": [
+          {
+            "name": "id",
+            "type": "Int32"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "tableName": "dbo.[part_categories]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/DestinationPartRelationships')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "structure": [
+          {
+            "name": "rel_type",
+            "type": "String"
+          },
+          {
+            "name": "child_part_num",
+            "type": "String"
+          },
+          {
+            "name": "parent_part_num",
+            "type": "String"
+          }
+        ],
+        "typeProperties": {
+          "tableName": "dbo.[part_relationships]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/DestinationParts')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "structure": [
+          {
+            "name": "part_num",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          },
+          {
+            "name": "part_cat_id",
+            "type": "Int32"
+          }
+        ],
+        "typeProperties": {
+          "tableName": "dbo.[parts]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/DestinationSets')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "structure": [
+          {
+            "name": "set_num",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          },
+          {
+            "name": "year",
+            "type": "Int32"
+          },
+          {
+            "name": "theme_id",
+            "type": "Int32"
+          },
+          {
+            "name": "num_parts",
+            "type": "Int32"
+          }
+        ],
+        "typeProperties": {
+          "tableName": "dbo.[sets]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('factoryName'), '/DestinationThemes')]",
+      "type": "Microsoft.DataFactory/factories/datasets",
+      "apiVersion": "2018-06-01",
+      "properties": {
+        "linkedServiceName": {
+          "referenceName": "SamLearnsAzureSqlDatabaseConnection",
+          "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "structure": [
+          {
+            "name": "id",
+            "type": "Int32"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          },
+          {
+            "name": "parent_id",
+            "type": "Int32"
+          }
+        ],
+        "typeProperties": {
+          "tableName": "dbo.[themes]"
+        }
+      },
+      "dependsOn": [
+        "[concat(variables('factoryId'), '/linkedServices/SamLearnsAzureSqlDatabaseConnection')]"
+      ]
+    }
+  ],
+  "outputs": {}
+}

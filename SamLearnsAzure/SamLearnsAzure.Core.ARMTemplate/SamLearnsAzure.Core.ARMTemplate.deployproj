@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>76fbce7d-0be3-4506-834a-552e7190cbc6</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PrepareForBuildDependsOn>
+    </PrepareForBuildDependsOn>
+  </PropertyGroup>
+  <Import Condition=" Exists('Deployment.targets') " Project="Deployment.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+  <!-- vertag<:>start tokens<:>maj.min -->
+  <Import Condition=" Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets') " Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets" />
+  <!-- vertag<:>end -->
+  <ItemGroup>
+    <Content Include="coredeploy.json" />
+    <Content Include="coredeploy.parameters.json" />
+    <None Include="arm_template.json" />
+    <None Include="arm_template_parameters.json" />
+    <None Include="Deployment.targets">
+      <Visible>False</Visible>
+    </None>
+    <Content Include="Deploy-AzureResourceGroup.ps1" />
+    <None Include="linkedTemplates\ArmTemplateParameters_master.json" />
+    <None Include="linkedTemplates\ArmTemplate_FactoryDependencies.json" />
+    <None Include="linkedTemplates\ArmTemplate_FactoryPipeline.json" />
+    <None Include="linkedTemplates\ArmTemplate_master.json" />
+  </ItemGroup>
+  <Target Name="GetReferenceAssemblyPaths" />
+</Project>

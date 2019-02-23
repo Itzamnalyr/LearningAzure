@@ -24,7 +24,6 @@ namespace SamLearnsAzure.Tests.UnitTests
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items != null);
             Assert.IsTrue(items.Count() == 2);
             Assert.IsTrue(items.FirstOrDefault<string>() == "value1");
         }

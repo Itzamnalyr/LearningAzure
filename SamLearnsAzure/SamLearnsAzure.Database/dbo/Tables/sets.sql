@@ -5,5 +5,5 @@
 	[year] INT NULL,
 	[theme_id] INT NULL,	
 	[num_parts] INT NULL--, 
-    --CONSTRAINT [FK_sets_themes] FOREIGN KEY ([theme_id]) REFERENCES [themes]([id])
+    CONSTRAINT [FK_sets_themes] FOREIGN KEY ([theme_id]) REFERENCES [themes]([id])
 )

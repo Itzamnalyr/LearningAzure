@@ -3,6 +3,7 @@ using SamLearnsAzure.Service.DataAccess;
 using SamLearnsAzure.Service.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace SamLearnsAzure.Service.Controllers
 {
