@@ -32,7 +32,7 @@ Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "SamLearnsAzure.Core.ARMTemp
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "SamLearnsAzure.Environment.ARMTemplate", "SamLearnsAzure.Environment.ARMTemplate\SamLearnsAzure.Environment.ARMTemplate.deployproj", "{64BB855B-6EAA-4A27-9BA6-CA801FBB6930}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamLearnsAzure.DataMigration.Function", "SamLearnsAzure.DataMigration.Function\SamLearnsAzure.DataMigration.Function.csproj", "{58EDD3C4-3B77-4655-B24C-82A1A60BF35E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamLearnsAzure.DataMigration.Function", "SamLearnsAzure.DataMigration.Function\SamLearnsAzure.DataMigration.Function.csproj", "{58EDD3C4-3B77-4655-B24C-82A1A60BF35E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

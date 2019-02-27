@@ -25,16 +25,15 @@
   <ItemGroup>
     <Content Include="coredeploy.json" />
     <Content Include="coredeploy.parameters.json" />
-    <None Include="arm_template.json" />
-    <None Include="arm_template_parameters.json" />
     <None Include="Deployment.targets">
       <Visible>False</Visible>
     </None>
     <Content Include="Deploy-AzureResourceGroup.ps1" />
-    <None Include="linkedTemplates\ArmTemplateParameters_master.json" />
-    <None Include="linkedTemplates\ArmTemplate_FactoryDependencies.json" />
-    <None Include="linkedTemplates\ArmTemplate_FactoryPipeline.json" />
-    <None Include="linkedTemplates\ArmTemplate_master.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties coredeploy_1json__JSONSchema="" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

@@ -1,41 +1,14 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SamLearnsAzure.DataMigration.Function
 {
     public static class AzureBlobManagement
-    {
-        
-
-        private static async Task<List<string>> ListBlobs(string storageConnectionString, string containerName)
-        {
-            CloudBlobContainer cloudBlobContainer = null;
-            List<string> files = new List<string>();
-
-            if (CloudStorageAccount.TryParse(storageConnectionString, out CloudStorageAccount storageAccount))
-            {
-                // Create the CloudBlobClient that represents the Blob storage endpoint for the storage account.
-                CloudBlobClient cloudBlobClient = storageAccount.CreateCloudBlobClient();
-
-                // Create a container called 'quickstartblobs' and append a GUID value to it to make the name unique. 
-                cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
-
-                // List the blobs in the container.
-                BlobContinuationToken continuationToken = null;
-                var blobResultSegment = await cloudBlobContainer.ListBlobsSegmentedAsync(continuationToken);
-                files = blobResultSegment.Results.Select(i => i.Uri.Segments.Last()).ToList();
-
-            }
-
-            return files;
-        }
+    {      
 
         public static async Task<int> UnzipBlob(string storageConnectionString, string sourceContainerName, string destinationContainerName, string fileName)
         {

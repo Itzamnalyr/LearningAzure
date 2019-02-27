@@ -12,6 +12,9 @@ namespace SamLearnsAzure.DataMigration.App
         {
             try
             {
+                //Start the timer
+                System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+
                 //Get configuration values from the appsettings.json file
                 IConfiguration config = new ConfigurationBuilder()
                       .AddJsonFile("appsettings.json", true, true)
@@ -26,22 +29,22 @@ namespace SamLearnsAzure.DataMigration.App
                 string zippedPartsContainerName = "zippedparts";
                 string partsContainerName = "partimages";
 
-                bool refreshData = false;
-                bool refreshParts = false;
-                bool unzipParts = false;
-                bool unzipPartsWithFunction = true;
+                bool uploadCSVFiles = true;
+                bool uploadNewPartZips = true;
+                bool unzipPartsInBlob = false;
+                bool unzipPartsWithHTTPFunction = false;
 
 
                 //Confirm that the temp folder can be accessed and is clear
-                if ((refreshData == true && LocalFileManagement.DeleteAllSubFoldersInTargetFolder(tempFolderLocationCSVFiles) == false) ||
-                    (refreshParts == true && LocalFileManagement.DeleteAllSubFoldersInTargetFolder(tempFolderLocationParts) == false) ||
-                    (refreshParts == true && LocalFileManagement.DeleteAllSubFoldersInTargetFolder(tempFolderLocationPartsUnZipped) == false))
+                if ((uploadCSVFiles == true && LocalFileManagement.DeleteAllSubFoldersInTargetFolder(tempFolderLocationCSVFiles) == false) ||
+                    (uploadNewPartZips == true && LocalFileManagement.DeleteAllSubFoldersInTargetFolder(tempFolderLocationParts) == false) ||
+                    (uploadNewPartZips == true && LocalFileManagement.DeleteAllSubFoldersInTargetFolder(tempFolderLocationPartsUnZipped) == false))
                 {
                     PressAKeyToExit("Temp folder preparation failed - process aborted");
                 }
                 else
                 {
-                    if (refreshData == true)
+                    if (uploadCSVFiles == true)
                     {
                         //Get csv files to process
                         List<CSVFile> csvFiles = GetCSVFiles();
@@ -55,16 +58,16 @@ namespace SamLearnsAzure.DataMigration.App
                             await fp.ProcessCSVFile(item.NumberOfColumns, item.StringColumns, item.ColumnToSquash, item.BooleanColumns, item.FileName, tempFolderLocationCSVFiles);
                         }
                         //Upload files to Azure Blob
-                        await AzureBlobManagement.UploadFilesToStorageAccountBlobs(storageConnectionString, "csvfiles", tempFolderLocationCSVFiles, csvFileNames, false);
+                        await AzureBlobManagement.UploadFilesToStorageAccountBlobs(storageConnectionString, "csvfiles", tempFolderLocationCSVFiles, csvFileNames, false, partsContainerName);
                     }
 
-                    if (refreshParts == true)
+                    if (uploadNewPartZips == true)
                     {
                         //Get list of colors from database
                         List<string> colorFiles = GetColorFiles();
 
                         //Download all files from URL to temp folder
-                        //await LocalFileManagement.DownloadFilesToTempFolder(partFilesToDownloadURL, tempFolderLocationParts, colorFiles);
+                        await LocalFileManagement.DownloadFilesToTempFolder(partFilesToDownloadURL, tempFolderLocationParts, colorFiles);
 
                         //Unzip all color zips into a new folder
                         //LocalFileManagement.UnZipFiles(tempFolderLocationParts, tempFolderLocationPartsUnZipped, colorFiles);
@@ -74,16 +77,16 @@ namespace SamLearnsAzure.DataMigration.App
                         //await AzureBlobManagement.UploadFilesToStorageAccountBlobs(storageConnectionString, "partimages", tempFolderLocationPartsUnZipped, unzippedColorFiles, true);
 
                         //Upload zipped files to Azure Blob
-                        await AzureBlobManagement.UploadFilesToStorageAccountBlobs(storageConnectionString, zippedPartsContainerName, tempFolderLocationParts, colorFiles, false);
+                        await AzureBlobManagement.UploadFilesToStorageAccountBlobs(storageConnectionString, zippedPartsContainerName, tempFolderLocationParts, colorFiles, false, partsContainerName);
 
                     }
 
-                    if (unzipParts == true)
+                    if (unzipPartsInBlob == true)
                     {
                         await AzureBlobManagement.UnZipFilesInStorageBlobs(storageConnectionString, zippedPartsContainerName, partsContainerName);
                     }
 
-                    if (unzipPartsWithFunction == true)
+                    if (unzipPartsWithHTTPFunction == true)
                     {
                         //Send Http request to function to process zip file
                         await AzureBlobManagement.UnZipFilesWithFunction(storageConnectionString, zippedPartsContainerName, partsContainerName, functionURL);
@@ -92,7 +95,11 @@ namespace SamLearnsAzure.DataMigration.App
                     //Bonus: Trigger azure function to start data factory import
                     //Bonus: If new color detected, run this process again
 
-                    PressAKeyToExit("Successfully uploaded!");
+                    // stop the timer
+                    watch.Stop();
+                    double elapsedSeconds = watch.Elapsed.TotalSeconds;
+
+                    PressAKeyToExit("Successfully uploaded in " + elapsedSeconds.ToString() + "s!");
                 }
             }
             catch (Exception ex)
@@ -350,10 +357,6 @@ namespace SamLearnsAzure.DataMigration.App
                 "parts_1005.zip",
                 "parts_1006.zip",
                 "parts_1007.zip",
-                //"parts_1008.zip",
-                //"parts_1009.zip",
-                //"parts_1010.zip",
-                //"parts_1011.zip",
                 "parts_9999.zip"
             };
 

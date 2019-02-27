@@ -38,8 +38,6 @@ namespace SamLearnsAzure.DataMigration.App
                 string fileToDownload = downloadURL + file;
                 Console.WriteLine("Downloading file '" + fileToDownload + "'");
                 //Need to look and remove the items like a queue, but then skip to the next one and come back if there is a problem.
-                //do
-                //{
                 //TODO: Fix this retry loop
                 for (int retries = 0; retries < 5; retries++)
                 {
@@ -65,8 +63,6 @@ namespace SamLearnsAzure.DataMigration.App
                         }
                     }
                 }
-
-                //} while (files.Count > 0);
             }
 
             return true;

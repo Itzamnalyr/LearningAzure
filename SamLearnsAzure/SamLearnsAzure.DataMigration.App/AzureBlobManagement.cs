@@ -15,7 +15,7 @@ namespace SamLearnsAzure.DataMigration.App
     {
         //Load up to the storage account, adapted from the Azure quick start for blob storage: 
         //https://github.com/Azure-Samples/storage-blobs-dotnet-quickstart/blob/master/storage-blobs-dotnet-quickstart/Program.cs
-        public static async Task UploadFilesToStorageAccountBlobs(string storageConnectionString, string sourceContainerName, string tempFolderLocation, List<string> files, bool filesHaveFullPath)
+        public static async Task UploadFilesToStorageAccountBlobs(string storageConnectionString, string sourceContainerName, string tempFolderLocation, List<string> files, bool filesHaveFullPath, string partsContainerName)
         {
             CloudBlobContainer cloudBlobContainer = null;
             //string sourceFile = null;
@@ -37,13 +37,28 @@ namespace SamLearnsAzure.DataMigration.App
                         await cloudBlobContainer.CreateAsync();
                         Console.WriteLine("Created container '{0}'", cloudBlobContainer.Name);
                     }
-
-                    // Set the permissions so the blobs are offs. 
+                   // Set the permissions so the blobs are offs. 
                     BlobContainerPermissions permissions = new BlobContainerPermissions
                     {
                         PublicAccess = BlobContainerPublicAccessType.Off
                     };
                     await cloudBlobContainer.SetPermissionsAsync(permissions);
+
+                    //Create the parts location, if it doesn't already exist
+                    CloudBlobContainer partsContainer = cloudBlobClient.GetContainerReference(partsContainerName);
+                    bool containerExists2 = partsContainer == null || await partsContainer.ExistsAsync();
+                    if (containerExists2 == false)
+                    {
+                        await partsContainer.CreateAsync();
+                        Console.WriteLine("Created container '{0}'", partsContainer.Name);
+                    }
+                    // Set the permissions so the blobs are offs. 
+                    BlobContainerPermissions permissions2 = new BlobContainerPermissions
+                    {
+                        PublicAccess = BlobContainerPublicAccessType.Off
+                    };
+                    await partsContainer.SetPermissionsAsync(permissions2);
+                    
 
                     foreach (string file in files)
                     {
@@ -206,15 +221,15 @@ namespace SamLearnsAzure.DataMigration.App
             //Get a list of zip files in the blob
             List<string> files = await AzureBlobManagement.ListBlobs(storageConnectionString, sourceContainerName);
 
-
             //Call the function
             foreach (string file in files)
             {
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri(functionURL);
                 //client.SendAsync(file, sourceContainerName)
-                HttpResponseMessage response = await client.GetAsync("/unzipfileinblob?source=" + sourceContainerName + "&destination=" + destinationContainerName + "&file=" + file);
+                HttpResponseMessage response = await client.GetAsync("/api/UnzipFileInBlob?code=pXUChJoDKFGZ9esg8RFMapWp/9YB1Fq4MTCMcsdfBt7n6QNmIoaDfw==&source=" + sourceContainerName + "&destination=" + destinationContainerName + "&file=" + file);
                 response.EnsureSuccessStatusCode();
+                Console.WriteLine(file + " processed with code: " + response.StatusCode);
             }
 
         }
