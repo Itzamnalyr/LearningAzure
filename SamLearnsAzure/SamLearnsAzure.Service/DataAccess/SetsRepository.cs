@@ -38,13 +38,13 @@ namespace SamLearnsAzure.Service.DataAccess
             return result;
         }
 
-        //public async Task<Sets> GetSet(string setNum)
-        //{
-        //    Sets result = await _context.Sets
-        //        .Include(t=> t.Theme)
-        //        .SingleAsync(b => b.SetNum == setNum);
+        public async Task<Sets> GetSet(string setNum)
+        {
+            Sets result = await _context.Sets
+                .Include(t => t.Theme)
+                .SingleAsync(b => b.SetNum == setNum);
 
-        //    return result;
-        //}
+            return result;
+        }
     }
 }

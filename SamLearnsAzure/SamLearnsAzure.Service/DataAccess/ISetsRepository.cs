@@ -12,6 +12,6 @@ namespace SamLearnsAzure.Service.DataAccess
 
         Task<IEnumerable<SetParts>> GetSetParts(string setNum);
 
-        //Task<Sets> GetSet(string setNum);
+        Task<Sets> GetSet(string setNum);
     }
 }

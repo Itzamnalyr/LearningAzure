@@ -33,11 +33,11 @@ namespace SamLearnsAzure.Service.Controllers
             return await _repo.GetSetParts(setNum);
         }
 
-        //[HttpGet("GetSet")]
-        //public async Task<Sets> GetSet(string setNum)
-        //{
-        //    return await _repo.GetSet(setNum);
-        //}
+        [HttpGet("GetSet")]
+        public async Task<Sets> GetSet(string setNum)
+        {
+            return await _repo.GetSet(setNum);
+        }
 
     }
 }
