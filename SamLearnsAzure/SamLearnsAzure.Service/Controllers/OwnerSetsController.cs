@@ -22,9 +22,9 @@ namespace SamLearnsAzure.Service.Controllers
         }
 
         [HttpGet("GetOwnerSets")]
-        public async Task<IEnumerable<OwnerSets>> GetOwnerSets()
+        public async Task<IEnumerable<OwnerSets>> GetOwnerSets(int ownerId)
         {
-            return await _repo.GetOwnerSets();
+            return await _repo.GetOwnerSets(ownerId);
         }
         
     }

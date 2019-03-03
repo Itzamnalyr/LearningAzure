@@ -21,11 +21,12 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             //Arrange
             SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IOwnerSetsRepository> mock = new Mock<IOwnerSetsRepository>();
-            mock.Setup(repo => repo.GetOwnerSets()).Returns(Task.FromResult(GetOwnerSetsTestData()));
+            mock.Setup(repo => repo.GetOwnerSets(It.IsAny<int>())).Returns(Task.FromResult(GetOwnerSetsTestData()));
             OwnerSetsController controller = new OwnerSetsController(mock.Object);
+            int ownerId = 1;
 
             //Act
-            IEnumerable<OwnerSets> sets = await controller.GetOwnerSets();
+            IEnumerable<OwnerSets> sets = await controller.GetOwnerSets(ownerId);
 
             //Assert
             Assert.IsTrue(sets != null);

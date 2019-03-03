@@ -18,11 +18,12 @@ namespace SamLearnsAzure.Service.DataAccess
             _context = context;
         }
 
-        public async Task<IEnumerable<OwnerSets>> GetOwnerSets()
+        public async Task<IEnumerable<OwnerSets>> GetOwnerSets(int ownerId)
         {
             List<OwnerSets> result = await _context.OwnerSets
                 .Include(l => l.Set)
                     .ThenInclude(t => t.Theme)
+                .Where(p => p.OwnerId == ownerId)
                 .OrderBy(p => p.OwnerId)
                 .ToListAsync();
             return result;

@@ -8,6 +8,6 @@ namespace SamLearnsAzure.Service.DataAccess
 {
     public interface IOwnerSetsRepository
     {
-        Task<IEnumerable<OwnerSets>> GetOwnerSets();
+        Task<IEnumerable<OwnerSets>> GetOwnerSets(int ownerId);
     }
 }
