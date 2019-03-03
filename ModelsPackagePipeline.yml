@@ -1,0 +1,46 @@
+resources:
+- repo: self
+
+pool:
+  vmImage: 'vs2017-win2016'
+
+variables:
+  BuildConfiguration: 'Release'
+  BuildPlatform : 'Any CPU'
+  BuildVersion: 1.0.$(Build.BuildId)
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: restore
+    projects: SamLearnsAzure/SamLearnsAzure.Models/SamLearnsAzure.Models.csproj
+
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    projects: SamLearnsAzure/SamLearnsAzure.Models/SamLearnsAzure.Models.csproj
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: Publish
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: SamLearnsAzure/SamLearnsAzure.Models/SamLearnsAzure.Models.csproj
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    zipAfterPublish: false
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet pack'
+  inputs:
+    command: pack
+    packagesToPack: SamLearnsAzure/SamLearnsAzure.Models/SamLearnsAzure.Models.csproj
+    versioningScheme: byEnvVar
+    versionEnvVar: BuildVersion
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+

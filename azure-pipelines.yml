@@ -26,6 +26,7 @@ steps:
   inputs:
     projects: |
      SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
+    vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
 
 - task: VSBuild@1
   displayName: 'Build database project'

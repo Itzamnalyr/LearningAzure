@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.Models;
+using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SamLearnsAzure.Service.EFCore;
 
 namespace SamLearnsAzure.Service.DataAccess
 {

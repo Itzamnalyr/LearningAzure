@@ -1,13 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.271
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28621.142
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamLearnsAzure.Service", "SamLearnsAzure.Service\SamLearnsAzure.Service.csproj", "{9A7B0546-3C3C-4730-B4C1-FFE50D5A9B78}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build YAML", "Build YAML", "{99984B31-6A92-4578-ACBE-4F3419629BB3}"
 	ProjectSection(SolutionItems) = preProject
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
+		..\ModelsPackagePipeline.yml = ..\ModelsPackagePipeline.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure as Code", "Infrastructure as Code", "{EBCBEFCC-3FD6-40C2-A4E7-F39FD1D6E8DC}"
@@ -33,6 +34,8 @@ EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "SamLearnsAzure.Environment.ARMTemplate", "SamLearnsAzure.Environment.ARMTemplate\SamLearnsAzure.Environment.ARMTemplate.deployproj", "{64BB855B-6EAA-4A27-9BA6-CA801FBB6930}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamLearnsAzure.DataMigration.Function", "SamLearnsAzure.DataMigration.Function\SamLearnsAzure.DataMigration.Function.csproj", "{58EDD3C4-3B77-4655-B24C-82A1A60BF35E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamLearnsAzure.Models", "SamLearnsAzure.Models\SamLearnsAzure.Models.csproj", "{B134E4A3-615D-4D57-9898-1C738F53A88C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +81,10 @@ Global
 		{58EDD3C4-3B77-4655-B24C-82A1A60BF35E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58EDD3C4-3B77-4655-B24C-82A1A60BF35E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58EDD3C4-3B77-4655-B24C-82A1A60BF35E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B134E4A3-615D-4D57-9898-1C738F53A88C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B134E4A3-615D-4D57-9898-1C738F53A88C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B134E4A3-615D-4D57-9898-1C738F53A88C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B134E4A3-615D-4D57-9898-1C738F53A88C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +99,7 @@ Global
 		{76FBCE7D-0BE3-4506-834A-552E7190CBC6} = {EBCBEFCC-3FD6-40C2-A4E7-F39FD1D6E8DC}
 		{64BB855B-6EAA-4A27-9BA6-CA801FBB6930} = {EBCBEFCC-3FD6-40C2-A4E7-F39FD1D6E8DC}
 		{58EDD3C4-3B77-4655-B24C-82A1A60BF35E} = {76875B17-4BFB-489B-8023-B0F3352EAC30}
+		{B134E4A3-615D-4D57-9898-1C738F53A88C} = {B307C0F9-E5A1-4486-9700-9F03FC1AF6B7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE0C1147-8732-43B2-9F0E-E52D337C8BA3}

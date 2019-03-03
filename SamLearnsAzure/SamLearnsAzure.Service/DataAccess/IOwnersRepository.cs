@@ -1,4 +1,4 @@
-﻿using SamLearnsAzure.Service.Models;
+﻿using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

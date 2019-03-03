@@ -1,7 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using OpenQA.Selenium.Chrome;
-using SamLearnsAzure.Service.Models;
+using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;

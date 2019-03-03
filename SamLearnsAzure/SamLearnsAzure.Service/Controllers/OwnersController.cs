@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Service.Models;
+using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Service.Models;
+using SamLearnsAzure.Models;
 
 namespace SamLearnsAzure.Service.Controllers
 {

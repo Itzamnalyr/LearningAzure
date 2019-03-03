@@ -75,6 +75,7 @@
     <Build Include="dbo\Tables\sets.sql" />
     <Build Include="dbo\Tables\themes.sql" />
     <Build Include="dbo\Stored Procedures\ClearDataFromTables.sql" />
+    <Build Include="dbo\Stored Procedures\GetSetParts.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

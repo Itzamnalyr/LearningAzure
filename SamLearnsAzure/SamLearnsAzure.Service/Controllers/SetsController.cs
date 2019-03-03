@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.Models;
+using SamLearnsAzure.Models;
 using SamLearnsAzure.Service.DataAccess;
 
 namespace SamLearnsAzure.Service.Controllers
@@ -26,7 +26,13 @@ namespace SamLearnsAzure.Service.Controllers
         {
             return await _repo.GetSets();
         }
-        
+
+        [HttpGet("GetSetParts")]
+        public async Task<IEnumerable<SetParts>> GetSetParts(string setNum)
+        {
+            return await _repo.GetSetParts(setNum);
+        }
+
         //[HttpGet("GetSet")]
         //public async Task<Sets> GetSet(string setNum)
         //{

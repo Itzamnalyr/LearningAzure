@@ -12,7 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Service.Models;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.EFCore;
 
 namespace SamLearnsAzure.Service
 {
