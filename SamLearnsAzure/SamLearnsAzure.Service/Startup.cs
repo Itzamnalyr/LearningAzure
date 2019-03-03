@@ -33,7 +33,11 @@ namespace SamLearnsAzure.Service
             services.AddDbContext<SamsAppDBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SamsAppConnectionString")));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                //This JSON setting stops the JSON from being truncated
+                .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = 
+                    Newtonsoft.Json.ReferenceLoopHandling.Ignore); 
 
             services.AddScoped<IColorsRepository, ColorsRepository>();
             services.AddScoped<IInventoriesRepository, InventoriesRepository>();
