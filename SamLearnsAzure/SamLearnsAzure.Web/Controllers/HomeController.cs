@@ -1,21 +1,51 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using SamLearnsAzure.Models;
 using SamLearnsAzure.Web.Models;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace SamLearnsAzure.Web.Controllers
 {
     public class HomeController : Controller
     {
-        public IConfiguration Configuration;
-        public HomeController(IConfiguration configuration)
+        private readonly IServiceAPIClient _serviceAPIClient;
+        private readonly IConfiguration _configuration;
+
+        public HomeController(IServiceAPIClient serviceAPIClient, IConfiguration configuration)
         {
-            this.Configuration = configuration;
+            _serviceAPIClient = serviceAPIClient;
+            _configuration = configuration;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(model: Configuration["AppSettings:Environment"]);
+            int ownerId = 1; //Sam
+            List<OwnerSets> ownerSets = await _serviceAPIClient.GetOwnerSets(ownerId);
+
+            IndexViewModel indexPageData = new IndexViewModel
+            {
+                Environment = _configuration["AppSettings:Environment"],
+                OwnerSets = ownerSets
+            };
+
+            return View(indexPageData);
+        }
+
+        public async Task<IActionResult> Set(string setnum)
+        {
+            Sets set = await _serviceAPIClient.GetSet(setnum);
+            List<SetParts> setParts = await _serviceAPIClient.GetSetParts(setnum);
+
+            SetViewModel setViewModel = new SetViewModel
+            {
+                Set = set,
+                SetParts = setParts,
+                BaseSetPartsImagesStorageURL = _configuration["AppSettings:PartImagesStorageURL"]
+            };
+
+            return View(setViewModel);
         }
 
         public IActionResult About()
@@ -34,6 +64,7 @@ namespace SamLearnsAzure.Web.Controllers
 
         public IActionResult Privacy()
         {
+            ViewData["Message"] = "Your privacy page.";
             return View();
         }
 

@@ -1,22 +1,21 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using OpenQA.Selenium.Chrome;
-using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Linq;
+using SamLearnsAzure.Models;
 
-namespace SamLearnsAzure.FunctionalTests
+namespace SamLearnsAzure.FunctionalTests.Service
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    public class SmokeTest
+    public class ServiceSmokeTest
     {
         private ChromeDriver _driver;
         private TestContext _testContextInstance;
         private string _serviceUrl = null;
-        private string _webUrl = null;
         private string _environment = null;
 
         [TestMethod]
@@ -25,7 +24,7 @@ namespace SamLearnsAzure.FunctionalTests
         public void GotoSamLearnsAzureServiceValuesTest()
         {
             //Arrange
-            bool serviceLoaded = false;
+            bool serviceLoaded;
 
             //Act
             string serviceURL = _serviceUrl + "api/values";
@@ -46,7 +45,7 @@ namespace SamLearnsAzure.FunctionalTests
         public void GotoSamLearnsAzureServiceOwnersTest()
         {
             //Arrange
-            bool serviceLoaded = false;
+            bool serviceLoaded;
 
             //Act
             string serviceURL = _serviceUrl + "api/owners/getowners";
@@ -64,27 +63,6 @@ namespace SamLearnsAzure.FunctionalTests
             Assert.IsTrue(owners.FirstOrDefault().OwnerName.Length > 0); //The first owner has an name
         }
 
-        [TestMethod]
-        [TestCategory("SkipWhenLiveUnitTesting")]
-        [TestCategory("SmokeTest")]
-        public void GotoSamLearnsAzureWebHomePageTest()
-        {
-            //Arrange
-            bool webLoaded = false;
-
-            //Act
-            string webURL = _webUrl + "home";
-            _driver.Navigate().GoToUrl(webURL);
-            webLoaded = (_driver.Url == webURL);
-            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/h2");
-            //System.Diagnostics.Debug.WriteLine(data.ToString());
-
-            //Assert
-            Assert.IsTrue(webLoaded);
-            Assert.IsTrue(data != null);
-            Assert.AreEqual(data.Text, "Environment: " + _environment);
-        }
-
         [TestInitialize]
         public void SetupTests()
         {
@@ -95,13 +73,11 @@ namespace SamLearnsAzure.FunctionalTests
             if (TestContext.Properties == null || TestContext.Properties.Count == 0)
             {
                 _serviceUrl = "https://samsapp-dev-eu-service.azurewebsites.net/";
-                _webUrl = "https://samsapp-dev-eu-web.azurewebsites.net/";
                 _environment = "dev";
             }
             else
             {
                 _serviceUrl = TestContext.Properties["ServiceUrl"].ToString();
-                _webUrl = TestContext.Properties["WebUrl"].ToString();
                 _environment = TestContext.Properties["TestEnvironment"].ToString();
             }
         }

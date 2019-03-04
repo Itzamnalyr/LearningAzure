@@ -7,6 +7,7 @@ using System.Text;
 
 namespace SamLearnsAzure.Tests.WebsiteUnitTests
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class BaseUnitTest
     {
         //public DbContextOptions<SamsAppDBContext> DbOptions;

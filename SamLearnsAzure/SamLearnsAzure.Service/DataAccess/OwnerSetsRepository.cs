@@ -23,6 +23,7 @@ namespace SamLearnsAzure.Service.DataAccess
             List<OwnerSets> result = await _context.OwnerSets
                 .Include(l => l.Set)
                     .ThenInclude(t => t.Theme)
+                .Include(l => l.Owner)
                 .Where(p => p.OwnerId == ownerId)
                 .OrderBy(p => p.OwnerId)
                 .ToListAsync();

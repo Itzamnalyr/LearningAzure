@@ -24,18 +24,7 @@ namespace SamLearnsAzure.Service.DataAccess
                  .OrderBy(p => p.Name)
                  .ToListAsync();
             return result;
-        }   
-
-        //public async Task<IEnumerable<PartsSummary>> GetPartsSummary(string setNum)
-        //{
-        //    SqlParameter setNumParameter = new SqlParameter("SetNum", setNum);
-
-        //    IEnumerable<PartsSummary> result = await _context
-        //       .Query<PartsSummary>()
-        //       .FromSql("EXECUTE dbo.GetPartsSummary @SetNum", setNumParameter)
-        //       .ToListAsync();
-
-        //    return result;
-        //}
+        }
+       
     }
 }

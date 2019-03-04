@@ -20,7 +20,7 @@ namespace SamLearnsAzure.Service.DataAccess
 
         public async Task<IEnumerable<InventoryParts>> GetInventoryParts()
         {
-            List<InventoryParts> result = await _context.InventoryParts
+            List<InventoryParts> result = await _context.InventoryParts.Take(1000)
                  .OrderBy(p => p.InventoryPartId)
                  .ToListAsync();
             return result;

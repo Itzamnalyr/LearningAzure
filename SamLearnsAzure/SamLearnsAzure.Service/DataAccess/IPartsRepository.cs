@@ -9,6 +9,5 @@ namespace SamLearnsAzure.Service.DataAccess
     public interface IPartsRepository
     {
         Task<IEnumerable<Parts>> GetParts();
-        //Task<IEnumerable<PartsSummary>> GetPartsSummary(string setNum);
     }
 }

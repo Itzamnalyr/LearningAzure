@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build YAML", "Build YAML", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure as Code", "Infrastructure as Code", "{EBCBEFCC-3FD6-40C2-A4E7-F39FD1D6E8DC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "The application", "The application", "{B307C0F9-E5A1-4486-9700-9F03FC1AF6B7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sams Application", "Sams Application", "{B307C0F9-E5A1-4486-9700-9F03FC1AF6B7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{FA6F78C9-24DC-4C17-B529-2A94CEF2BA1E}"
 EndProject

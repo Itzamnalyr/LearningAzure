@@ -28,11 +28,5 @@ namespace SamLearnsAzure.Service.Controllers
             return await _repo.GetParts();
         }
 
-        //[HttpGet("GetPartsSummary")]
-        //public async Task<IEnumerable<PartsSummary>> GetPartsSummary(string setNum)
-        //{
-        //    return await _repo.GetPartsSummary(setNum);
-        //}
-
     }
 }

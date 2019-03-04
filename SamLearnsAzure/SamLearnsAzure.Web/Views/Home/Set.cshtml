@@ -1,0 +1,36 @@
+﻿@using SamLearnsAzure.Models
+@model SetViewModel
+@{
+    ViewData["Title"] = "Set Details";
+}
+
+<div class="BreadCrumbs">
+    <br />@Html.ActionLink("Home", "Index", "Home") &gt;
+</div>
+<h3><b>@Model.Set.Name</b> (@Model.Set.Year)</h3>
+<span><b>Total parts: </b>@(((int)Model.Set.NumParts).ToString("#,##0"))</span><br />
+<span><b>Theme: </b>@Model.Set.Theme.Name</span><br />
+<span><b>Parts: </b></span><br />
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            @for (int i = 0; i < Model.SetParts.Count; i++)
+            {
+                SetParts item = Model.SetParts[i];
+                if (i % 12 == 0)
+                {
+                    <div></div>
+                }
+                <div class="col-sm-1 col-xs-2 samsAppPart">
+                    <b>@(item.Quantity)x</b><br />
+                    <img src="@(Model.BaseSetPartsImagesStorageURL)/@(item.ColorId)/@(item.PartNum).png"
+                         class="img-rounded samsAppImage"
+                         onerror="if (this.src != '/images/lego.gif') { this.src = '/images/lego.gif'; }" 
+                         /><br />
+                    <span class="samsAppImageText">@item.ColorName</span><br />
+                    <span class="samsAppImageText">PartNum: @item.PartNum</span><br />
+                </div>
+            }
+        </div>
+    </div>
+</div>

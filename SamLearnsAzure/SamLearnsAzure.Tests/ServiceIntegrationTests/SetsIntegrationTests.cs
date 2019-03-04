@@ -36,21 +36,22 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
         }
 
-        //[TestMethod]
-        //public async Task GetSetTest()
-        //{
-        //    //Arrange
-        //    SetsController controller = new SetsController(new SetsRepository(base.DBContext));
-        //    string setNum = "75218-1";
+        [TestMethod]
+        public async Task GetSetTest()
+        {
+            //Arrange
+            string setNum = "75218-1";
 
-        //    //Act
-        //    Sets set = await controller.GetSet(setNum);
+            //Act
+            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getset?setnum=" + setNum);
+            response.EnsureSuccessStatusCode();
+            Sets set = await response.Content.ReadAsAsync<Sets>();
 
-        //    //Assert
-        //    Assert.IsTrue(set != null);
-        //    Assert.IsTrue(set.SetNum == setNum);
-        //    Assert.IsTrue(set.Theme != null);//We are including this in the repo, so want to test it specifically
-        //}
-        
+            //Assert
+            Assert.IsTrue(set != null);
+            Assert.IsTrue(set.SetNum == setNum);
+            Assert.IsTrue(set.Theme != null); //We are including this in the repo, so want to test it specifically
+        }
+
     }
 }

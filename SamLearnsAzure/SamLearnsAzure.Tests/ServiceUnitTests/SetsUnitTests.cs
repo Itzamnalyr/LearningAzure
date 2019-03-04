@@ -33,23 +33,23 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             TestSets(sets.FirstOrDefault());
         }
 
-        //[TestMethod]
-        //public async Task GetSetMockTest()
-        //{
-        //    //Arrange
-        //    SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
-        //    Mock<ISetsRepository> mock = new Mock<ISetsRepository>();
-        //    mock.Setup(repo => repo.GetSet(It.IsAny<string>())).Returns(Task.FromResult(GetSetTestData()));
-        //    SetsController controller = new SetsController(mock.Object);
-        //    string setNum = "75218-1";
+        [TestMethod]
+        public async Task GetSetMockTest()
+        {
+            //Arrange
+            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
+            Mock<ISetsRepository> mock = new Mock<ISetsRepository>();
+            mock.Setup(repo => repo.GetSet(It.IsAny<string>())).Returns(Task.FromResult(GetSetTestData()));
+            SetsController controller = new SetsController(mock.Object);
+            string setNum = "75218-1";
 
-        //    //Act
-        //    Sets set = await controller.GetSet(setNum);
+            //Act
+            Sets set = await controller.GetSet(setNum);
 
-        //    //Assert
-        //    Assert.IsTrue(set != null);
-        //    TestSets(set);
-        //}
+            //Assert
+            Assert.IsTrue(set != null);
+            TestSets(set);
+        }
 
         private void TestSets(Sets Set)
         {

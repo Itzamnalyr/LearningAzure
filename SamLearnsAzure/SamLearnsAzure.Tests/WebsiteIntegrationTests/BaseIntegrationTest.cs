@@ -11,8 +11,6 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class BaseIntegrationTest
     {
-        private TestServer _server;
-        public HttpClient Client;
         public IConfigurationRoot Configuration;
 
         [TestInitialize]
@@ -32,13 +30,6 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             //config.AddAzureKeyVault(azureKeyVaultURL, keyVaultClient, new DefaultKeyVaultSecretManager());
             config.AddAzureKeyVault(azureKeyVaultURL, clientId, clientSecret);
             Configuration = config.Build();
-
-            ////Setup the test server
-            //_server = new TestServer(WebHost.CreateDefaultBuilder()
-            //    .UseConfiguration(Configuration)
-            //    .UseStartup<SamLearnsAzure.Service.Startup>());
-            //Client = _server.CreateClient();
-            //Client.BaseAddress = new Uri(Configuration["AppSettings:WebServiceURL"]);
         }
     }
 }
