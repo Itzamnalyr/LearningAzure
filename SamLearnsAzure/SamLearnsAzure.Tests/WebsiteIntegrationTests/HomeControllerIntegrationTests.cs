@@ -58,21 +58,21 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             //Assert.IsTrue(items.FirstOrDefault().PartName.Length > 0); //The first item has an name
         }
 
-        //[TestMethod]
-        //public async Task GetSetViewIntegrationTest()
-        //{
-        //    //Arrange
-        //    string setNum = "75218-1";
-        //    HttpClient client = new HttpClient();
-        //    client.BaseAddress = new Uri(Configuration["AppSettings:WebServiceURL"]);
+        [TestMethod]
+        public async Task GetSetViewIntegrationTest()
+        {
+            //Arrange
+            string setNum = "75218-1";
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(Configuration["AppSettings:WebServiceURL"]);
 
-        //    //Act
-        //    HttpResponseMessage response = await client.GetAsync("home/set?setnum=" + setNum);
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/set?setnum=" + setNum);
 
-        //    //Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.IsTrue(true);
-        //}
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
 
         [TestMethod]
         public async Task GetAboutViewIntegrationTest()

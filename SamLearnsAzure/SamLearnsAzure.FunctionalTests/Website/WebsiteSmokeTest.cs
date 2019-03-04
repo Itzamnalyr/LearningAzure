@@ -21,7 +21,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
         [TestMethod]
         [TestCategory("SkipWhenLiveUnitTesting")]
         [TestCategory("SmokeTest")]
-        public void GotoSamLearnsAzureWebHomePageTest()
+        public void GotoSamLearnsAzureWebHomeIndexPageTest()
         {
             //Arrange
             bool webLoaded;
@@ -37,6 +37,28 @@ namespace SamLearnsAzure.FunctionalTests.Website
             Assert.IsTrue(webLoaded);
             Assert.IsTrue(data != null);
             Assert.AreEqual(data.Text, "Environment: " + _environment);
+        }
+
+        [TestMethod]
+        [TestCategory("SkipWhenLiveUnitTesting")]
+        [TestCategory("SmokeTest")]
+        public void GotoSamLearnsAzureWebHomeSetPageTest()
+        {
+            //Arrange
+            bool webLoaded;
+            string setNum = "75218-1";
+
+            //Act
+            string webURL = _webUrl + "home/set?setnum=" + setNum;
+            _driver.Navigate().GoToUrl(webURL);
+            webLoaded = (_driver.Url == webURL);
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/h3/b");
+            //System.Diagnostics.Debug.WriteLine(data.ToString());
+
+            //Assert
+            Assert.IsTrue(webLoaded);
+            Assert.IsTrue(data != null);
+            Assert.IsTrue(data.Text != null);
         }
 
         [TestInitialize]
