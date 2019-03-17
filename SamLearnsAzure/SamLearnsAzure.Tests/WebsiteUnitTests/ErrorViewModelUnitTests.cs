@@ -1,4 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using SamLearnsAzure.Web.Controllers;
 using SamLearnsAzure.Web.Models;
 
 namespace SamLearnsAzure.Tests.WebsiteUnitTests
@@ -16,8 +20,13 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             {
                 RequestId = "abc123"
             };
+            //Mock<IServiceAPIClient> mockService = new Mock<IServiceAPIClient>();
+            //Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
+            //HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
 
-            //Act
+
+            ////Act
+            //IActionResult result = controller.Error();
 
             //Assert
             Assert.IsTrue(model.ShowRequestId == true);

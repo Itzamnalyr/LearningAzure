@@ -17,7 +17,7 @@ namespace SamLearnsAzure.DataMigration.App
         //https://github.com/Azure-Samples/storage-blobs-dotnet-quickstart/blob/master/storage-blobs-dotnet-quickstart/Program.cs
         public static async Task UploadFilesToStorageAccountBlobs(string storageConnectionString, string sourceContainerName, string tempFolderLocation, List<string> files, bool filesHaveFullPath, string partsContainerName)
         {
-            CloudBlobContainer cloudBlobContainer = null;
+            CloudBlobContainer cloudBlobContainer;
             //string sourceFile = null;
             //string destinationFile = null;
 
@@ -37,7 +37,7 @@ namespace SamLearnsAzure.DataMigration.App
                         await cloudBlobContainer.CreateAsync();
                         Console.WriteLine("Created container '{0}'", cloudBlobContainer.Name);
                     }
-                   // Set the permissions so the blobs are offs. 
+                    // Set the permissions so the blobs are offs. 
                     BlobContainerPermissions permissions = new BlobContainerPermissions
                     {
                         PublicAccess = BlobContainerPublicAccessType.Off
@@ -58,7 +58,7 @@ namespace SamLearnsAzure.DataMigration.App
                         PublicAccess = BlobContainerPublicAccessType.Off
                     };
                     await partsContainer.SetPermissionsAsync(permissions2);
-                    
+
 
                     foreach (string file in files)
                     {
@@ -144,8 +144,8 @@ namespace SamLearnsAzure.DataMigration.App
 
         public static async Task UnzipBlob(string storageConnectionString, string sourceContainerName, string destinationContainerName, string fileName)
         {
-            CloudBlobContainer cloudBlobSourceContainer = null;
-            CloudBlobContainer cloudBlobDestinationContainer = null;
+            CloudBlobContainer cloudBlobSourceContainer;
+            CloudBlobContainer cloudBlobDestinationContainer;
 
             if (CloudStorageAccount.TryParse(storageConnectionString, out CloudStorageAccount storageAccount))
             {
@@ -224,9 +224,10 @@ namespace SamLearnsAzure.DataMigration.App
             //Call the function
             foreach (string file in files)
             {
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(functionURL);
-                //client.SendAsync(file, sourceContainerName)
+                HttpClient client = new HttpClient
+                {
+                    BaseAddress = new Uri(functionURL)
+                };
                 HttpResponseMessage response = await client.GetAsync("/api/UnzipFileInBlob?code=pXUChJoDKFGZ9esg8RFMapWp/9YB1Fq4MTCMcsdfBt7n6QNmIoaDfw==&source=" + sourceContainerName + "&destination=" + destinationContainerName + "&file=" + file);
                 response.EnsureSuccessStatusCode();
                 Console.WriteLine(file + " processed with code: " + response.StatusCode);

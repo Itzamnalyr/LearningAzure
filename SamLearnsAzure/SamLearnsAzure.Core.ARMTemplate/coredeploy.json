@@ -152,6 +152,9 @@
       "scale": null,
       "properties": {
         "enabled": true,
+        "siteConfig": {
+          "AlwaysOn": true
+        },
         "hostNameSslStates": [
           {
             "name": "[concat(variables('functionName'),'.azurewebsites.net')]",
@@ -172,9 +175,6 @@
         ],
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
         "reserved": false,
-        "siteConfig": {
-          "AlwaysOn": true
-        },
         "scmSiteAlsoStopped": false,
         "hostingEnvironmentProfile": null,
         "clientAffinityEnabled": true,
@@ -1039,7 +1039,7 @@
           "type": "Microsoft.DataFactory/factories/pipelines",
           "apiVersion": "2018-06-01",
           "tags": {
-            "displayName": "Clear database stored procedure"
+            "displayName": "Data factory pipeline"
           },
           "properties": {
             "activities": [

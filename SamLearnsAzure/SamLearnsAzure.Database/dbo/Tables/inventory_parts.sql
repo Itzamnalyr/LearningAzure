@@ -10,3 +10,7 @@
     CONSTRAINT [FK_inventory_parts_parts] FOREIGN KEY ([part_num]) REFERENCES [parts]([part_num]), 
     CONSTRAINT [FK_inventory_parts_colors] FOREIGN KEY ([color_id]) REFERENCES [colors]([id]) 
 )
+GO
+
+CREATE NONCLUSTERED INDEX [IX_inventory_parts_isspareandinventoryId] ON [dbo].[inventory_parts] ([is_spare], [inventory_id]) INCLUDE ([color_id], [part_num], [quantity]) WITH (ONLINE = ON)
+GO

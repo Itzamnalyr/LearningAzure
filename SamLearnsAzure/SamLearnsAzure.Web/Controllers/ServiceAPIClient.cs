@@ -28,9 +28,9 @@ namespace SamLearnsAzure.Web.Controllers
         //    return await ReadMessageList<Owners>(url);
         //}
 
-        public async Task<List<OwnerSets>> GetOwnerSets(int ownedId)
+        public async Task<List<OwnerSets>> GetOwnerSets(int ownerId)
         {
-            Uri url = new Uri($"api/OwnerSets/GetOwnerSets?ownerid=" + ownedId, UriKind.Relative);
+            Uri url = new Uri($"api/OwnerSets/GetOwnerSets?ownerid=" + ownerId, UriKind.Relative);
             return await ReadMessageList<OwnerSets>(url);
         }
 

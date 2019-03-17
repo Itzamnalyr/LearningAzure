@@ -47,11 +47,6 @@ namespace SamLearnsAzure.DataMigration.App
                         string downloadedFile = tempFolderLocation + @"\" + file;
                         File.WriteAllBytes(downloadedFile, fileBytes);
                         FileInfo fileInfo = new FileInfo(downloadedFile);
-                        if (fileInfo.Extension.ToLower() == "csv")
-                        {
-                            CleanCSVFile(downloadedFile);
-                        }
-
                         break;
                     }
                     catch (Exception)
@@ -64,12 +59,6 @@ namespace SamLearnsAzure.DataMigration.App
                     }
                 }
             }
-
-            return true;
-        }
-
-        public static bool CleanCSVFile(string downloadedFile)
-        {
 
             return true;
         }

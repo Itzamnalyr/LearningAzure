@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace SamLearnsAzure.DataMigration.Function
 {
     public static class AzureBlobManagement
-    {      
+    {
 
         public static async Task<int> UnzipBlob(string storageConnectionString, string sourceContainerName, string destinationContainerName, string fileName)
         {
             int totalZips = 0;
-            CloudBlobContainer cloudBlobSourceContainer = null;
-            CloudBlobContainer cloudBlobDestinationContainer = null;
+            CloudBlobContainer cloudBlobSourceContainer;
+            CloudBlobContainer cloudBlobDestinationContainer;
 
             if (CloudStorageAccount.TryParse(storageConnectionString, out CloudStorageAccount storageAccount))
             {

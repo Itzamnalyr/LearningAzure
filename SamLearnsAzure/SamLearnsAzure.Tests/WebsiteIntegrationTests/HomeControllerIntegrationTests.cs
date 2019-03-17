@@ -30,8 +30,10 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             //string setNum = "75218-1";
             //ServiceAPIClient client = new ServiceAPIClient(this.Configuration);
             //HomeController controller = new HomeController(client, this.Configuration);
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(Configuration["AppSettings:WebServiceURL"]);
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
             //Act
             //IActionResult result = await controller.Index();
@@ -63,8 +65,10 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         {
             //Arrange
             string setNum = "75218-1";
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(Configuration["AppSettings:WebServiceURL"]);
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
             //Act
             HttpResponseMessage response = await client.GetAsync("home/set?setnum=" + setNum);
@@ -78,8 +82,10 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         public async Task GetAboutViewIntegrationTest()
         {
             //Arrange
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(Configuration["AppSettings:WebServiceURL"]);
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
             //Act
             HttpResponseMessage response = await client.GetAsync("home/about");
@@ -94,8 +100,10 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         {
             //Arrange
             //string setNum = "75218-1";
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(Configuration["AppSettings:WebServiceURL"]);
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
             //Act
             HttpResponseMessage response = await client.GetAsync("home/contact");
@@ -110,8 +118,10 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         {
             //Arrange
             //string setNum = "75218-1";
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(Configuration["AppSettings:WebServiceURL"]);
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
             //Act
             HttpResponseMessage response = await client.GetAsync("home/privacy");
@@ -121,7 +131,24 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             Assert.IsTrue(true);
         }
 
-       
+        [TestMethod]
+        public async Task GetErrorViewIntegrationTest()
+        {
+            //Arrange
+            //string setNum = "75218-1";
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
+
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/error");
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
+
 
     }
 }

@@ -9,11 +9,12 @@ namespace SamLearnsAzure.DataMigration.Function
     public static class UnzipFileBlobTrigger
     {
         [FunctionName("UnzipFileBlobTrigger")]
-        public static async Task Run([BlobTrigger("zippedparts/{name}", Connection = "storageConnectionString")]Stream myBlob, string name, ILogger log)
+        public static async Task Run([BlobTrigger("zippedparts/{name}", 
+            Connection = "storageConnectionString")]Stream myBlob, string name, ILogger log)
         {
             if (myBlob != null)
-            { 
-            log.LogInformation($"C# Blob trigger function processing blob, Name:{name}, Size: {myBlob.Length} Bytes");
+            {
+                log.LogInformation($"C# Blob trigger function processing blob, Name:{name}, Size: {myBlob.Length} Bytes");
             }
             else
             {

@@ -7,7 +7,7 @@ namespace SamLearnsAzure.Service.Controllers
     [ApiController]
     public class KeyVaultTestController : ControllerBase
     {
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
         public KeyVaultTestController(IConfiguration configuration)
         {

@@ -10,7 +10,7 @@ namespace SamLearnsAzure.DataMigration.Function
 {
     public static class UnzipFileHttpTrigger
     {
-       
+
         [FunctionName("UnzipFileHttpTrigger")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
@@ -39,4 +39,4 @@ namespace SamLearnsAzure.DataMigration.Function
                 : new BadRequestObjectResult("Zip file not processed");
         }
     }
-    }
+}
