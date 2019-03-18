@@ -162,6 +162,41 @@
       "metadata": {
         "description": "Specifies if the vault is enabled for volume encryption"
       }
+    },
+    "redisCacheSKUName": {
+      "type": "string",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ],
+      "defaultValue": "Standard"
+    },
+    "redisCacheSKUFamily": {
+      "type": "string",
+      "allowedValues": [
+        "C"
+      ],
+      "defaultValue": "C"
+    },
+    "redisCacheSKUCapacity": {
+      "type": "int",
+      "allowedValues": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "defaultValue": 0
+    },
+    "redisCacheRedisVersion": {
+      "type": "string",
+      "allowedValues": [
+        "2.8"
+      ],
+      "defaultValue": "2.8"
     }
   },
   "variables": {
@@ -171,7 +206,8 @@
     "hostingPlanName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-hostingplan')]",
     "storageAccountName": "[concat(parameters('appPrefix'), parameters('environment'), parameters('locationShort'), 'storage')]",
     "applicationInsightsName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-appinsights')]",
-    "keyVaultName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-keyvault')]"
+    "keyVaultName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-keyvault')]",
+    "redisCacheName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-redis')]"
   },
   "resources": [
     {
@@ -730,6 +766,24 @@
         }
       },
       "resources": []
+    },
+    {
+      "name": "[variables('redisCacheName')]",
+      "type": "Microsoft.Cache/Redis",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-04-01",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "Redis Cache"
+      },
+      "properties": {
+        "sku": {
+          "name": "[parameters('redisCacheSKUName')]",
+          "family": "[parameters('redisCacheSKUFamily')]",
+          "capacity": "[parameters('redisCacheSKUCapacity')]"
+        },
+        "redisVersion": "[parameters('redisCacheRedisVersion')]"
+      }
     }
   ]
 }
