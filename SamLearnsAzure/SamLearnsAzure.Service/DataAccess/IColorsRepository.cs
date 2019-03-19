@@ -8,6 +8,6 @@ namespace SamLearnsAzure.Service.DataAccess
 {
     public interface IColorsRepository
     {
-        Task<IEnumerable<Colors>> GetColors();
+        Task<IEnumerable<Colors>> GetColors(IRedisService redisService, bool useCache);
     }
 }

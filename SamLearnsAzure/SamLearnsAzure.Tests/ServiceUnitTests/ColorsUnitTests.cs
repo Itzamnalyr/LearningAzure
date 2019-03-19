@@ -21,8 +21,9 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             //Arrange
             SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IColorsRepository> mock = new Mock<IColorsRepository>();
-            mock.Setup(repo => repo.GetColors()).Returns(Task.FromResult(GetColorsTestData()));
-            ColorsController controller = new ColorsController(mock.Object);
+            Mock<IRedisService> mockRedis = new Mock<IRedisService>();
+            mock.Setup(repo => repo.GetColors(It.IsAny<IRedisService>(), It.IsAny<bool>())).Returns(Task.FromResult(GetColorsTestData()));
+            ColorsController controller = new ColorsController(mock.Object, mockRedis.Object);
 
             //Act
             IEnumerable<Colors> sets = await controller.GetColors();

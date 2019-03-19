@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using StackExchange.Redis;
 using System;
 using System.Net.Http;
 
@@ -14,6 +15,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         private TestServer _server;
         public HttpClient Client;
         public IConfigurationRoot Configuration;
+        // public IDatabase Database;
 
         [TestInitialize]
         public void TestStartUp()
@@ -32,6 +34,9 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             //config.AddAzureKeyVault(azureKeyVaultURL, keyVaultClient, new DefaultKeyVaultSecretManager());
             config.AddAzureKeyVault(azureKeyVaultURL, clientId, clientSecret);
             Configuration = config.Build();
+
+            //ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(Configuration["RedisCacheConnectionString:CacheConnection"]);
+            //Database = connectionMultiplexer.GetDatabase(0); //TODO: do we need the 0?
 
             //Setup the test server
             _server = new TestServer(WebHost.CreateDefaultBuilder()
