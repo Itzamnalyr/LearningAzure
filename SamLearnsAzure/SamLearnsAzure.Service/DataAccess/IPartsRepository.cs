@@ -8,6 +8,6 @@ namespace SamLearnsAzure.Service.DataAccess
 {
     public interface IPartsRepository
     {
-        Task<IEnumerable<Parts>> GetParts();
+        Task<IEnumerable<Parts>> GetParts(IRedisService redisService, bool useCache);
     }
 }

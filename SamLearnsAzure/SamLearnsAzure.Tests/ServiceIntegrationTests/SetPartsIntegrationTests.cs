@@ -26,7 +26,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             string setNum = "75218-1";
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsetparts?setnum=" + setNum);
+            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsetparts?setnum=" + setNum+ "&useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<SetParts> items = await response.Content.ReadAsAsync<IEnumerable<SetParts>>();
 

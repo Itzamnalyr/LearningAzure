@@ -21,8 +21,9 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             //Arrange
             SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IInventoriesRepository> mock = new Mock<IInventoriesRepository>();
-            mock.Setup(repo => repo.GetInventories()).Returns(Task.FromResult(GetInventoriesTestData()));
-            InventoriesController controller = new InventoriesController(mock.Object);
+            Mock<IRedisService> mockRedis = new Mock<IRedisService>();
+            mock.Setup(repo => repo.GetInventories(It.IsAny<IRedisService>(), It.IsAny<bool>())).Returns(Task.FromResult(GetInventoriesTestData()));
+            InventoriesController controller = new InventoriesController(mock.Object, mockRedis.Object);
 
             //Act
             IEnumerable<Inventories> sets = await controller.GetInventories();

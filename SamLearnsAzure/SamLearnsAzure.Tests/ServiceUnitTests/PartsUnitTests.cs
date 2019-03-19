@@ -21,8 +21,9 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             //Arrange
             SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IPartsRepository> mock = new Mock<IPartsRepository>();
-            mock.Setup(repo => repo.GetParts()).Returns(Task.FromResult(GetPartsTestData()));
-            PartsController controller = new PartsController(mock.Object);
+            Mock<IRedisService> mockRedis = new Mock<IRedisService>();
+            mock.Setup(repo => repo.GetParts(It.IsAny<IRedisService>(), It.IsAny<bool>())).Returns(Task.FromResult(GetPartsTestData()));
+            PartsController controller = new PartsController(mock.Object, mockRedis.Object);
             
             //Act
             IEnumerable<Parts> parts = await controller.GetParts();

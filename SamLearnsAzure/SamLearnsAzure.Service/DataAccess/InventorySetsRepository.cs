@@ -18,11 +18,30 @@ namespace SamLearnsAzure.Service.DataAccess
             _context = context;
         }
 
-        public async Task<IEnumerable<InventorySets>> GetInventorySets()
+        public async Task<IEnumerable<InventorySets>> GetInventorySets(IRedisService redisService, bool useCache)
         {
-            List<InventorySets> result = await _context.InventorySets
+            string cacheKeyName = "InventorySets-all";
+            TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
+
+            List<InventorySets> result = null;
+
+            //Check the cache
+            string cachedJSON = null;
+            if (redisService != null && useCache == true)
+            {
+                cachedJSON = await redisService.GetAsync(cacheKeyName);
+            }
+            if (cachedJSON != null)
+            {
+                result = Newtonsoft.Json.JsonConvert.DeserializeObject<List<InventorySets>>(cachedJSON);
+            }
+            else
+            {
+                result = await _context.InventorySets
                  .OrderBy(p => p.InventoryId)
                  .ToListAsync();
+            }
+
             return result;
         }
     }

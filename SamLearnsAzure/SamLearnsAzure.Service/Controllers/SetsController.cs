@@ -15,28 +15,30 @@ namespace SamLearnsAzure.Service.Controllers
     public class SetsController : ControllerBase
     {
         private readonly ISetsRepository _repo;
+        private readonly IRedisService _redisService;
 
-        public SetsController(ISetsRepository repo)
+        public SetsController(ISetsRepository repo, IRedisService redisService)
         {
             _repo = repo;
+            _redisService = redisService;
         }
 
         [HttpGet("GetSets")]
-        public async Task<IEnumerable<Sets>> GetSets()
+        public async Task<IEnumerable<Sets>> GetSets(bool useCache = true)
         {
-            return await _repo.GetSets();
+            return await _repo.GetSets(_redisService, useCache);
         }
 
         [HttpGet("GetSetParts")]
-        public async Task<IEnumerable<SetParts>> GetSetParts(string setNum)
+        public async Task<IEnumerable<SetParts>> GetSetParts(string setNum, bool useCache = true)
         {
-            return await _repo.GetSetParts(setNum);
+            return await _repo.GetSetParts(_redisService, useCache, setNum);
         }
 
         [HttpGet("GetSet")]
-        public async Task<Sets> GetSet(string setNum)
+        public async Task<Sets> GetSet(string setNum, bool useCache = true)
         {
-            return await _repo.GetSet(setNum);
+            return await _repo.GetSet(_redisService, useCache, setNum);
         }
 
     }

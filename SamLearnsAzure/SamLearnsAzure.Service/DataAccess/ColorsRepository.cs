@@ -20,7 +20,7 @@ namespace SamLearnsAzure.Service.DataAccess
 
         public async Task<IEnumerable<Colors>> GetColors(IRedisService redisService, bool useCache)
         {
-            string cacheKeyName = "colors-all";
+            string cacheKeyName = "Colors-all";
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
             List<Colors> result = null;
 

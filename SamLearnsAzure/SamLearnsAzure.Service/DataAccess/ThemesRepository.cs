@@ -18,11 +18,30 @@ namespace SamLearnsAzure.Service.DataAccess
             _context = context;
         }
 
-        public async Task<IEnumerable<Themes>> GetThemes()
+        public async Task<IEnumerable<Themes>> GetThemes(IRedisService redisService, bool useCache)
         {
-            List<Themes> result = await _context.Themes
+            string cacheKeyName = "Themes-all";
+            TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
+
+            List<Themes> result = null;
+
+            //Check the cache
+            string cachedJSON = null;
+            if (redisService != null && useCache == true)
+            {
+                cachedJSON = await redisService.GetAsync(cacheKeyName);
+            }
+            if (cachedJSON != null)
+            {
+                result = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Themes>>(cachedJSON);
+            }
+            else
+            {
+                result = await _context.Themes
                  .OrderBy(p => p.Name)
                  .ToListAsync();
+            }
+
             return result;
         }
     }

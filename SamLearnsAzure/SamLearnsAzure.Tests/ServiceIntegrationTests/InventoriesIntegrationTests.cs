@@ -24,7 +24,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             //Arrange
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/inventories/getinventories");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/inventories/getinventories?useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<Inventories> items = await response.Content.ReadAsAsync<IEnumerable<Inventories>>();
 

@@ -6,8 +6,8 @@ namespace SamLearnsAzure.Service.DataAccess
 {
     public interface IOwnersRepository
     {
-        Task<IEnumerable<Owners>> GetOwners();
+        Task<IEnumerable<Owners>> GetOwners(IRedisService redisService, bool useCache);
 
-        Task<Owners> GetOwner(int ownerId);
+        Task<Owners> GetOwner(IRedisService redisService, bool useCache, int ownerId);
     }
 }

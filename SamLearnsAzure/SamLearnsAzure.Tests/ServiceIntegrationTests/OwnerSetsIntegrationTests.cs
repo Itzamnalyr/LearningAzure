@@ -25,7 +25,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             int ownerId = 1;
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/getownersets?ownerid=" + ownerId);
+            HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/getownersets?ownerid=" + ownerId + "&useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<OwnerSets> items = await response.Content.ReadAsAsync<IEnumerable<OwnerSets>>();
 

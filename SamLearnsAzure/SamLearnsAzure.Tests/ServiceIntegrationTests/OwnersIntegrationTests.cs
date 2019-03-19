@@ -18,7 +18,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             //Arrange
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners?useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<Owners> items = await response.Content.ReadAsAsync<IEnumerable<Owners>>();
 
@@ -36,7 +36,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             int ownerId = 1;
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString());
+            HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=true");
             response.EnsureSuccessStatusCode();
             Owners item = await response.Content.ReadAsAsync<Owners>();
 

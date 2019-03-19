@@ -21,8 +21,9 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             //Arrange
             SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IOwnerSetsRepository> mock = new Mock<IOwnerSetsRepository>();
-            mock.Setup(repo => repo.GetOwnerSets(It.IsAny<int>())).Returns(Task.FromResult(GetOwnerSetsTestData()));
-            OwnerSetsController controller = new OwnerSetsController(mock.Object);
+            Mock<IRedisService> mockRedis = new Mock<IRedisService>();
+            mock.Setup(repo => repo.GetOwnerSets(It.IsAny<IRedisService>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(Task.FromResult(GetOwnerSetsTestData()));
+            OwnerSetsController controller = new OwnerSetsController(mock.Object, mockRedis.Object);
             int ownerId = 1;
 
             //Act
@@ -65,8 +66,8 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
                 OwnerSetId = 2,
                 Owner = new Owners(),
                 Set = new Sets()
-                
-    };
+
+            };
         }
 
     }

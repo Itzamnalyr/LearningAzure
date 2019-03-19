@@ -25,7 +25,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             //Arrange
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsets");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsets?useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<Sets> items = await response.Content.ReadAsAsync<IEnumerable<Sets>>();
 
@@ -43,7 +43,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             string setNum = "75218-1";
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getset?setnum=" + setNum);
+            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getset?setnum=" + setNum+ "&?useCache=true");
             response.EnsureSuccessStatusCode();
             Sets set = await response.Content.ReadAsAsync<Sets>();
 

@@ -21,8 +21,9 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             //Arrange
             SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IOwnersRepository> mock = new Mock<IOwnersRepository>();
-            mock.Setup(repo => repo.GetOwners()).Returns(Task.FromResult(GetOwnersTestData()));
-            OwnersController controller = new OwnersController(mock.Object);
+            Mock<IRedisService> mockRedis = new Mock<IRedisService>();
+            mock.Setup(repo => repo.GetOwners(It.IsAny<IRedisService>(), It.IsAny<bool>())).Returns(Task.FromResult(GetOwnersTestData()));
+            OwnersController controller = new OwnersController(mock.Object, mockRedis.Object);
 
             //Act
             IEnumerable<Owners> items = await controller.GetOwners();
@@ -39,8 +40,9 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             //Arrange
             SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IOwnersRepository> mock = new Mock<IOwnersRepository>();
-            mock.Setup(repo => repo.GetOwner(It.IsAny<int>())).Returns(Task.FromResult(GetOwnersRow()));
-            OwnersController controller = new OwnersController(mock.Object);
+            Mock<IRedisService> mockRedis = new Mock<IRedisService>();
+            mock.Setup(repo => repo.GetOwner(It.IsAny<IRedisService>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(Task.FromResult(GetOwnersRow()));
+            OwnersController controller = new OwnersController(mock.Object, mockRedis.Object);
             int id = 99;
 
             //Act

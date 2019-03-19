@@ -24,7 +24,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             //Arrange
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/themes/getthemes");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/themes/getthemes?useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<Themes> items = await response.Content.ReadAsAsync<IEnumerable<Themes>>();
 

@@ -15,16 +15,18 @@ namespace SamLearnsAzure.Service.Controllers
     public class OwnerSetsController : ControllerBase
     {
         private readonly IOwnerSetsRepository _repo;
+        private readonly IRedisService _redisService;
 
-        public OwnerSetsController(IOwnerSetsRepository repo)
+        public OwnerSetsController(IOwnerSetsRepository repo, IRedisService redisService)
         {
             _repo = repo;
+            _redisService = redisService;
         }
 
         [HttpGet("GetOwnerSets")]
-        public async Task<IEnumerable<OwnerSets>> GetOwnerSets(int ownerId)
+        public async Task<IEnumerable<OwnerSets>> GetOwnerSets(int ownerId, bool useCache = true)
         {
-            return await _repo.GetOwnerSets(ownerId);
+            return await _repo.GetOwnerSets(_redisService, useCache, ownerId);
         }
         
     }

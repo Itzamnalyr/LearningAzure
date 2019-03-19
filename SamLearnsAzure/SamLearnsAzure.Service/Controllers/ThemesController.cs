@@ -15,16 +15,18 @@ namespace SamLearnsAzure.Service.Controllers
     public class ThemesController : ControllerBase
     {
         private readonly IThemesRepository _repo;
+        private readonly IRedisService _redisService;
 
-        public ThemesController(IThemesRepository repo)
+        public ThemesController(IThemesRepository repo, IRedisService redisService)
         {
             _repo = repo;
+            _redisService = redisService;
         }
 
         [HttpGet("GetThemes")]
-        public async Task<IEnumerable<Themes>> GetThemes()
+        public async Task<IEnumerable<Themes>> GetThemes(bool useCache = true)
         {
-            return await _repo.GetThemes();
+            return await _repo.GetThemes(_redisService, useCache);
         }
         
     }

@@ -8,6 +8,6 @@ namespace SamLearnsAzure.Service.DataAccess
 {
     public interface IThemesRepository
     {
-        Task<IEnumerable<Themes>> GetThemes();
+        Task<IEnumerable<Themes>> GetThemes(IRedisService redisService, bool useCache);
     }
 }

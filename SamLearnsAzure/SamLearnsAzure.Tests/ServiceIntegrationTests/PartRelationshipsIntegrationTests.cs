@@ -24,7 +24,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             //Arrange
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/partrelationships/getpartrelationships");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/partrelationships/getpartrelationships?useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<PartRelationships> items = await response.Content.ReadAsAsync<IEnumerable<PartRelationships>>();
 
