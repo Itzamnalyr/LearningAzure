@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SamLearnsAzure.Models;
 using SamLearnsAzure.Service.EFCore;
 
@@ -32,7 +33,7 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             if (cachedJSON != null)
             {
-                result = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Colors>>(cachedJSON);
+                result = JsonConvert.DeserializeObject<List<Colors>>(cachedJSON);
             }
             else
             {
@@ -43,7 +44,7 @@ namespace SamLearnsAzure.Service.DataAccess
                 if (redisService != null)
                 {
                     //set the cache with the updated record
-                    await redisService.SetAsync(cacheKeyName, Newtonsoft.Json.JsonConvert.SerializeObject(result), cacheExpirationTime);
+                    await redisService.SetAsync(cacheKeyName, JsonConvert.SerializeObject(result), cacheExpirationTime);
                 }
             }
             return result;

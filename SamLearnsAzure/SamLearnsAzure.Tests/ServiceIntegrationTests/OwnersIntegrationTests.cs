@@ -13,7 +13,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     public class OwnersServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
-        public async Task GetOwnersIntegrationTest()
+        public async Task GetOwnersIntegrationWithCacheTest()
         {
             //Arrange
 
@@ -30,13 +30,47 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         }
 
         [TestMethod]
-        public async Task GetOwnerIntegrationTest()
+        public async Task GetOwnersIntegrationWithoutCacheTest()
+        {
+            //Arrange
+
+            //Act
+            HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners?useCache=false");
+            response.EnsureSuccessStatusCode();
+            IEnumerable<Owners> items = await response.Content.ReadAsAsync<IEnumerable<Owners>>();
+
+            //Assert
+            Assert.IsTrue(items != null);
+            Assert.IsTrue(items.Count() > 0); //There is more than one owner
+            Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first owner has an id
+            Assert.IsTrue(items.FirstOrDefault().OwnerName.Length > 0); //The first owner has an name
+        }
+
+        [TestMethod]
+        public async Task GetOwnerIntegrationWithCacheTest()
         {
             //Arrange
             int ownerId = 1;
 
             //Act
             HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=true");
+            response.EnsureSuccessStatusCode();
+            Owners item = await response.Content.ReadAsAsync<Owners>();
+
+            //Assert
+            Assert.IsTrue(item != null);
+            Assert.IsTrue(item.Id > 0); //The owner has an id
+            Assert.IsTrue(item.OwnerName.Length > 0); //The owner has an name
+        }
+
+        [TestMethod]
+        public async Task GetOwnerIntegrationWithoutCacheTest()
+        {
+            //Arrange
+            int ownerId = 1;
+
+            //Act
+            HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=false");
             response.EnsureSuccessStatusCode();
             Owners item = await response.Content.ReadAsAsync<Owners>();
 

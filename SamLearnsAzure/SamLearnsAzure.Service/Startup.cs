@@ -15,6 +15,7 @@ using SamLearnsAzure.Service.DataAccess;
 using SamLearnsAzure.Models;
 using SamLearnsAzure.Service.EFCore;
 using StackExchange.Redis;
+using Newtonsoft.Json;
 
 namespace SamLearnsAzure.Service
 {
@@ -40,8 +41,7 @@ namespace SamLearnsAzure.Service
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 //This JSON setting stops the JSON from being truncated
-                .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling =
-                    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
             services.AddSingleton<IRedisService, RedisService>();
             ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(Configuration["AppSettings:RedisCacheConnectionString"]);

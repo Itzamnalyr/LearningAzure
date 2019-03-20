@@ -19,12 +19,29 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     public class InventorySetsServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
-        public async Task GetInventorySetsIntegrationTest()
+        public async Task GetInventorySetsIntegrationWithCacheTest()
         {
             //Arrange
 
             //Act
             HttpResponseMessage response = await base.Client.GetAsync("/api/inventorysets/getinventorysets?useCache=true");
+            response.EnsureSuccessStatusCode();
+            IEnumerable<InventorySets> items = await response.Content.ReadAsAsync<IEnumerable<InventorySets>>();
+
+            //Assert
+            Assert.IsTrue(items != null);
+            Assert.IsTrue(items.Count() > 0); //There is more than one
+            Assert.IsTrue(items.FirstOrDefault().InventorySetId > 0); //The first item has an id
+            Assert.IsTrue(items.FirstOrDefault().SetNum.Length > 0); //The set num item has an name
+        }
+
+        [TestMethod]
+        public async Task GetInventorySetsIntegrationWithoutCacheTest()
+        {
+            //Arrange
+
+            //Act
+            HttpResponseMessage response = await base.Client.GetAsync("/api/inventorysets/getinventorysets?useCache=false");
             response.EnsureSuccessStatusCode();
             IEnumerable<InventorySets> items = await response.Content.ReadAsAsync<IEnumerable<InventorySets>>();
 

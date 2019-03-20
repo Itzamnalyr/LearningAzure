@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SamLearnsAzure.Service.EFCore;
 using System;
+using Newtonsoft.Json;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
@@ -31,13 +32,19 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             if (cachedJSON != null)
             {
-                result = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Owners>>(cachedJSON);
+                result = JsonConvert.DeserializeObject<List<Owners>>(cachedJSON);
             }
             else
             {
                 result = await _context.Owners
                   .OrderBy(p => p.OwnerName)
                   .ToListAsync();
+
+                if (redisService != null)
+                {
+                    //set the cache with the updated record
+                    await redisService.SetAsync(cacheKeyName, JsonConvert.SerializeObject(result), cacheExpirationTime);
+                }
             }
 
             return result;
@@ -45,7 +52,7 @@ namespace SamLearnsAzure.Service.DataAccess
 
         public async Task<Owners> GetOwner(IRedisService redisService, bool useCache, int ownerId)
         {
-            string cacheKeyName = "Owner-" + ownerId;
+            string cacheKeyName = "Owners-" + ownerId;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
 
             Owners result = null;
@@ -58,13 +65,19 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             if (cachedJSON != null)
             {
-                result = Newtonsoft.Json.JsonConvert.DeserializeObject<Owners>(cachedJSON);
+                result = JsonConvert.DeserializeObject<Owners>(cachedJSON);
             }
             else
             {
                 result = await _context.Owners
                 .Where(p => p.Id == ownerId)
                 .FirstOrDefaultAsync<Owners>();
+
+                if (redisService != null)
+                {
+                    //set the cache with the updated record
+                    await redisService.SetAsync(cacheKeyName, JsonConvert.SerializeObject(result), cacheExpirationTime);
+                }
             }
 
             return result;

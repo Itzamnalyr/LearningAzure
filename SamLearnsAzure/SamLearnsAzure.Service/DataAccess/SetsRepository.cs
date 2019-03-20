@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SamLearnsAzure.Models;
 using Microsoft.EntityFrameworkCore;
 using SamLearnsAzure.Service.EFCore;
+using Newtonsoft.Json;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
@@ -32,13 +33,19 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             if (cachedJSON != null)
             {
-                result = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Sets>>(cachedJSON);
+                result = JsonConvert.DeserializeObject<List<Sets>>(cachedJSON);
             }
             else
             {
                 result = await _context.Sets
-                 .OrderBy(p => p.Name)
-                 .ToListAsync();
+                    .OrderBy(p => p.Name)
+                    .ToListAsync();
+
+                if (redisService != null)
+                {
+                    //set the cache with the updated record
+                    await redisService.SetAsync(cacheKeyName, JsonConvert.SerializeObject(result), cacheExpirationTime);
+                }
             }
 
             return result;
@@ -46,9 +53,9 @@ namespace SamLearnsAzure.Service.DataAccess
 
         public async Task<IEnumerable<SetParts>> GetSetParts(IRedisService redisService, bool useCache, string setNum)
         {
-            string cacheKeyName = "Sets-" + setNum;
+            string cacheKeyName = "SetParts-" + setNum;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            IEnumerable<SetParts> result = null;
+            IEnumerable<SetParts> result;
 
             //Check the cache
             string cachedJSON = null;
@@ -58,16 +65,22 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             if (cachedJSON != null)
             {
-                result = Newtonsoft.Json.JsonConvert.DeserializeObject<IEnumerable<SetParts>>(cachedJSON);
+                result = JsonConvert.DeserializeObject<IEnumerable<SetParts>>(cachedJSON);
             }
             else
             {
                 SqlParameter setNumParameter = new SqlParameter("SetNum", setNum);
 
-                 result = await _context
-                   .Query<SetParts>()
-                   .FromSql("EXECUTE dbo.GetSetParts @SetNum", setNumParameter)
-                   .ToListAsync();
+                result = await _context
+                    .Query<SetParts>()
+                    .FromSql("EXECUTE dbo.GetSetParts @SetNum", setNumParameter)
+                    .ToListAsync();
+
+                if (redisService != null)
+                {
+                    //set the cache with the updated record
+                    await redisService.SetAsync(cacheKeyName, JsonConvert.SerializeObject(result), cacheExpirationTime);
+                }
             }
 
             return result;
@@ -75,7 +88,7 @@ namespace SamLearnsAzure.Service.DataAccess
 
         public async Task<Sets> GetSet(IRedisService redisService, bool useCache, string setNum)
         {
-            string cacheKeyName = "Set-"+ setNum;
+            string cacheKeyName = "Set-" + setNum;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
             Sets result = null;
 
@@ -87,13 +100,19 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             if (cachedJSON != null)
             {
-                result = Newtonsoft.Json.JsonConvert.DeserializeObject<Sets>(cachedJSON);
+                result = JsonConvert.DeserializeObject<Sets>(cachedJSON);
             }
             else
             {
                 result = await _context.Sets
-                .Include(t => t.Theme)
-                .SingleAsync(b => b.SetNum == setNum);
+                    .Include(t => t.Theme)
+                    .SingleAsync(b => b.SetNum == setNum);
+
+                if (redisService != null)
+                {
+                    //set the cache with the updated record
+                    await redisService.SetAsync(cacheKeyName, JsonConvert.SerializeObject(result), cacheExpirationTime);
+                }
             }
 
             return result;

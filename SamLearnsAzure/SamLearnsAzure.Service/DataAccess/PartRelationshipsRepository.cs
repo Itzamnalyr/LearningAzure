@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SamLearnsAzure.Models;
 using Microsoft.EntityFrameworkCore;
 using SamLearnsAzure.Service.EFCore;
+using Newtonsoft.Json;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
@@ -33,13 +34,19 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             if (cachedJSON != null)
             {
-                result = Newtonsoft.Json.JsonConvert.DeserializeObject<List<PartRelationships>>(cachedJSON);
+                result = JsonConvert.DeserializeObject<List<PartRelationships>>(cachedJSON);
             }
             else
             {
                 result = await _context.PartRelationships
                  .OrderBy(p => p.PartRelationshipId)
                  .ToListAsync();
+
+                if (redisService != null)
+                {
+                    //set the cache with the updated record
+                    await redisService.SetAsync(cacheKeyName, JsonConvert.SerializeObject(result), cacheExpirationTime);
+                }
             }
 
             return result;

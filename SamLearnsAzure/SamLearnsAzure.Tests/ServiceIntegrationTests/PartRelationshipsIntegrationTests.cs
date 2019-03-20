@@ -19,12 +19,30 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     public class PartRelationshipsServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
-        public async Task GetPartRelationshipsIntegrationTest()
+        public async Task GetPartRelationshipsIntegrationWithCacheTest()
         {
             //Arrange
 
             //Act
             HttpResponseMessage response = await base.Client.GetAsync("/api/partrelationships/getpartrelationships?useCache=true");
+            response.EnsureSuccessStatusCode();
+            IEnumerable<PartRelationships> items = await response.Content.ReadAsAsync<IEnumerable<PartRelationships>>();
+
+            //Assert
+            Assert.IsTrue(items != null);
+            Assert.IsTrue(items.Count() > 0); //There is more than one
+            Assert.IsTrue(items.FirstOrDefault().PartRelationshipId > 0); //The first item has an id
+            Assert.IsTrue(items.FirstOrDefault().ChildPartNum.Length > 0); //The child item has an name
+            Assert.IsTrue(items.FirstOrDefault().ParentPartNum.Length > 0); //The parent item has an name
+        }
+
+        [TestMethod]
+        public async Task GetPartRelationshipsIntegrationWithoutCacheTest()
+        {
+            //Arrange
+
+            //Act
+            HttpResponseMessage response = await base.Client.GetAsync("/api/partrelationships/getpartrelationships?useCache=false");
             response.EnsureSuccessStatusCode();
             IEnumerable<PartRelationships> items = await response.Content.ReadAsAsync<IEnumerable<PartRelationships>>();
 

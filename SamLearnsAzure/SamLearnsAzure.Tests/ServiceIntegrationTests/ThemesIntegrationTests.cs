@@ -19,7 +19,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     public class ThemesServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
-        public async Task GetThemesIntegrationTest()
+        public async Task GetThemesIntegrationWithCacheTest()
         {
             //Arrange
 
@@ -34,6 +34,22 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
         }
-        
+        [TestMethod]
+        public async Task GetThemesIntegrationWithoutCacheTest()
+        {
+            //Arrange
+
+            //Act
+            HttpResponseMessage response = await base.Client.GetAsync("/api/themes/getthemes?useCache=false");
+            response.EnsureSuccessStatusCode();
+            IEnumerable<Themes> items = await response.Content.ReadAsAsync<IEnumerable<Themes>>();
+
+            //Assert
+            Assert.IsTrue(items != null);
+            Assert.IsTrue(items.Count() > 0); //There is more than one
+            Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first item has an id
+            Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
+        }
+
     }
 }

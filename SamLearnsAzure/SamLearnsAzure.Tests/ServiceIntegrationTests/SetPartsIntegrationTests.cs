@@ -20,13 +20,31 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     {
 
         [TestMethod]
-        public async Task GetSetPartsIntegrationTest()
+        public async Task GetSetPartsIntegrationWithCacheTest()
         {
             //Arrange
             string setNum = "75218-1";
 
             //Act
             HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsetparts?setnum=" + setNum+ "&useCache=true");
+            response.EnsureSuccessStatusCode();
+            IEnumerable<SetParts> items = await response.Content.ReadAsAsync<IEnumerable<SetParts>>();
+
+            //Assert
+            Assert.IsTrue(items != null);
+            Assert.IsTrue(items.Count() > 0); //There is more than one
+            Assert.IsTrue(items.FirstOrDefault().PartNum != ""); //The first item has an id
+            Assert.IsTrue(items.FirstOrDefault().PartName.Length > 0); //The first item has an name
+        }
+
+        [TestMethod]
+        public async Task GetSetPartsIntegrationWithoutCacheTest()
+        {
+            //Arrange
+            string setNum = "75218-1";
+
+            //Act
+            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsetparts?setnum=" + setNum+ "&useCache=false");
             response.EnsureSuccessStatusCode();
             IEnumerable<SetParts> items = await response.Content.ReadAsAsync<IEnumerable<SetParts>>();
 
