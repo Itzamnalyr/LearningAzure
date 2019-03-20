@@ -19,40 +19,11 @@ namespace SamLearnsAzure.Service.DataAccess
             _context = context;
         }
 
-        public async Task<IEnumerable<PartRelationships>> GetPartRelationships(IRedisService redisService, bool useCache)
+        public async Task<IEnumerable<PartRelationships>> GetPartRelationships()
         {
-            string cacheKeyName = "PartRelationships-all";
-            TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-
-            List<PartRelationships> result = null;
-
-            //Check the cache
-            string cachedJSON = null;
-            if (redisService != null && useCache == true)
-            {
-                cachedJSON = await redisService.GetAsync(cacheKeyName);
-            }
-            if (cachedJSON != null)
-            {
-                result = JsonConvert.DeserializeObject<List<PartRelationships>>(cachedJSON);
-            }
-            else
-            {
-                result = await _context.PartRelationships
+            List<PartRelationships> result = await _context.PartRelationships
                  .OrderBy(p => p.PartRelationshipId)
                  .ToListAsync();
-
-                if (redisService != null)
-                {
-                    //set the cache with the updated record
-                    string json = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-                    //Only save to REDIS is the length of the json is less than 100KB, a REDIS best practice
-                    if (json.Length < 100000)
-                    {
-                        await redisService.SetAsync(cacheKeyName, json, cacheExpirationTime);
-                    }
-                }
-            }
 
             return result;
         }

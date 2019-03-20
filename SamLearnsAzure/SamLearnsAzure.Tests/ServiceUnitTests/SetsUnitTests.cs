@@ -22,7 +22,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<ISetsRepository> mock = new Mock<ISetsRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
-            mock.Setup(repo => repo.GetSets(It.IsAny<IRedisService>(), It.IsAny<bool>())).Returns(Task.FromResult(GetSetsTestData()));
+            mock.Setup(repo => repo.GetSets()).Returns(Task.FromResult(GetSetsTestData()));
             SetsController controller = new SetsController(mock.Object, mockRedis.Object);
 
             //Act

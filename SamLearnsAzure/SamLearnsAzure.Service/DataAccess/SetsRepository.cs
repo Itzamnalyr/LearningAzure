@@ -19,39 +19,11 @@ namespace SamLearnsAzure.Service.DataAccess
             _context = context;
         }
 
-        public async Task<IEnumerable<Sets>> GetSets(IRedisService redisService, bool useCache)
+        public async Task<IEnumerable<Sets>> GetSets()
         {
-            string cacheKeyName = "Sets-all";
-            TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            List<Sets> result = null;
-
-            //Check the cache
-            string cachedJSON = null;
-            if (redisService != null && useCache == true)
-            {
-                cachedJSON = await redisService.GetAsync(cacheKeyName);
-            }
-            if (cachedJSON != null)
-            {
-                result = JsonConvert.DeserializeObject<List<Sets>>(cachedJSON);
-            }
-            else
-            {
-                result = await _context.Sets
-                    .OrderBy(p => p.Name)
-                    .ToListAsync();
-
-                if (redisService != null)
-                {
-                    //set the cache with the updated record
-                    string json = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-                    //Only save to REDIS is the length of the json is less than 100KB, a REDIS best practice
-                    if (json.Length < 100000)
-                    {
-                        await redisService.SetAsync(cacheKeyName, json, cacheExpirationTime);
-                    }
-                }
-            }
+            List<Sets> result = await _context.Sets
+                .OrderBy(p => p.Name)
+                .ToListAsync();
 
             return result;
         }

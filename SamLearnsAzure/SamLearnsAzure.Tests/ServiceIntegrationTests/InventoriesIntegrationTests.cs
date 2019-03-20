@@ -19,12 +19,12 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     public class InventoriesServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
-        public async Task GetInventoriesIntegrationWithCacheTest()
+        public async Task GetInventoriesIntegrationTest()
         {
             //Arrange
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/inventories/getinventories?useCache=true");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/inventories/getinventories");
             response.EnsureSuccessStatusCode();
             IEnumerable<Inventories> items = await response.Content.ReadAsAsync<IEnumerable<Inventories>>();
 
@@ -33,24 +33,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             Assert.IsTrue(items.Count() > 0); //There is more than one
             Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().SetNum.Length > 0); //The setnum item has an name
-        }
-
-        [TestMethod]
-        public async Task GetInventoriesIntegrationWithoutCacheTest()
-        {
-            //Arrange
-
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/inventories/getinventories?useCache=false");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<Inventories> items = await response.Content.ReadAsAsync<IEnumerable<Inventories>>();
-
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one
-            Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first item has an id
-            Assert.IsTrue(items.FirstOrDefault().SetNum.Length > 0); //The setnum item has an name
-        }
+        }     
         
     }
 }

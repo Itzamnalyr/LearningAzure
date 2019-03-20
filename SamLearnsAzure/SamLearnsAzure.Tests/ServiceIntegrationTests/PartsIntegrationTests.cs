@@ -19,12 +19,12 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     public class PartsInterationTests : BaseIntegrationTest
     {
         [TestMethod]
-        public async Task GetPartsIntegrationWithCacheTest()
+        public async Task GetPartsIntegrationTest()
         {
             //Arrange
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/parts/getparts?useCache=true");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/parts/getparts");
             response.EnsureSuccessStatusCode();
             IEnumerable<Parts> items = await response.Content.ReadAsAsync<IEnumerable<Parts>>();
 
@@ -34,38 +34,6 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             Assert.IsTrue(items.FirstOrDefault().PartNum != ""); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
         }
-
-        [TestMethod]
-        public async Task GetPartsIntegrationWithoutCacheTest()
-        {
-            //Arrange
-
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/parts/getparts?useCache=false");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<Parts> items = await response.Content.ReadAsAsync<IEnumerable<Parts>>();
-
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one
-            Assert.IsTrue(items.FirstOrDefault().PartNum != ""); //The first item has an id
-            Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
-        }
-
-        //[TestMethod]
-        //public async Task GetPartsSummaryIntegrationTest()
-        //{
-        //    //Arrange
-        //    PartsController controller = new PartsController(new PartsRepository(base.DBContext));
-        //    string setNum = "75218-1";
-
-        //    //Act
-        //    IEnumerable<PartsSummary> parts = await controller.GetPartsSummary(setNum);
-
-        //    //Assert
-        //    Assert.IsTrue(parts != null);
-        //    Assert.IsTrue(parts.Count() > 0);
-        //}
 
     }
 }

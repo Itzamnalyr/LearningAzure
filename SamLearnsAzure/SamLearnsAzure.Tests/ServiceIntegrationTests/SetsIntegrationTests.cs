@@ -16,16 +16,17 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     [TestCategory("IntegrationTest")]
+    [TestCategory("RedisTest")]
     public class SetsServiceIntegrationTests : BaseIntegrationTest
     {
        
         [TestMethod]
-        public async Task GetSetsWithCacheTest()
+        public async Task GetSetsTest()
         {
             //Arrange
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsets?useCache=true");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsets");
             response.EnsureSuccessStatusCode();
             IEnumerable<Sets> items = await response.Content.ReadAsAsync<IEnumerable<Sets>>();
 
@@ -35,24 +36,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             Assert.IsTrue(items.FirstOrDefault().SetNum != ""); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
         }
-
-        [TestMethod]
-        public async Task GetSetsWithoutCacheTest()
-        {
-            //Arrange
-
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsets?useCache=false");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<Sets> items = await response.Content.ReadAsAsync<IEnumerable<Sets>>();
-
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one
-            Assert.IsTrue(items.FirstOrDefault().SetNum != ""); //The first item has an id
-            Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
-        }
-
+        
         [TestMethod]
         public async Task GetSetWithCacheTest()
         {

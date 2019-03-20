@@ -24,9 +24,9 @@ namespace SamLearnsAzure.Service.Controllers
         }
 
         [HttpGet("GetSets")]
-        public async Task<IEnumerable<Sets>> GetSets(bool useCache = true)
+        public async Task<IEnumerable<Sets>> GetSets()
         {
-            return await _repo.GetSets(_redisService, useCache);
+            return await _repo.GetSets();
         }
 
         [HttpGet("GetSetParts")]

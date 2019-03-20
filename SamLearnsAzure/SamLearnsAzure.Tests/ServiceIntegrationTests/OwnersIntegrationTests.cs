@@ -10,6 +10,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     [TestCategory("IntegrationTest")]
+    [TestCategory("RedisTest")]
     public class OwnersServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]

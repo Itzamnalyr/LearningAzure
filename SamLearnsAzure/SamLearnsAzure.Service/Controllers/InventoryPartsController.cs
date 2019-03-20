@@ -15,18 +15,16 @@ namespace SamLearnsAzure.Service.Controllers
     public class InventoryPartsController : ControllerBase
     {
         private readonly IInventoryPartsRepository _repo;
-        private readonly IRedisService _redisService;
 
-        public InventoryPartsController(IInventoryPartsRepository repo, IRedisService redisService)
+        public InventoryPartsController(IInventoryPartsRepository repo)
         {
             _repo = repo;
-            _redisService = redisService;
         }
 
         [HttpGet("GetInventoryParts")]
-        public async Task<IEnumerable<InventoryParts>> GetInventoryParts(bool useCache = true)
+        public async Task<IEnumerable<InventoryParts>> GetInventoryParts()
         {
-            return await _repo.GetInventoryParts(_redisService, useCache);
+            return await _repo.GetInventoryParts();
         }
         
     }
