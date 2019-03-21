@@ -21,6 +21,10 @@ namespace SamLearnsAzure.Service.Controllers
             _repo = repo;
         }
 
+        /// <summary>
+        /// Return a list of all inventory parts
+        /// </summary>
+        /// <returns>an IEnumerable list of inventory part objects</returns>
         [HttpGet("GetInventoryParts")]
         public async Task<IEnumerable<InventoryParts>> GetInventoryParts()
         {

@@ -19,6 +19,11 @@ namespace SamLearnsAzure.Service.Controllers
             _redisService = redisService;
         }
 
+        /// <summary>
+        /// Return a list of all inventories
+        /// </summary>
+        /// <param name="useCache">an optional parameter to use the Redis cache or now - used for troubleshooting, it is not recommended to edit this</param>
+        /// <returns>an IEnumerable list of inventories objects</returns>
         [HttpGet("GetInventories")]
         public async Task<IEnumerable<Inventories>> GetInventories(bool useCache = true)
         {

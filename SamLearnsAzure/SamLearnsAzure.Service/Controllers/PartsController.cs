@@ -24,6 +24,11 @@ namespace SamLearnsAzure.Service.Controllers
             _redisService = redisService;
         }
 
+        /// <summary>
+        /// Return a list of all parts
+        /// </summary>
+        /// <param name="useCache">an optional parameter to use the Redis cache or now - used for troubleshooting, it is not recommended to edit this</param>
+        /// <returns>an IEnumerable list of parts objects</returns>
         [HttpGet("GetParts")]
         public async Task<IEnumerable<Parts>> GetParts(bool useCache = true)
         {

@@ -23,6 +23,11 @@ namespace SamLearnsAzure.Service.Controllers
             _redisService = redisService;
         }
 
+        /// <summary>
+        /// Return a list of all themes
+        /// </summary>
+        /// <param name="useCache">an optional parameter to use the Redis cache or now - used for troubleshooting, it is not recommended to edit this</param>
+        /// <returns>an IEnumerable list of themes objects</returns>
         [HttpGet("GetThemes")]
         public async Task<IEnumerable<Themes>> GetThemes(bool useCache = true)
         {

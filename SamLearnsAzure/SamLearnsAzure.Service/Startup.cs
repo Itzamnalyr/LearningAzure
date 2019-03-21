@@ -16,6 +16,9 @@ using SamLearnsAzure.Models;
 using SamLearnsAzure.Service.EFCore;
 using StackExchange.Redis;
 using Newtonsoft.Json;
+using System.Reflection;
+using System.IO;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace SamLearnsAzure.Service
 {
@@ -42,6 +45,16 @@ namespace SamLearnsAzure.Service
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 //This JSON setting stops the JSON from being truncated
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "SamLearnsAzure API", Version = "v1" });
+
+                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";    
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
 
             services.AddSingleton<IRedisService, RedisService>();
             ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(Configuration["AppSettings:RedisCacheConnectionString"]);
@@ -76,6 +89,16 @@ namespace SamLearnsAzure.Service
             {
                 app.UseHsts();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SamLearnsAzure API V1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseHttpsRedirection();
             app.UseMvc();

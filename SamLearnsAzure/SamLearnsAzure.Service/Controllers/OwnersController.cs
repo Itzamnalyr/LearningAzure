@@ -20,12 +20,23 @@ namespace SamLearnsAzure.Service.Controllers
             _redisService = redisService;
         }
 
+        /// <summary>
+        /// Return a list of all owners
+        /// </summary>
+        /// <param name="useCache">an optional parameter to use the Redis cache or now - used for troubleshooting, it is not recommended to edit this</param>
+        /// <returns>an IEnumerable list of inventories objects</returns>
         [HttpGet("GetOwners")]
         public async Task<IEnumerable<Owners>> GetOwners(bool useCache = true)
         {
             return await _repo.GetOwners(_redisService, useCache);
         }
 
+        /// <summary>
+        /// Return a single owner
+        /// </summary>
+        /// <param name="ownerId">a integer owner number, for example "1"</param>
+        /// <param name="useCache">an optional parameter to use the Redis cache or now - used for troubleshooting, it is not recommended to edit this</param>
+        /// <returns></returns>
         [HttpGet("GetOwner")]
         public async Task<Owners> GetOwner(int ownerId, bool useCache = true)
         {

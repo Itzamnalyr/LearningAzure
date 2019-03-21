@@ -21,6 +21,10 @@ namespace SamLearnsAzure.Service.Controllers
             _repo = repo;
         }
 
+        /// <summary>
+        /// Return a list of all part relationships
+        /// </summary>
+        /// <returns>an IEnumerable list of part relationship objects</returns>
         [HttpGet("GetPartRelationships")]
         public async Task<IEnumerable<PartRelationships>> GetPartRelationships()
         {

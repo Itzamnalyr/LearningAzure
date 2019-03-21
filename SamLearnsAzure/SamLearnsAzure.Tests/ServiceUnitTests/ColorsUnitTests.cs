@@ -26,12 +26,12 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             ColorsController controller = new ColorsController(mock.Object, mockRedis.Object);
 
             //Act
-            IEnumerable<Colors> sets = await controller.GetColors();
+            IEnumerable<Colors> results = await controller.GetColors();
 
             //Assert
-            Assert.IsTrue(sets != null);
-            Assert.IsTrue(sets.Count() == 1);
-            TestColors(sets.FirstOrDefault());
+            Assert.IsTrue(results != null);
+            Assert.IsTrue(results.Count() == 1);
+            TestColors(results.FirstOrDefault());
         }
 
         private void TestColors(Colors Colors)

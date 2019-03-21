@@ -23,18 +23,34 @@ namespace SamLearnsAzure.Service.Controllers
             _redisService = redisService;
         }
 
+        /// <summary>
+        /// Return a list of all sets
+        /// </summary>
+        /// <returns>an IEnumerable list of sets objects</returns>
         [HttpGet("GetSets")]
         public async Task<IEnumerable<Sets>> GetSets()
         {
             return await _repo.GetSets();
         }
 
+        /// <summary>
+        /// Return a list of all set parts
+        /// </summary>
+        /// <param name="setNum">a string set number, for example "75218-1"</param>
+        /// <param name="useCache">an optional parameter to use the Redis cache or now - used for troubleshooting, it is not recommended to edit this</param>
+        /// <returns>an IEnumerable list of set parts objects</returns>
         [HttpGet("GetSetParts")]
         public async Task<IEnumerable<SetParts>> GetSetParts(string setNum, bool useCache = true)
         {
             return await _repo.GetSetParts(_redisService, useCache, setNum);
         }
 
+        /// <summary>
+        /// Return a single set object
+        /// </summary>
+        /// <param name="setNum">a string set number, for example "75218-1"</param>
+        /// <param name="useCache">an optional parameter to use the Redis cache or now - used for troubleshooting, it is not recommended to edit this</param>
+        /// <returns>an single set object</returns>
         [HttpGet("GetSet")]
         public async Task<Sets> GetSet(string setNum, bool useCache = true)
         {
