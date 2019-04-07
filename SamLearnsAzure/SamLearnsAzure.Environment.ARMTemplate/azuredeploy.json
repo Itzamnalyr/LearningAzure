@@ -73,10 +73,23 @@
       "type": "string",
       "defaultValue": "1073741824"
     },
-    "databaseSKU": {
+    "databaseSKUName": {
       "type": "string",
-      "defaultValue": "S0",
+      "defaultValue": "Basic",
       "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "Describes the SKU name category, Basic, Standard, Premium"
+      }
+    },
+    "databaseSKUTier": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
         "S0",
         "S1",
         "S2",
@@ -85,7 +98,7 @@
         "P3"
       ],
       "metadata": {
-        "description": "Describes the performance level for Azure SQL Database Edition"
+        "description": "Describes the SKU tier"
       }
     },
     "storageAccountType": {
@@ -99,10 +112,23 @@
         "Premium_LRS"
       ]
     },
+    "storageAccountTier": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard"
+      ]
+    },
+    "userPrincipalLogin": {
+      "type": "string",
+      "metadata": {
+        "description": "login nameof the AAD user that will have admin access to SQL server and the Key Vault. "
+      }
+    },
     "userPrincipalId": {
       "type": "string",
       "metadata": {
-        "description": "Object Id of the AAD user that will have admin access to the vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
+        "description": "Object Id of the AAD user that will have admin access to the SQL server and the Key Vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
       }
     },
     "azureDevOpsPrincipalId": {
@@ -230,43 +256,180 @@
           "tags": {
             "displayName": "Database"
           },
-          "apiVersion": "2014-04-01-preview",
+          "apiVersion": "2017-10-01-preview",
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', variables('sqlserverName'))]"
           ],
+          "sku": {
+            "name": "[parameters('databaseSKUName')]",
+            "tier": "[parameters('databaseSKUTier')]"
+          },
           "properties": {
             "edition": "[parameters('databaseEdition')]",
             "collation": "[parameters('databaseCollation')]",
-            "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]",
-            "requestedServiceObjectiveName": "[parameters('databaseSKU')]"
-          }
+            "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Sql/servers/databases/advisors",
+              "name": "[concat(variables('sqlserverName'), '/', parameters('databaseName'), '/', 'ForceLastGoodPlan')]",
+              "apiVersion": "2014-04-01",
+              "properties": {
+                "autoExecuteValue": "Enabled"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
+                "[parameters('databaseName')]",
+                "[resourceId('Microsoft.Sql/servers/advisors', variables('sqlserverName'), 'ForceLastGoodPlan')]"
+              ],
+              "tags": {
+                "displayName": "SqlServer database ForceLastGoodPlan Advisor setting"
+              }
+            },
+            {
+              "type": "Microsoft.Sql/servers/databases/advisors",
+              "name": "[concat(variables('sqlserverName'), '/', parameters('databaseName'), '/', 'CreateIndex')]",
+              "apiVersion": "2014-04-01",
+              "properties": {
+                "autoExecuteValue": "Enabled"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
+                "[parameters('databaseName')]",
+                "ForceLastGoodPlan"
+              ],
+              "tags": {
+                "displayName": "SqlServer database CreateIndex Advisor setting"
+              }
+            },
+            {
+              "type": "Microsoft.Sql/servers/databases/advisors",
+              "name": "[concat(variables('sqlserverName'), '/', parameters('databaseName'), '/', 'DropIndex')]",
+              "apiVersion": "2014-04-01",
+              "properties": {
+                "autoExecuteValue": "Enabled"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
+                "[parameters('databaseName')]",
+                "CreateIndex"
+              ],
+              "tags": {
+                "displayName": "SqlServer database DropIndex Advisor setting"
+              }
+            }
+          ]
         },
         {
           "type": "firewallrules",
-          "apiVersion": "2014-04-01-preview",
+          "name": "AllowAllWindowsAzureIps",
+          "apiVersion": "2014-04-01",
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', variables('sqlserverName'))]"
           ],
           "location": "[resourceGroup().location]",
-          "name": "AllowAllWindowsAzureIps",
           "properties": {
             "endIpAddress": "0.0.0.0",
             "startIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "type": "administrators",
+          "name": "activeDirectory",
+          "apiVersion": "2014-04-01",
+          //"tags": {
+          //  "displayName": "SqlService AD Administrator"
+          //},
+          "properties": {
+            "administratorType": "ActiveDirectory",
+            "login": "[parameters('userPrincipalLogin')]",
+            "sid": "[parameters('userPrincipalId')]",
+            "tenantId": "[subscription().tenantid]"
+          },
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', variables('sqlserverName'))]"
+          ]
+        },
+        {
+          "type": "Microsoft.Sql/servers/advisors",
+          "name": "[concat(variables('sqlserverName'), '/', 'ForceLastGoodPlan')]",
+          "apiVersion": "2014-04-01",
+          "properties": {
+            "autoExecuteValue": "Enabled"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
+            "[parameters('databaseName')]"
+          ],
+          "tags": {
+            "displayName": "SqlServer ForceLastGoodPlan Advisor setting"
+          }
+        },
+        {
+          "type": "Microsoft.Sql/servers/advisors",
+          "name": "[concat(variables('sqlserverName'), '/', 'CreateIndex')]",
+          "apiVersion": "2014-04-01",
+          "properties": {
+            "autoExecuteValue": "Enabled"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
+            "ForceLastGoodPlan"
+          ],
+          "tags": {
+            "displayName": "SqlServer CreateIndex Advisor setting"
+          }
+        },
+        {
+          "type": "Microsoft.Sql/servers/advisors",
+          "name": "[concat(variables('sqlserverName'), '/', 'DropIndex')]",
+          "apiVersion": "2014-04-01",
+          "properties": {
+            "autoExecuteValue": "Enabled"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
+            "CreateIndex"
+          ],
+          "tags": {
+            "displayName": "SqlServer DropIndex Advisor setting"
           }
         }
       ]
     },
     {
-      "name": "[variables('storageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2018-07-01",
+      "name": "[variables('storageAccountName')]",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [],
       "tags": {
         "displayName": "Storage Account"
       },
+      "sku": {
+        "name": "[parameters('storageAccountType')]",
+        "tier": "[parameters('storageAccountTier')]"
+      },
+      "kind": "Storage",
       "properties": {
-        "accountType": "[parameters('storageAccountType')]"
+        "azureFilesAadIntegration": false,
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "virtualNetworkRules": [],
+          "ipRules": [],
+          "defaultAction": "Allow"
+        },
+        "supportsHttpsTrafficOnly": true,
+        "encryption": {
+          "services": {
+            "file": {
+              "enabled": true
+            },
+            "blob": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
       }
     },
     {

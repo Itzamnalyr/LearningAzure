@@ -59,6 +59,13 @@
         "Premium_LRS"
       ]
     },
+    "storageAccountTier": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard"
+      ]
+    },
     "SamLearnsAzureBlobStorage_connectionString": {
       "type": "secureString",
       "metadata": "Secure string for 'connectionString' of 'SamLearnsAzureBlobStorageConnection'"
@@ -78,16 +85,38 @@
   },
   "resources": [
     {
-      "name": "[variables('storageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2018-07-01",
+      "name": "[variables('storageAccountName')]",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [],
       "tags": {
         "displayName": "Storage Account"
       },
+      "sku": {
+        "name": "[parameters('storageAccountType')]",
+        "tier": "[parameters('storageAccountTier')]"
+      },
+      "kind": "Storage",
       "properties": {
-        "accountType": "[parameters('storageAccountType')]"
+        "azureFilesAadIntegration": false,
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "virtualNetworkRules": [],
+          "ipRules": [],
+          "defaultAction": "Allow"
+        },
+        "supportsHttpsTrafficOnly": true,
+        "encryption": {
+          "services": {
+            "file": {
+              "enabled": true
+            },
+            "blob": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
       }
     },
     {

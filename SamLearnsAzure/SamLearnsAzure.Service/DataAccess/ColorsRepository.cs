@@ -45,7 +45,7 @@ namespace SamLearnsAzure.Service.DataAccess
                 {
                     //set the cache with the updated record
                     string json = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-                    //Only save to REDIS is the length of the json is less than 100KB, a REDIS best practice
+                    //Only save to REDIS if the length of the json is less than 100KB, a REDIS best practice
                     if (json.Length < 100000)
                     {
                         await redisService.SetAsync(cacheKeyName, json, cacheExpirationTime);
