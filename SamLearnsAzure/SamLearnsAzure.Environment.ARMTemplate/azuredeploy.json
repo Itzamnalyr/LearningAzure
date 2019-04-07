@@ -394,7 +394,46 @@
           "tags": {
             "displayName": "SqlServer DropIndex Advisor setting"
           }
+        },
+        {
+          "type": "auditingSettings",
+          "name": "AuditingSettings",
+          "apiVersion": "2017-03-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+          ],
+          "properties": {
+            "state": "Enabled",
+            "storageEndpoint": "[concat('https://', variables('storageAccountName'), '.blob.core.windows.net')]",
+            "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+            "retentionDays": "180",
+            "storageAccountSubscriptionId": "[subscription().subscriptionId]",
+            "isStorageSecondaryKeyInUse": false,
+            "auditActionsAndGroups": [
+              "SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP",
+              "FAILED_DATABASE_AUTHENTICATION_GROUP",
+              "BATCH_COMPLETED_GROUP"
+            ],
+            "isAzureMonitorTargetEnabled": false
+          }
         }
+        //{
+        //  "type": "Microsoft.Sql/servers/auditingPolicies",
+        //  "apiVersion": "2017-03-01-preview",
+        //  "name": "[concat(variables('sqlserverName'), '/Default')]",
+        //  "location": "East US",
+        //  "dependsOn": [
+        //    "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]"
+        //  ],
+        //  "properties": {
+        //    "auditingState": "New",
+        //    "eventTypesToAudit": "PlainSQL_Success,PlainSQL_Failure,ParameterizedSQL_Success,ParameterizedSQL_Failure,StoredProcedure_Success,StoredProcedure_Failure,Login_Success,Login_Failure,TransactionManagement_Success,TransactionManagement_Failure",
+        //    "fullAuditLogsTableName": "SQLDBAuditLogsSamsappdeveusqlserver",
+        //    "auditLogsTableName": "Samsappdeveusqlserver",
+        //    "retentionDays": "180"
+        //  }
+        //}
       ]
     },
     {
