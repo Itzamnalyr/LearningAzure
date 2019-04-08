@@ -51,7 +51,7 @@ if ($ExistingDatabase)
 
 # Restore the database from storage to target environment
 Write-Host "Importing database"
-$importRequest = New-AzureRmSqlDatabaseImport -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -StorageKeytype "StorageAccessKey" -StorageKey $StorageAccountKey -StorageUri $BacpacUri -AdministratorLogin $Creds.UserName -AdministratorLoginPassword $Creds.Password -Edition Standard -ServiceObjectiveName S0 -DatabaseMaxSizeBytes 50000
+$importRequest = New-AzureRmSqlDatabaseImport -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -StorageKeytype "StorageAccessKey" -StorageKey $StorageAccountKey -StorageUri $BacpacUri -AdministratorLogin $Creds.UserName -AdministratorLoginPassword $Creds.Password -Edition Basic -ServiceObjectiveName B -DatabaseMaxSizeBytes 50000
 $importRequest
 
 # Monitor import status, showing progress every 1 second
