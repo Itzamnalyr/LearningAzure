@@ -18,26 +18,26 @@ namespace SamLearnsAzure.FunctionalTests.Website
         private string _webUrl = null;
         private string _environment = null;
 
-        //[TestMethod]
-        //[TestCategory("SkipWhenLiveUnitTesting")]
-        //[TestCategory("SmokeTest")]
-        //public void GotoSamLearnsAzureWebHomeIndexPageTest()
-        //{
-        //    //Arrange
-        //    bool webLoaded;
+        [TestMethod]
+        [TestCategory("SkipWhenLiveUnitTesting")]
+        [TestCategory("SmokeTest")]
+        public void GotoSamLearnsAzureWebHomeIndexPageTest()
+        {
+            //Arrange
+            bool webLoaded;
 
-        //    //Act
-        //    string webURL = _webUrl + "home";
-        //    _driver.Navigate().GoToUrl(webURL);
-        //    webLoaded = (_driver.Url == webURL);
-        //    OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/h2");
-        //    //System.Diagnostics.Debug.WriteLine(data.ToString());
+            //Act
+            string webURL = _webUrl + "home";
+            _driver.Navigate().GoToUrl(webURL);
+            webLoaded = (_driver.Url == webURL);
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/h2");
+            //System.Diagnostics.Debug.WriteLine(data.ToString());
 
-        //    //Assert
-        //    Assert.IsTrue(webLoaded);
-        //    Assert.IsTrue(data != null);
-        //    Assert.AreEqual(data.Text, "Environment: " + _environment);
-        //}
+            //Assert
+            Assert.IsTrue(webLoaded);
+            Assert.IsTrue(data != null);
+            Assert.AreEqual(data.Text, "Environment: " + _environment);
+        }
 
         [TestMethod]
         [TestCategory("SkipWhenLiveUnitTesting")]
