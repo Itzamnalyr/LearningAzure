@@ -12,7 +12,9 @@ param
 	[string] $StorageAccountName,
 	[string] $StorageUri,
 	[string] $StorageAccountKey,
-	[string] $StorageContainerName
+	[string] $StorageContainerName,
+	[string] $Edition,
+	[string] $ServiceObjectiveName
 )
 
 # Check if the Storage Context exists. The storage container is required to backup the database
@@ -51,7 +53,7 @@ if ($ExistingDatabase)
 
 # Restore the database from storage to target environment
 Write-Host "Importing database"
-$importRequest = New-AzureRmSqlDatabaseImport -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -StorageKeytype "StorageAccessKey" -StorageKey $StorageAccountKey -StorageUri $BacpacUri -AdministratorLogin $Creds.UserName -AdministratorLoginPassword $Creds.Password -Edition Basic -ServiceObjectiveName B -DatabaseMaxSizeBytes 50000
+$importRequest = New-AzureRmSqlDatabaseImport -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -StorageKeytype "StorageAccessKey" -StorageKey $StorageAccountKey -StorageUri $BacpacUri -AdministratorLogin $Creds.UserName -AdministratorLoginPassword $Creds.Password -Edition $Edition -ServiceObjectiveName $ServiceObjectiveName -DatabaseMaxSizeBytes 50000
 $importRequest
 
 # Monitor import status, showing progress every 1 second
