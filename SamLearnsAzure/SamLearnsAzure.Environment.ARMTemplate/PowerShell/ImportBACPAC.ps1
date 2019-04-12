@@ -49,6 +49,13 @@ $ExistingDatabase = $ExistingDatabases | Where-Object {$_.DatabaseName -eq $Data
 if ($ExistingDatabase)
 {
 	Remove-AzureRmSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -Force
+	$DeletingExistingDatabase = "confirming database is deleted..."
+	while ($DeletingExistingDatabase -ne $null)
+	{
+		Write-Host "Deleting in progress..." (Get-Date).ToString("HH:mm:ss.ff")
+		$DeletingExistingDatabase = Get-AzureRmSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName | Where-Object {$_.DatabaseName -eq $DatabaseName} 
+	}
+	Write-Host "Delete done: " (Get-Date).ToString("HH:mm:ss.ff")
 }
 
 # Restore the database from storage to target environment
