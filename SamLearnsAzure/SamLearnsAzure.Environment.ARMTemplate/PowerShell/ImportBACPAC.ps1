@@ -40,7 +40,7 @@ if (!$BacpacFilename)
 {
 	Write-Error "BACPAC does not exist in container $StorageContainerName. Import aborted"
 }
-Write-Host "Importing file " + $BacpacFilename.Name
+Write-Host "Found file to import" + $BacpacFilename.Name
 $BacpacUri = $StorageUri + $StorageContainerName + "/" + $BacpacFilename.Name
 
 # Remove the current database, if it exists
@@ -49,18 +49,19 @@ $ExistingDatabases = Get-AzureRmSqlDatabase -ResourceGroupName $ResourceGroupNam
 $ExistingDatabase = $ExistingDatabases | Where-Object {$_.DatabaseName -eq $DatabaseName}
 if ($ExistingDatabase)
 {
+	Write-Host "Removing existing database..."
 	Remove-AzureRmSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -Force
-	$DeletingExistingDatabase = "confirming database is deleted..."
-	while ($DeletingExistingDatabase -ne $null)
+	do
 	{
 		Write-Host "Deleting in progress..." (Get-Date).ToString("HH:mm:ss.ff")
 		$DeletingExistingDatabase = Get-AzureRmSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName | Where-Object {$_.DatabaseName -eq $DatabaseName} 
 	}
-	Write-Host "Delete done: " (Get-Date).ToString("HH:mm:ss.ff")
+	while ($DeletingExistingDatabase -ne $null)
+	Write-Host "Delete done! " (Get-Date).ToString("HH:mm:ss.ff")
 }
 
 # Restore the database from storage to target environment
-Write-Host "Importing database"
+Write-Host "Starting database import"
 $importRequest = New-AzureRmSqlDatabaseImport -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -StorageKeytype "StorageAccessKey" -StorageKey $StorageAccountKey -StorageUri $BacpacUri -AdministratorLogin $Creds.UserName -AdministratorLoginPassword $Creds.Password -Edition $Edition -ServiceObjectiveName $ServiceObjectiveName -DatabaseMaxSizeBytes 50000
 $importRequest
 
@@ -74,4 +75,4 @@ while ($importStatus.Status -eq "InProgress")
 }
 $importStatus
 
-Write-Host "Import complete"
+Write-Host "Import complete!" (Get-Date).ToString("HH:mm:ss.ff")
