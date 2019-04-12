@@ -44,6 +44,7 @@ Write-Host "Importing file " + $BacpacFilename.Name
 $BacpacUri = $StorageUri + $StorageContainerName + "/" + $BacpacFilename.Name
 
 # Remove the current database, if it exists
+Write-Host "Checking if database already exists..."
 $ExistingDatabases = Get-AzureRmSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName 
 $ExistingDatabase = $ExistingDatabases | Where-Object {$_.DatabaseName -eq $DatabaseName}
 if ($ExistingDatabase)
