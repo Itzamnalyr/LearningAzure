@@ -24,6 +24,10 @@
         "description": "Two to three character value that identifies the region into which the resources are deployed. Should map to the resource group's location."
       }
     },
+    "applicationInsightsLocation": {
+      "type": "string",
+      "defaultValue": "East US"
+    },
     "hostingPlanSKUName": {
       "type": "string",
       "defaultValue": "S1",
@@ -474,7 +478,7 @@
     {
       "name": "[variables('applicationInsightsName')]",
       "type": "Microsoft.Insights/components",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('applicationInsightsLocation')]",
       "apiVersion": "2014-04-01",
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
