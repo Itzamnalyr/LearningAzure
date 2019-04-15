@@ -422,7 +422,7 @@
         //  "type": "Microsoft.Sql/servers/auditingPolicies",
         //  "apiVersion": "2017-03-01-preview",
         //  "name": "[concat(variables('sqlserverName'), '/Default')]",
-        //  "location": "East US",
+        //  "location": "[resourceGroup().location]",
         //  "dependsOn": [
         //    "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]"
         //  ],
@@ -474,7 +474,7 @@
     {
       "name": "[variables('applicationInsightsName')]",
       "type": "Microsoft.Insights/components",
-      "location": "East US",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2014-04-01",
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
