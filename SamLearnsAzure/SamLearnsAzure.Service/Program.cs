@@ -21,8 +21,9 @@ namespace SamLearnsAzure.Service
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            return WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     //Load the appsettings.json configuration file
@@ -36,5 +37,6 @@ namespace SamLearnsAzure.Service
                 })
                 .UseApplicationInsights()
                 .UseStartup<Startup>();
+        }
     }
 }

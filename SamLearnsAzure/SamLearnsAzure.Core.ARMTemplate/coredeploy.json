@@ -67,12 +67,86 @@
       ]
     },
     "SamLearnsAzureBlobStorage_connectionString": {
-      "type": "secureString",
-      "metadata": "Secure string for 'connectionString' of 'SamLearnsAzureBlobStorageConnection'"
+      "type": "securestring",
+      "metadata": {
+        "description": "Secure string for 'connectionString' of 'SamLearnsAzureBlobStorageConnection'"
+      }
     },
     "SamLearnsAzureSqlDatabase_connectionString": {
-      "type": "secureString",
-      "metadata": "Secure string for 'connectionString' of 'SamLearnsAzureSqlDatabaseConnection'"
+      "type": "securestring",
+      "metadata": {
+        "description": "Secure string for 'connectionString' of 'SamLearnsAzureSqlDatabaseConnection'"
+      }
+    },
+    "vaultAdminSecretsPermissions": {
+      "type": "array",
+      "defaultValue": [ "all" ],
+      "metadata": {
+        "description": "Permissions to grant user to secrets in the vault. Valid values are: all, get, set, list, and delete."
+      }
+    },
+    "vaultUserSecretsPermissions": {
+      "type": "array",
+      "defaultValue": [ "get", "list" ],
+      "metadata": {
+        "description": "Permissions to grant user to secrets in the vault. Valid values are: all, get, set, list, and delete."
+      }
+    },
+    "vaultSku": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "SKU for the vault"
+      }
+    },
+    "vaultEnabledForDeployment": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Specifies if the vault is enabled for VM or Service Fabric deployment"
+      }
+    },
+    "vaultEnabledForTemplateDeployment": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Specifies if the vault is enabled for ARM template deployment"
+      }
+    },
+    "vaultEnableVaultForVolumeEncryption": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Specifies if the vault is enabled for volume encryption"
+      }
+    },
+    "userPrincipalLogin": {
+      "type": "string",
+      "metadata": {
+        "description": "login nameof the AAD user that will have admin access to SQL server and the Key Vault. "
+      }
+    },
+    "userPrincipalId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the AAD user that will have admin access to the SQL server and the Key Vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
+      }
+    },
+    "azureDevOpsPrincipalId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the service principal that will have Azure DevOps access to the vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
+      }
+    },
+    "integrationTestsPrincipalId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the service principal that is used to run integration tests. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
+      }
     }
   },
   "variables": {
@@ -81,7 +155,8 @@
     "factoryId": "[concat('Microsoft.DataFactory/factories/', variables('factoryName'))]",
     "functionName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-function')]",
     "hostingPlanName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-hostingplan')]",
-    "applicationInsightsName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-appinsights')]"
+    "applicationInsightsName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-appinsights')]",
+    "keyVaultName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-keyvault')]"
   },
   "resources": [
     {
@@ -118,6 +193,73 @@
           "keySource": "Microsoft.Storage"
         }
       }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "name": "[variables('keyVaultName')]",
+      "apiVersion": "2015-06-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "KeyVault"
+      },
+      "properties": {
+        "enabledForDeployment": "[parameters('vaultEnabledForDeployment')]",
+        "enabledForTemplateDeployment": "[parameters('vaultEnabledForTemplateDeployment')]",
+        "enabledForVolumeEncryption": "[parameters('vaultEnableVaultForVolumeEncryption')]",
+        "tenantId": "[subscription().tenantid]",
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantid]",
+            "objectId": "[parameters('userPrincipalId')]",
+            "permissions": {
+              "keys": [],
+              "secrets": "[parameters('vaultAdminSecretsPermissions')]",
+              "certificates": []
+            }
+          },
+          //{
+          //  "tenantId": "[subscription().tenantid]",
+          //  "objectId": "[reference(concat(resourceId('Microsoft.Web/sites', variables('serviceAPIName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]",
+          //  "permissions": {
+          //    "keys": [],
+          //    "secrets": "[parameters('vaultUserSecretsPermissions')]",
+          //    "certificates": []
+          //  }
+          //},
+          //{
+          //  "tenantId": "[subscription().tenantid]",
+          //  "objectId": "[reference(concat(resourceId('Microsoft.Web/sites', variables('webSiteName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]",
+          //  "permissions": {
+          //    "keys": [],
+          //    "secrets": "[parameters('vaultUserSecretsPermissions')]",
+          //    "certificates": []
+          //  }
+          //},
+          {
+            "tenantId": "[subscription().tenantid]",
+            "objectId": "[parameters('azureDevOpsPrincipalId')]",
+            "permissions": {
+              "keys": [],
+              "secrets": "[parameters('vaultUserSecretsPermissions')]",
+              "certificates": []
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantid]",
+            "objectId": "[parameters('integrationTestsPrincipalId')]",
+            "permissions": {
+              "keys": [],
+              "secrets": "[parameters('vaultUserSecretsPermissions')]",
+              "certificates": []
+            }
+          }
+        ],
+        "sku": {
+          "name": "[parameters('vaultSku')]",
+          "family": "A"
+        }
+      },
+      "resources": []
     },
     {
       "type": "microsoft.insights/components",
