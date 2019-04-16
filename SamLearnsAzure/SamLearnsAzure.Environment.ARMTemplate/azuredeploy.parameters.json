@@ -16,12 +16,12 @@
     },
     "userPrincipalId": {
       "value": "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
-    },
-    "azureDevOpsPrincipalId": {
-      "value": "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
-    },
-    "integrationTestsPrincipalId": {
-      "value": "ac49cae4-2832-41a6-a3ef-eb305d56faf1"
     }
+    //"azureDevOpsPrincipalId": {
+    //  "value": "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+    //},
+    //"integrationTestsPrincipalId": {
+    //  "value": "ac49cae4-2832-41a6-a3ef-eb305d56faf1"
+    //}
   }
 }
