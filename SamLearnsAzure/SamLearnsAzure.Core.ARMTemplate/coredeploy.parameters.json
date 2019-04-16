@@ -17,6 +17,9 @@
     "SamLearnsAzureSqlDatabase_connectionString": {
       "value": ""
     },
+    "userPrincipalLogin": {
+      "value": ""
+    },
     "userPrincipalId": {
       "value": "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
     },
