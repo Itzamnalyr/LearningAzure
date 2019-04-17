@@ -240,7 +240,7 @@
             "objectId": "[parameters('azureDevOpsPrincipalId')]",
             "permissions": {
               "keys": [],
-              "secrets": "[parameters('vaultUserSecretsPermissions')]",
+              "secrets": "[parameters('vaultAdminSecretsPermissions')]",
               "certificates": []
             }
           },
