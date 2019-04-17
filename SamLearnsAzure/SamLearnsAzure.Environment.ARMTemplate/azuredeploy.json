@@ -12,6 +12,7 @@
       "allowedValues": [
         "dev",
         "qa",
+        "qa2",
         "test",
         "prod"
       ]

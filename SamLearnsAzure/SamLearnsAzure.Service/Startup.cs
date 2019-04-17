@@ -38,8 +38,9 @@ namespace SamLearnsAzure.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string sqlConnectionStringName = "ConnectionStrings:SamsAppConnectionString" + Configuration["AppSettings:Environment"];
             services.AddDbContext<SamsAppDBContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("SamsAppConnectionString")));
+                options.UseSqlServer(Configuration[sqlConnectionStringName]));
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
@@ -57,7 +58,8 @@ namespace SamLearnsAzure.Service
             });
 
             services.AddSingleton<IRedisService, RedisService>();
-            ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(Configuration["AppSettings:RedisCacheConnectionString"]);
+            string redisConnectionStringName = "AppSettings:RedisCacheConnectionString" + Configuration["AppSettings:Environment"];
+            ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(Configuration[redisConnectionStringName]);
             if (connectionMultiplexer != null)
             {
 
