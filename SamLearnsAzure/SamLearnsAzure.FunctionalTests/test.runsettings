@@ -5,7 +5,7 @@
   <TestRunParameters>
     <Parameter name="ServiceUrl" value="https://samsapp-dev-eu-service.azurewebsites.net/" />
     <Parameter name="WebUrl" value="https://samsapp-dev-eu-web.azurewebsites.net/" />
-    <Parameter name="TestEnvironment" value="dev" />
+    <Parameter name="TestEnvironment" value="Dev" />
   </TestRunParameters>
 
 </RunSettings>
