@@ -886,7 +886,7 @@
       "type": "string",
       "value": "[reference(concat(resourceId('Microsoft.Web/sites', variables('webSiteName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
     },
-    "applicationInsightsResourceName": {
+    "applicationInsightsResourceNameOutput": {
       "type": "string",
       "value": "[variables('applicationInsightsName')]"
     },
