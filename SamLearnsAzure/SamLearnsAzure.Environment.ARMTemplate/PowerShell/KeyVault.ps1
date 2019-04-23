@@ -29,7 +29,7 @@ Set-AzKeyVaultSecret -VaultName "$KeyVaultName" -Name "$applicationInsightsInstr
 
 #Get the storage account key from the ARM Template outputs
 $storageAccountName = "StorageAccountKey$Environment"
-$storageAccountSecretvalue = ConvertTo-SecureString "$StorageAccountKeyOutput" -AsPlainText -Force
+$storageAccountSecretvalue = ConvertTo-SecureString "$StorageAccountKey" -AsPlainText -Force
 #$storageAccountExistingSecretValue = (Get-AzKeyVaultSecret -vaultName "$KeyVaultName" -name "$storageAccountName").SecretValueText
 Write-Host "Setting value for $storageAccountName to key vault"
 Set-AzKeyVaultSecret -VaultName "$KeyVaultName" -Name "$storageAccountName" -SecretValue $storageAccountSecretvalue
