@@ -35,13 +35,19 @@ steps:
     configuration: '$(BuildConfiguration)'
     solution: SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
 
-
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  displayName: 'Copy database files to: $(build.artifactstagingdirectory)'
   inputs:
     SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Database\bin\Output'
-    Contents: '*'
+    Contents: '*' # * = Copy all files in the current directory
     TargetFolder: '$(build.artifactstagingdirectory)\Database'
+
+- task: CopyFiles@2
+  displayName: 'Copy environment ARM template files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Environment.ARMTemplate'
+    Contents: '**\*' # **\* = Copy all files and all files in sub directories
+    TargetFolder: '$(build.artifactstagingdirectory)\EnvironmentARMTemplate'
 
 # Dotnet Core build items
 - task: DotNetCoreCLI@2
