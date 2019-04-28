@@ -48,6 +48,17 @@ namespace SamLearnsAzure.Web.Controllers
             return View(setViewModel);
         }
 
+        public IActionResult Test()
+        {
+            CDNTestViewModel cdnTestViewModel = new CDNTestViewModel
+            {
+                BaseSetPartsImagesStorageURL = _configuration["AppSettings:PartImagesStorageURL"],
+                BaseSetPartsImagesCDNURL = _configuration["AppSettings:PartImagesStorageCDNURL"]
+            };
+
+            return View(cdnTestViewModel);
+        }
+
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
