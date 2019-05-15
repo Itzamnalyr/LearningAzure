@@ -71,13 +71,13 @@ steps:
      SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
     arguments: '--configuration $(BuildConfiguration)'
  
-#- task: DotNetCoreCLI@2
-#  displayName: 'Test dotnet code projects'
-#  inputs:
-#    command: test
-#    projects: |
-#     SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-#    arguments: '--configuration $(BuildConfiguration) --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
+- task: DotNetCoreCLI@2
+  displayName: 'Test dotnet code projects'
+  inputs:
+    command: test
+    projects: |
+     SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+    arguments: '--configuration $(BuildConfiguration) --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish dotnet core projects'

@@ -178,6 +178,37 @@
         "2.8"
       ],
       "defaultValue": "2.8"
+    },
+    "websiteDomainName": {
+      "type": "string",
+      "defaultValue": "dev.SamLearnsAzure.com"
+    },
+    "letsEncryptUniqueRoleAssignmentGuid": {
+      "type": "string",
+      "defaultValue": "6e4cff57-e63a-403e-822c-e98e5ba02145",
+      "metadata": {
+        "description": "A Guid that will serve as the name for the roleAssignment. Should be unique and remain constant"
+      }
+    },
+    "appServiceContributerClientId": {
+      "type": "string",
+      "defaultValue": "c6193b13-08e7-4519-b7b4-e6b1875b15a8",
+      "metadata": {
+        "description": "ClientId of the Service Principal that the LetsEncrypt extension should use"
+      }
+    },
+    "appServiceContributorObjectId": {
+      "type": "string",
+      "defaultValue": "ca1af823-ed55-4cca-a202-1bee11370834",
+      "metadata": {
+        "description": "ObjectId of the Service Principal that the LetsEncrypt extension should use"
+      }
+    },
+    "appServiceContributerClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "ClientSecret of the Service Principal that the LetsEncrypt extension should use -- Pro tip: DO NOT CHECK THIS INTO SOURCE CONTROL, USE A KEY VAULT"
+      }
     }
   },
   "variables": {
@@ -675,6 +706,21 @@
       ]
     },
     {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2015-07-01",
+      "name": "[parameters('letsEncryptUniqueRoleAssignmentGuid')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/Sites', variables('webSiteName'))]"
+      ],
+      "properties": {
+        "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+        "principalId": "[parameters('appServiceContributorObjectId')]"
+      },
+      "tags": {
+        "displayName": "Website authorization"
+      }
+    },
+    {
       "apiVersion": "2014-04-01",
       "name": "[concat('ServerErrors ', variables('serviceAPIName'))]",
       "type": "Microsoft.Insights/alertrules",
@@ -760,6 +806,7 @@
       "properties": {
         "name": "[variables('webSiteName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "alwaysOn": true,
         "httpsOnly": true
       },
       "resources": [
@@ -787,6 +834,47 @@
           "location": "[resourceGroup().location]",
           "properties": {
 
+          }
+        },
+        {
+          "type": "Microsoft.Web/sites/hostNameBindings",
+          "name": "[concat(variables('webSiteName'),'/',parameters('websiteDomainName'))]",
+          "apiVersion": "2016-08-01",
+          "location": "[resourceGroup().location]",
+          "tags": {
+            "displayName": "Website bindings"
+          },
+          "properties": {
+            "siteName": "[variables('webSiteName')]"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
+          ]
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "letsencrypt",
+          "type": "siteextensions",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('webSiteName'))]"
+          ],
+          "properties": {
+          }
+        },
+        {
+          "apiVersion": "2016-03-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
+          ],
+          "properties": {
+            "letsencrypt:Tenant": "[subscription().tenantId]",
+            "letsencrypt:SubscriptionId": "[subscription().subscriptionId]",
+            "letsencrypt:ResourceGroupName": "[resourceGroup().name]",
+            "letsencrypt:ServicePlanResourceGroupName": "[resourceGroup().name]",
+            "letsencrypt:ClientId": "[parameters('appServiceContributerClientId')]",
+            "letsencrypt:ClientSecret": "[parameters('appServiceContributerClientSecret')]"
           }
         }
       ]
@@ -892,7 +980,7 @@
         "provisioningState": "Succeeded",
         "resourceState": "Active"
       }
-    },    
+    },
     {
       "type": "Microsoft.Cdn/profiles/endpoints",
       "apiVersion": "2016-04-02",
@@ -979,7 +1067,7 @@
         "httpsPort": 443
       }
     }
-    
+
   ],
   "outputs": {
     "servicePrincipalId": {
