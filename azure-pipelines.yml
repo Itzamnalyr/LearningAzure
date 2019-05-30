@@ -1,123 +1,129 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
 - master
-
-pool:
-  vmImage: 'vs2017-win2016'
+pr:
+  branches:
+    include:
+    - '*'  # must quote since "*" is a YAML reserved character; we want a string
 
 variables:
-  BuildConfiguration: 'Release'
-  BuildPlatform : 'Any CPU'
+- group: 'SamLearnsAzure KeyVault'
+- name: vmImage #Note this weird name/value syntax if you need to reference a variable group in variables
+  value: 'vs2017-win2016'
 
-steps:
+stages:
+- stage: Build
+  displayName: 'Build & Test stage'
+  jobs:
+  - template: azure-pipelines-build-template.yml
+    parameters:
+      buildConfiguration: 'Release'
+      buildPlatform: 'Any CPU'
+      vmImage: $(vmImage)
 
-# DotNet Framework build items
-- task: NuGetToolInstaller@0
-  displayName: 'Use NuGet 4.4.1'
-  inputs:
-    versionSpec: 4.4.1
 
-- task: NuGetCommand@2
-  displayName: 'NuGet restore'
-  inputs:
-    projects: |
-     SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
-    vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
+- stage: DeployDev
+  displayName: 'Deploy Dev Stage'
+  jobs:
+  - template: azure-pipelines-deployment-template.yml
+    parameters:
+      applicationInsightsApiKey: '$(ApplicationInsights--APIKeyDev)'
+      applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
+      applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
+      applicationInsightsLocation: 'East US'
+      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      environment: 'Dev'  
+      environmentLowercase: 'dev'
+      databaseLoginName: $(databaseLoginNameDev) 
+      databaseLoginPassword: $(databaseLoginPasswordDev)
+      databaseServerName: 'samsapp-dev-eu-sqlserver'
+      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02145'
+      partImagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/partimages'
+      partImagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/partimages'
+      redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringDev)'
+      resourceGroupName: 'SamLearnsAzureDev'
+      resourceGroupLocation: 'East US'
+      resourceGroupLocationShort: 'eu'
+      roleAssignmentId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+      samsAppConnectionString: '$(ConnectionStrings--SamsAppConnectionStringDev)'
+      serviceName: 'samsapp-dev-eu-service'
+      serviceStagingUrl: 'https://samsapp-dev-eu-service-staging.azurewebsites.net/'
+      serviceUrl: 'https://samsapp-dev-eu-service.azurewebsites.net/'
+      userPrincipalLogin: $(userPrincipalLogin)
+      vmImage: $(vmImage)
+      websiteName: 'samsapp-dev-eu-web'
+      websiteDomainName: 'dev.samlearnsazure.com'
+      websiteStagingUrl: 'https://samsapp-dev-eu-web-staging.azurewebsites.net/'
+      websiteUrl: 'https://samsapp-dev-eu-web.azurewebsites.net/'
 
-- task: VSBuild@1
-  displayName: 'Build database project'
-  inputs:
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
-    solution: SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
 
-- task: CopyFiles@2
-  displayName: 'Copy database files to: $(build.artifactstagingdirectory)'
-  inputs:
-    SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Database\bin\Output'
-    Contents: '*' # * = Copy all files in the current directory
-    TargetFolder: '$(build.artifactstagingdirectory)\Database'
+- stage: DeployQA
+  displayName: 'Deploy QA Stage'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - template: azure-pipelines-deployment-template.yml
+    parameters:
+      applicationInsightsApiKey: '$(ApplicationInsights--APIKeyQA)'
+      applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdQA)'
+      applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyQA)
+      applicationInsightsLocation: 'East US'
+      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      environment: 'QA'  
+      environmentLowercase: 'qa'
+      databaseLoginName: $(databaseLoginNameQA) 
+      databaseLoginPassword: $(databaseLoginPasswordQA)
+      databaseServerName: 'samsapp-qa-eu-sqlserver'
+      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02146'
+      partImagesStorageCDNURL: 'https://samsapp-qa-eu-cdnendpoint.azureedge.net/partimages'
+      partImagesStorageURL: 'https://samsappqaeustorage.blob.core.windows.net/partimages'
+      redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringQA)'
+      resourceGroupName: 'SamLearnsAzureQA'
+      resourceGroupLocation: 'East US'
+      resourceGroupLocationShort: 'eu'
+      roleAssignmentId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+      samsAppConnectionString: '$(ConnectionStrings--SamsAppConnectionStringQA)'
+      serviceName: 'samsapp-qa-eu-service'
+      serviceStagingUrl: 'https://samsapp-qa-eu-service-staging.azurewebsites.net/'
+      serviceUrl: 'https://samsapp-qa-eu-service.azurewebsites.net/'
+      userPrincipalLogin: $(userPrincipalLogin)
+      vmImage: $(vmImage)
+      websiteName: 'samsapp-qa-eu-web'
+      websiteDomainName: 'qa.samlearnsazure.com'
+      websiteStagingUrl: 'https://samsapp-qa-eu-web-staging.azurewebsites.net/'
+      websiteUrl: 'https://samsapp-qa-eu-web.azurewebsites.net/'
+      
 
-- task: CopyFiles@2
-  displayName: 'Copy environment ARM template files to: $(build.artifactstagingdirectory)'
-  inputs:
-    SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Environment.ARMTemplate'
-    Contents: '**\*' # **\* = Copy all files and all files in sub directories
-    TargetFolder: '$(build.artifactstagingdirectory)\EnvironmentARMTemplate'
-
-# Dotnet Core build items
-- task: DotNetCoreCLI@2
-  displayName: 'Restore dotnet core projects'
-  inputs:
-    command: restore
-    projects: |
-     SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-     SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
-     SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-     SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
-
-- task: DotNetCoreCLI@2
-  displayName: 'Build dotnet core projects'
-  inputs:
-    command: build
-    projects: |
-     SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-     SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
-     SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-     SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
-    arguments: '--configuration $(BuildConfiguration)'
- 
-- task: DotNetCoreCLI@2
-  displayName: 'Test dotnet code projects'
-  inputs:
-    command: test
-    projects: |
-     SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-    arguments: '--configuration $(BuildConfiguration) --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Publish dotnet core projects'
-  inputs:
-    command: publish
-    publishWebProjects: false
-    projects: |
-     SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-     SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
-    zipAfterPublish: true
-
-- task: DotNetCoreCLI@2
-  displayName: 'Publish dotnet core functional tests project'
-  inputs:
-    command: publish
-    publishWebProjects: false
-    projects: |
-     SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/FunctionalTests'
-    zipAfterPublish: false
-
-- task: CopyFiles@2
-  displayName: 'Copy Selenium Files to: $(build.artifactstagingdirectory)/FunctionalTests/SamLearnsAzure.FunctionalTests'
-  inputs:
-    SourceFolder: 'SamLearnsAzure/SamLearnsAzure.FunctionalTests/bin/$(BuildConfiguration)/netcoreapp2.1'
-    Contents: '*chromedriver.exe*'
-    TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests/SamLearnsAzure.FunctionalTests'
-
-# Publish the artifacts
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)'
-
-# Run security tasks
-#- task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
-#  displayName: 'Run CredScan'
-#
-#- task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-postanalysis.PostAnalysis@1
-#  displayName: 'Post Analysis'
-#  inputs:
-#    CredScan: true
+- stage: DeployProd
+  displayName: 'Deploy Prod Stage'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - template: azure-pipelines-deployment-template.yml
+    parameters:
+      applicationInsightsApiKey: '$(ApplicationInsights--APIKeyProd)'
+      applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdProd)'
+      applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyProd)
+      applicationInsightsLocation: 'East US'
+      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      environment: 'Prod'  
+      environmentLowercase: 'prod'
+      databaseLoginName: $(databaseLoginNameProd) 
+      databaseLoginPassword: $(databaseLoginPasswordProd)
+      databaseServerName: 'samsapp-prod-eu-sqlserver'
+      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02147'
+      partImagesStorageCDNURL: 'https://samsapp-prod-eu-cdnendpoint.azureedge.net/partimages'
+      partImagesStorageURL: 'https://samsappprodeustorage.blob.core.windows.net/partimages'
+      redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringProd)'
+      resourceGroupName: 'SamLearnsAzureProd'
+      resourceGroupLocation: 'East US'
+      resourceGroupLocationShort: 'eu'
+      roleAssignmentId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+      samsAppConnectionString: '$(ConnectionStrings--SamsAppConnectionStringProd)'
+      serviceName: 'samsapp-prod-eu-service'
+      serviceStagingUrl: 'https://samsapp-prod-eu-service-staging.azurewebsites.net/'
+      serviceUrl: 'https://samsapp-prod-eu-service.azurewebsites.net/'
+      userPrincipalLogin: $(userPrincipalLogin)
+      vmImage: $(vmImage)
+      websiteName: 'samsapp-prod-eu-web'
+      websiteDomainName: 'samlearnsazure.com'
+      websiteStagingUrl: 'https://samsapp-prod-eu-web-staging.azurewebsites.net/'
+      websiteUrl: 'https://samsapp-prod-eu-web.azurewebsites.net/'
+      

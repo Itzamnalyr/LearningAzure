@@ -751,7 +751,7 @@
             "metricName": "Http5xx"
           },
           "operator": "GreaterThan",
-          "threshold": 3.0,
+          "threshold": 10.0,
           "windowSize": "PT5M"
         },
         "action": {
@@ -910,7 +910,7 @@
             "metricName": "Http5xx"
           },
           "operator": "GreaterThan",
-          "threshold": 3.0,
+          "threshold": 10.0,
           "windowSize": "PT5M"
         },
         "action": {

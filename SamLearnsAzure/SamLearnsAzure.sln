@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamLearnsAzure.Service", "S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build YAML", "Build YAML", "{99984B31-6A92-4578-ACBE-4F3419629BB3}"
 	ProjectSection(SolutionItems) = preProject
+		..\azure-pipelines-build-template.yml = ..\azure-pipelines-build-template.yml
+		..\azure-pipelines-deployment-template.yml = ..\azure-pipelines-deployment-template.yml
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
 		..\ModelsPackagePipeline.yml = ..\ModelsPackagePipeline.yml
 	EndProjectSection

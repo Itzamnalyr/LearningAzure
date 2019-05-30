@@ -1,0 +1,139 @@
+parameters: # defaults for any parameters that aren't specified
+  applicationInsightsApiKey: '$(ApplicationInsights--ApplicationIdDev)'
+  applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
+  applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
+  applicationInsightsLocation: 'East US'
+  appServiceContributerClientSecret: '***secret'
+  environment: 'Dev'  
+  environmentLowercase: 'dev'
+  databaseLoginName: '***secret'
+  databaseLoginPassword: '***secret'
+  databaseServerName: 'samsapp-dev-eu-sqlserver'
+  keyVaultName: 'samsapp-data-eu-keyvault'
+  keyVaultURL: 'https://samsapp-data-eu-keyvault.vault.azure.net/'
+  letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02145'
+  partImagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/partimages'
+  partImagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/partimages'
+  redisCacheConnectionString: '***secret'
+  resourceGroupName: 'SamLearnsAzureDev'
+  resourceGroupLocation: 'East US'
+  resourceGroupLocationShort: 'eu'
+  roleAssignmentId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+  samsAppConnectionString: '***secret'
+  serviceName: 'samsapp-dev-eu-service'
+  serviceStagingUrl: 'https://samsapp-dev-eu-service-staging.azurewebsites.net/'
+  serviceUrl: 'https://samsapp-dev-eu-service.azurewebsites.net/'
+  stagingSlotName: 'Staging'
+  userPrincipalLogin: '***secret'
+  vmImage: 'vs2017-win2016'
+  websiteName: 'samsapp-dev-eu-web'
+  websiteDomainName: 'dev.samlearnsazure.com'
+  websiteStagingUrl: 'https://samsapp-dev-eu-web-staging.azurewebsites.net/'
+  websiteUrl: 'https://samsapp-dev-eu-web.azurewebsites.net/'
+  
+jobs:
+  - job: Deploy
+    displayName: "Deploy ${{parameters.environment}} job"
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    variables:
+      ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
+      AppSettings.Environment: ${{parameters.environment}}
+      AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
+      AppSettings.PartImagesStorageCDNURL: ${{parameters.partImagesStorageCDNURL}}
+      AppSettings.PartImagesStorageURL: ${{parameters.partImagesStorageURL}}
+      AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
+      AppSettings.WebServiceURL: ${{parameters.serviceURL}}
+      ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}}      
+    steps:
+    - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
+      displayName: 'Show all build variables in build output.'
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download the build artifacts'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(build.artifactstagingdirectory)'
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Azure Deployment: Deploy ARM Template to resource group'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        resourceGroupName: '${{parameters.resourceGroupName}}'
+        location: '${{parameters.resourceGroupLocation}}}}'
+        csmFile: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/azuredeploy.json'
+        csmParametersFile: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/azuredeploy.parameters.json'
+        overrideParameters: '-userPrincipalLogin ${{parameters.userPrincipalLogin}} -databaseLoginName ${{parameters.databaseLoginName}} -databaseLoginPassword ${{parameters.databaseLoginPassword}} -environment ${{parameters.environmentLowercase}} -locationShort ${{parameters.resourceGroupLocationShort}}  -appServiceContributerClientSecret "${{parameters.appServiceContributerClientSecret}}" -websiteDomainName ${{parameters.websiteDomainName}} -roleAssignmentId ${{parameters.roleAssignmentId}} -letsEncryptUniqueRoleAssignmentGuid ${{parameters.letsEncryptUniqueRoleAssignmentGuid}}'
+    - task: keesschollaart.arm-outputs.arm-outputs.ARM Outputs@5
+      displayName: 'Extract ARM template outputs to pipeline variables'
+      inputs:
+        ConnectedServiceNameARM: 'SamLearnsAzure connection to Azure Portal'
+        resourceGroupName: ${{parameters.resourceGroupName}}
+    - task: AzurePowerShell@4 #Note that pipeline variables �servicePrincipalId�, �websitePrincipalId�, �applicationInsightsInstrumentationKeyOutput�, �storageAccountKeyOutput�, �DatabaseLoginPassword�, �redisConnectionStringOutput� are populated from the previous output task
+      displayName: 'Run Azure PowerShell to setup KeyVault with ARM template output variables'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/KeyVault.ps1'
+        ScriptArguments: '-KeyVaultName "${{parameters.KeyVaultName}}" -Environment "${{parameters.Environment}}" -ServicePrincipalId "$(servicePrincipalId)" -WebsitePrincipalId "$(websitePrincipalId)" -ApplicationInsightsInstrumentationKey "$(applicationInsightsInstrumentationKeyOutput)" -StorageAccountKey "$(storageAccountKeyOutput)" -DatabaseServerName "${{parameters.DatabaseServerName}}" -DatabaseLoginName "${{parameters.DatabaseLoginName}}" -DatabaseLoginPassword "${{parameters.DatabaseLoginPassword}}" -RedisConnectionString "$(redisConnectionStringOutput)"'
+        azurePowerShellVersion: LatestVersion
+    - task: SqlAzureDacpacDeployment@1
+      displayName: 'Azure SQL dacpac publish'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        ServerName: '${{parameters.databaseServerName}}.database.windows.net'
+        DatabaseName: samsdb
+        SqlUsername: '${{parameters.databaseLoginName}}'
+        SqlPassword: '${{parameters.databaseLoginPassword}}'
+        DacpacFile: '$(build.artifactstagingdirectory)/drop/Database/SamLearnsAzure.Database.dacpac'
+    - task: AzureRmWebAppDeployment@3
+      displayName: 'Azure App Service Deploy: web service'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        WebAppName: '${{parameters.serviceName}}'
+        DeployToSlotFlag: true
+        ResourceGroupName: '${{parameters.resourceGroupName}}'
+        SlotName: '${{parameters.stagingSlotName}}'
+        Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure.Service.zip'
+        TakeAppOfflineFlag: true
+        JSONFiles: '**/appsettings.json'
+    - task: AzureRmWebAppDeployment@3
+      displayName: 'Azure App Service Deploy: website'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        WebAppName: '${{parameters.websiteName}}'
+        DeployToSlotFlag: true
+        ResourceGroupName: '${{parameters.resourceGroupName}}'
+        SlotName: '${{parameters.stagingSlotName}}'
+        Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure.Web.zip'
+        TakeAppOfflineFlag: true
+        JSONFiles: '**/appsettings.json'
+    - task: VSTest@2
+      displayName: 'Run functional smoke tests on website and web service'
+      inputs:
+        testAssemblyVer2: |
+         **\*functionaltests*.dll
+        uiTests: true
+        runSettingsFile: '$(build.artifactstagingdirectory)/drop/FunctionalTests/SamLearnsAzure.FunctionalTests/test.runsettings'
+        overrideTestrunParameters: |
+         -ServiceUrl=${{parameters.serviceStagingUrl}}; 
+         -websiteUrl=${{parameters.websiteStagingUrl}};
+         -TestEnvironment=${{parameters.environment}};
+    - task: AzureAppServiceManage@0
+      displayName: 'Swap Slots: web service'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        WebAppName: '${{parameters.serviceName}}'
+        ResourceGroupName: '${{parameters.resourceGroupName}}'
+        SourceSlot: '${{parameters.stagingSlotName}}'
+    - task: AzureAppServiceManage@0
+      displayName: 'Swap Slots: website'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        WebAppName: '${{parameters.websiteName}}'
+        ResourceGroupName: '${{parameters.resourceGroupName}}'
+        SourceSlot: '${{parameters.stagingSlotName}}'
+    - task: ms-appinsights.appinsightsreleaseannotations.release-task.ms-appinsights.ReleaseAnnotation@1
+      displayName: 'Add release annotation to Azure Application Insights'
+      inputs:
+        applicationId: '${{parameters.applicationInsightsApplicationId}}'
+        apiKey: '${{parameters.applicationInsightsApiKey}}'
