@@ -24,7 +24,7 @@ Set-AzKeyVaultAccessPolicy -VaultName "$KeyVaultName" -ObjectId "$websitePrincip
 $applicationInsightsInstrumentationKeyName = "ApplicationInsights--InstrumentationKey$Environment"
 $applicationInsightsInstrumentationKeySecretvalue = ConvertTo-SecureString "$ApplicationInsightsInstrumentationKey" -AsPlainText -Force
 #$applicationInsightsInstrumentationKeyExistingSecretValue = (Get-AzKeyVaultSecret -vaultName "$KeyVaultName" -name "$applicationInsightsInstrumentationKeyName").SecretValueText
-Write-Host "Setting value for $applicationInsightsInstrumentationKeyName to key vault"
+Write-Host "Setting value $ApplicationInsightsInstrumentationKey for $applicationInsightsInstrumentationKeyName to key vault"
 Set-AzKeyVaultSecret -VaultName "$KeyVaultName" -Name "$applicationInsightsInstrumentationKeyName" -SecretValue $applicationInsightsInstrumentationKeySecretvalue
 
 #Get the storage account key from the ARM Template outputs

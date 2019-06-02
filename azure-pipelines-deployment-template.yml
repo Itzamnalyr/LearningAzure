@@ -96,6 +96,7 @@ jobs:
         Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure.Service.zip'
         TakeAppOfflineFlag: true
         JSONFiles: '**/appsettings.json'
+        ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
     - task: AzureRmWebAppDeployment@3
       displayName: 'Azure App Service Deploy: website'
       inputs:
@@ -107,6 +108,7 @@ jobs:
         Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure.Web.zip'
         TakeAppOfflineFlag: true
         JSONFiles: '**/appsettings.json'
+        ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
     - task: VSTest@2
       displayName: 'Run functional smoke tests on website and web service'
       inputs:

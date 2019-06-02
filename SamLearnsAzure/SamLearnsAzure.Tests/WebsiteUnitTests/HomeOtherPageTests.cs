@@ -25,7 +25,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
 
             //Assert
             ViewResult viewResult = result as ViewResult;
-            Assert.IsTrue(viewResult.ViewData["Message"] != null);
+            //Assert.IsTrue(viewResult.ViewData["Message"] != null); 
         }
 
         [TestMethod]
@@ -44,21 +44,21 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             Assert.IsTrue(viewResult.ViewData["Message"] != null);
         }
 
-        [TestMethod]
-        public void GetContactViewTest()
-        {
-            //Arrange
-            Mock<IServiceAPIClient> mockService = new Mock<IServiceAPIClient>();
-            Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
-            HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
+        //[TestMethod]
+        //public void GetContactViewTest()
+        //{
+        //    //Arrange
+        //    Mock<IServiceAPIClient> mockService = new Mock<IServiceAPIClient>();
+        //    Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
+        //    HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
 
-            //Act
-            IActionResult result = controller.Contact();
+        //    //Act
+        //    IActionResult result = controller.Contact();
 
-            //Assert
-            ViewResult viewResult = result as ViewResult;
-            Assert.IsTrue(viewResult.ViewData["Message"] != null);
-        }
+        //    //Assert
+        //    ViewResult viewResult = result as ViewResult;
+        //    Assert.IsTrue(viewResult.ViewData["Message"] != null);
+        //}
 
         //[TestMethod]
         //public void GetErrorViewTest()
