@@ -36,7 +36,7 @@ namespace SamLearnsAzure.Service.DataAccess
 
             //Check the cache
             string cachedJSON = null;
-            if (redisService != null && useCache == true)
+            if (redisService != null && useCache)
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);
             }
@@ -76,7 +76,7 @@ namespace SamLearnsAzure.Service.DataAccess
 
             //Check the cache
             string cachedJSON = null;
-            if (redisService != null && useCache == true)
+            if (redisService != null && useCache)
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);
             }

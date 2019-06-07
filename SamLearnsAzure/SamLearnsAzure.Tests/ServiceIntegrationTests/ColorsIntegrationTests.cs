@@ -25,7 +25,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one
+            Assert.IsTrue(items.Any()); //There is more than one
             Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
         }
@@ -42,7 +42,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one
+            Assert.IsTrue(items.Any()); //There is more than one
             Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
         }
