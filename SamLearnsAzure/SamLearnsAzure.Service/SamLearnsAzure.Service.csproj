@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <ApplicationInsightsResourceId>/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourcegroups/SamLearnsAzureDev/providers/microsoft.insights/components/samsapp-dev-eu-appinsights</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourcegroups/SamLearnsAzureDev/providers/microsoft.insights/components/samsapp-dev-eu-appinsights</ApplicationInsightsAnnotationResourceId>
+    <!-- SonarQube needs this -->
+    <ProjectGuid>{50dd37ad-58dd-4697-84ec-f28fb5935b51}</ProjectGuid>
   </PropertyGroup>
 
   <PropertyGroup>

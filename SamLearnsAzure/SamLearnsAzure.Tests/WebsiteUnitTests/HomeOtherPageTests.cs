@@ -25,7 +25,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
 
             //Assert
             ViewResult viewResult = result as ViewResult;
-            //Assert.IsTrue(viewResult.ViewData["Message"] != null); 
+            //Assert.IsTrue(viewResult.ViewData["Message"] != null);
         }
 
         [TestMethod]

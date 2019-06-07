@@ -44,6 +44,13 @@ jobs:
         TargetFolder: '$(build.artifactstagingdirectory)\EnvironmentARMTemplate'
 
     # Dotnet Core build items
+    - task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
+      displayName: 'Prepare analysis on SonarCloud'
+      inputs:
+        SonarCloud: 'SonarQube connection'
+        organization: samsmithnz
+        projectKey: SamLearnsAzure
+
     - task: DotNetCoreCLI@2
       displayName: 'Restore dotnet core projects'
       inputs:
@@ -72,7 +79,13 @@ jobs:
         projects: |
          SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
         arguments: '--configuration ${{parameters.buildConfiguration}} --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
-    
+ 
+    - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
+      displayName: 'Run Code Analysis on SonarCloud'
+
+    - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
+      displayName: 'Publish Quality Gate Result on SonarCloud'
+
     - task: DotNetCoreCLI@2
       displayName: 'Publish dotnet core projects'
       inputs:
@@ -108,9 +121,8 @@ jobs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
 
     # Run security tasks
-    #- task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
-    #  displayName: 'Run CredScan'
-    #
+    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
+      displayName: 'Run CredScan'
     #- task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-postanalysis.PostAnalysis@1
     #  displayName: 'Post Analysis'
     #  inputs:
