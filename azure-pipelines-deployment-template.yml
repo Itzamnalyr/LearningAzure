@@ -35,7 +35,7 @@ jobs:
   - job: Deploy
     displayName: "Deploy ${{parameters.environment}} job"
     pool:
-      vmImage: ${{parameters.vmImage}}
+      vmImage: ${{parameters.vmImage}}      
     variables:
       ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
       AppSettings.Environment: ${{parameters.environment}}

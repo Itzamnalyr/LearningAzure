@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <DebugType>Full</DebugType>
     <ApplicationInsightsResourceId>/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourcegroups/SamLearnsAzureDev/providers/microsoft.insights/components/samsapp-dev-eu-appinsights</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourcegroups/SamLearnsAzureDev/providers/microsoft.insights/components/samsapp-dev-eu-appinsights</ApplicationInsightsAnnotationResourceId>
     <!-- SonarQube needs this -->

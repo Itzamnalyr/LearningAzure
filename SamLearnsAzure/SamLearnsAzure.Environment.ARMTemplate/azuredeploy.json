@@ -216,6 +216,10 @@
       "metadata": {
         "description": "The unique string for the role assignment of the let's encrypt user"
       }
+    },
+    "alertEmailAddress": {
+      "type": "string",
+      "defaultValue": "samsmithnz@gmail.com"
     }
   },
   "variables": {
@@ -224,6 +228,8 @@
     "sqlserverName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-sqlserver')]",
     "hostingPlanName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-hostingplan')]",
     "storageAccountName": "[concat(parameters('appPrefix'), parameters('environment'), parameters('locationShort'), 'storage')]",
+    "actionGroupName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-actionGroup')]",
+    "actionGroupShortName": "[concat(parameters('environment'), '-actgrp')]",
     "applicationInsightsName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-appinsights')]",
     "redisCacheName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-redis')]",
     "cdnName": "[concat(parameters('appPrefix'), '-', parameters('environment'), '-', parameters('locationShort'), '-cdn')]"
@@ -465,6 +471,33 @@
       }
     },
     {
+      "type": "microsoft.insights/actionGroups",
+      "apiVersion": "2018-09-01",
+      "name": "[variables('actionGroupName')]",
+      "location": "global",
+      "tags": {
+        "displayName": "Action Group"
+      },
+      "properties": {
+        "groupShortName": "[variables('actionGroupShortName')]",
+        "enabled": true,
+        "emailReceivers": [
+          {
+            "name": "[concat(parameters('appPrefix'), ' dev team')]",
+            "emailAddress": "[parameters('alertEmailAddress')]"
+          }
+        ],
+        "smsReceivers": [],
+        "webhookReceivers": [],
+        "itsmReceivers": [],
+        "azureAppPushReceivers": [],
+        "automationRunbookReceivers": [],
+        "voiceReceivers": [],
+        "logicAppReceivers": [],
+        "azureFunctionReceivers": []
+      }
+    },
+    {
       "name": "[variables('applicationInsightsName')]",
       "type": "Microsoft.Insights/components",
       "location": "[resourceGroup().location]",
@@ -562,105 +595,49 @@
       }
     },
     {
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2018-03-01",
+      "type": "microsoft.insights/metricAlerts",
       "name": "[concat('CPUHigh ', variables('hostingPlanName'))]",
-      "type": "Microsoft.Insights/alertrules",
-      "location": "[resourceGroup().location]",
+      "location": "global",
       "dependsOn": [
-        "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
+        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+        "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
       ],
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "Resource",
         "displayName": "Hosting Plan CPU High Alert Rule"
       },
       "properties": {
-        "name": "[concat('CPUHigh ', variables('hostingPlanName'))]",
-        "description": "[concat('The average CPU is high across all the instances of ', variables('hostingPlanName'))]",
-        "isEnabled": true,
-        "condition": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
-          "dataSource": {
-            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-            "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
-            "metricName": "CpuPercentage"
-          },
-          "operator": "GreaterThan",
-          "threshold": 90,
-          "windowSize": "PT15M"
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT15M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "CpuPercentage",
+              "metricNamespace": "Microsoft.Web/serverFarms",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 80.0,
+              "timeAggregation": "Average"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
         },
-        "action": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-          "sendToServiceOwners": true,
-          "customEmails": []
-        }
-      }
-    },
-    {
-      "apiVersion": "2014-04-01",
-      "name": "[concat('LongHttpQueue ', variables('hostingPlanName'))]",
-      "type": "Microsoft.Insights/alertrules",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
-      ],
-      "tags": {
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "Resource",
-        "displayName": "Hosting Plan Auto Scale Settings Alert Rule"
-      },
-      "properties": {
-        "name": "[concat('LongHttpQueue ', variables('hostingPlanName'))]",
-        "description": "[concat('The HTTP queue for the instances of ', variables('hostingPlanName'), ' has a large number of pending requests.')]",
-        "isEnabled": true,
-        "condition": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
-          "dataSource": {
-            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-            "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
-            "metricName": "HttpQueueLength"
-          },
-          "operator": "GreaterThan",
-          "threshold": 100.0,
-          "windowSize": "PT5M"
-        },
-        "action": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-          "sendToServiceOwners": true,
-          "customEmails": []
-        }
-      }
-    },
-    {
-      "name": "[concat('LongHttpQueue ', variables('applicationInsightsName'))]",
-      "type": "Microsoft.Insights/alertrules",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2014-04-01",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
-      ],
-      "tags": {
-        "[concat('hidden-link:', resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName')))]": "Resource",
-        "displayName": "Hosting Plan Long Http Queue Alert Rule"
-      },
-      "properties": {
-        "name": "[concat('LongHttpQueue ', variables('hostingPlanName'))]",
-        "description": "[concat('The HTTP queue for the instances of ', variables('hostingPlanName'), ' has a large number of pending requests.')]",
-        "isEnabled": false,
-        "condition": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
-          "dataSource": {
-            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-            "resourceUri": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
-            "metricName": "HttpQueueLength"
-          },
-          "operator": "GreaterThan",
-          "threshold": 100,
-          "windowSize": "PT5M"
-        },
-        "action": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-          "sendToServiceOwners": true,
-          "customEmails": []
-        }
+        "actions": [
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ],
+        "description": "[concat('The average CPU is high across all the instances of ', variables('hostingPlanName'))]"
       }
     },
     {
@@ -728,71 +705,95 @@
       }
     },
     {
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2018-03-01",
       "name": "[concat('ServerErrors ', variables('serviceAPIName'))]",
-      "type": "Microsoft.Insights/alertrules",
-      "location": "[resourceGroup().location]",
+      "type": "microsoft.insights/metricAlerts",
+      "location": "global",
       "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('serviceAPIName'))]"
+        "[resourceId('Microsoft.Web/sites', variables('serviceAPIName'))]",
+        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]"
       ],
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('serviceAPIName'))]": "Resource",
         "displayName": "Web Service Server Errors Alert Rule"
       },
       "properties": {
-        "name": "[concat('ServerErrors ', variables('serviceAPIName'))]",
         "description": "[concat(variables('serviceAPIName'), ' has some server errors, status code 5xx.')]",
-        "isEnabled": true,
-        "condition": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
-          "dataSource": {
-            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-            "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('serviceAPIName'))]",
-            "metricName": "Http5xx"
-          },
-          "operator": "GreaterThan",
-          "threshold": 10.0,
-          "windowSize": "PT5M"
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', variables('serviceAPIName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "Http5xx",
+              "metricNamespace": "Microsoft.Web/sites",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 10.0,
+              "timeAggregation": "Total"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
         },
-        "action": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-          "sendToServiceOwners": true,
-          "customEmails": []
-        }
+        "actions": [
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ]
       }
     },
     {
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2018-03-01",
       "name": "[concat('ForbiddenRequests ', variables('serviceAPIName'))]",
-      "type": "Microsoft.Insights/alertrules",
-      "location": "[resourceGroup().location]",
+      "type": "microsoft.insights/metricAlerts",
+      "location": "global",
       "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('serviceAPIName'))]"
+        "[resourceId('Microsoft.Web/sites', variables('serviceAPIName'))]",
+        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]"
       ],
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('serviceAPIName'))]": "Resource",
         "displayName": "Web Service Forbidden Requests Alert Rule"
       },
       "properties": {
-        "name": "[concat('ForbiddenRequests ', variables('serviceAPIName'))]",
         "description": "[concat(variables('serviceAPIName'), ' has some requests that are forbidden, status code 403.')]",
-        "isEnabled": true,
-        "condition": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
-          "dataSource": {
-            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-            "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('serviceAPIName'))]",
-            "metricName": "Http403"
-          },
-          "operator": "GreaterThan",
-          "threshold": 0,
-          "windowSize": "PT5M"
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', variables('serviceAPIName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "Http403",
+              "metricNamespace": "Microsoft.Web/sites",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 0.0,
+              "timeAggregation": "Total"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
         },
-        "action": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-          "sendToServiceOwners": true,
-          "customEmails": []
-        }
+        "actions": [
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ]
       }
     },
     {
@@ -887,71 +888,95 @@
       ]
     },
     {
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2018-03-01",
       "name": "[concat('ServerErrors ', variables('webSiteName'))]",
-      "type": "Microsoft.Insights/alertrules",
-      "location": "[resourceGroup().location]",
+      "type": "microsoft.insights/metricAlerts",
+      "location": "global",
       "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('webSiteName'))]"
+        "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]",
+        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]"
       ],
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webSiteName'))]": "Resource",
         "displayName": "Website Server Errors Alert Rule"
       },
       "properties": {
-        "name": "[concat('ServerErrors ', variables('webSiteName'))]",
         "description": "[concat(variables('webSiteName'), ' has some server errors, status code 5xx.')]",
-        "isEnabled": true,
-        "condition": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
-          "dataSource": {
-            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-            "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webSiteName'))]",
-            "metricName": "Http5xx"
-          },
-          "operator": "GreaterThan",
-          "threshold": 10.0,
-          "windowSize": "PT5M"
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "Http5xx",
+              "metricNamespace": "Microsoft.Web/sites",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 10.0,
+              "timeAggregation": "Total"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
         },
-        "action": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-          "sendToServiceOwners": true,
-          "customEmails": []
-        }
+        "actions": [
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ]
       }
     },
     {
-      "apiVersion": "2014-04-01",
-      "name": "[concat('ForbiddenRequests ', variables('webSiteName'))]",
-      "type": "Microsoft.Insights/alertrules",
-      "location": "[resourceGroup().location]",
+      "apiVersion": "2018-03-01",
+      "name": "[concat('ForbiddenRequests ', variables('webSiteName'),'new')]",
+      "type": "microsoft.insights/metricAlerts",
+      "location": "global",
       "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('webSiteName'))]"
+        "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]",
+        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]"
       ],
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webSiteName'))]": "Resource",
         "displayName": "Website Forbidden Requests Alert Rule"
       },
       "properties": {
-        "name": "[concat('ForbiddenRequests ', variables('webSiteName'))]",
         "description": "[concat(variables('webSiteName'), ' has some requests that are forbidden, status code 403.')]",
-        "isEnabled": true,
-        "condition": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
-          "dataSource": {
-            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-            "resourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webSiteName'))]",
-            "metricName": "Http403"
-          },
-          "operator": "GreaterThan",
-          "threshold": 0,
-          "windowSize": "PT5M"
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "Http403",
+              "metricNamespace": "Microsoft.Web/sites",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 0.0,
+              "timeAggregation": "Total"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
         },
-        "action": {
-          "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-          "sendToServiceOwners": true,
-          "customEmails": []
-        }
+        "actions": [
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ]
       }
     },
     {
