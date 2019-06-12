@@ -76,7 +76,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         }
 
         //[TestMethod]
-        //public async Task GetContactViewIntegrationTest()
+        //public async Task GetCDNTestViewIntegrationTest()
         //{
         //    //Arrange
         //    //string setNum = "75218-1";
@@ -86,7 +86,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         //    };
 
         //    //Act
-        //    HttpResponseMessage response = await client.GetAsync("home/contact");
+        //    HttpResponseMessage response = await client.GetAsync("home/cdntest");
 
         //    //Assert
         //    response.EnsureSuccessStatusCode();
@@ -115,7 +115,6 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         public async Task GetErrorViewIntegrationTest()
         {
             //Arrange
-            //string setNum = "75218-1";
             HttpClient client = new HttpClient
             {
                 BaseAddress = new Uri(Configuration["AppSettings:WebURL"])

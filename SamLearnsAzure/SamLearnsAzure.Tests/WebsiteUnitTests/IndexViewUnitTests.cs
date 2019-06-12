@@ -21,7 +21,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
         {
             //Arrange
             string environmentName = "DevResult";
-            Mock<IServiceAPIClient> mockService = new Mock<IServiceAPIClient>();
+            Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
             Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
             mockService.Setup(repo => repo.GetOwnerSets(It.IsAny<int>())).Returns(Task.FromResult(GetOwnerSetsTestData()));
             mockConfiguration.SetupGet(x => x[It.IsAny<string>()]).Returns(environmentName);

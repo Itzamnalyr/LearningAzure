@@ -63,7 +63,7 @@ namespace SamLearnsAzure.Service
             if (connectionMultiplexer != null)
             {
 
-                IDatabase database = connectionMultiplexer.GetDatabase(0); //TODO: do we need the 0?
+                IDatabase database = connectionMultiplexer.GetDatabase(); 
                 services.AddSingleton<IDatabase>(_ => database);
             }
 

@@ -25,7 +25,7 @@
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.8" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
-    <PackageReference Include="SamLearnsAzure.Models" Version="1.0.1312" />
+    <PackageReference Include="SamLearnsAzure.Models" Version="1.0.1755" />
     <PackageReference Include="StackExchange.Redis" Version="2.0.571" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>

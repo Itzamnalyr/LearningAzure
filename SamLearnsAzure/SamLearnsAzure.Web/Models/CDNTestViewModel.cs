@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SamLearnsAzure.Web.Models
 {
-    public class CDNTestViewModel
+    public class CdnTestViewModel
     {
         public string BaseSetPartsImagesStorageURL { get; set; }
         public string BaseSetPartsImagesCDNURL { get; set; }

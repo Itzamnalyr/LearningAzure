@@ -10,19 +10,19 @@ namespace SamLearnsAzure.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IServiceAPIClient _serviceAPIClient;
+        private readonly IServiceApiClient _ServiceApiClient;
         private readonly IConfiguration _configuration;
 
-        public HomeController(IServiceAPIClient serviceAPIClient, IConfiguration configuration)
+        public HomeController(IServiceApiClient ServiceApiClient, IConfiguration configuration)
         {
-            _serviceAPIClient = serviceAPIClient;
+            _ServiceApiClient = ServiceApiClient;
             _configuration = configuration;
         }
 
         public async Task<IActionResult> Index()
         {
             int ownerId = 1; //Sam
-            List<OwnerSets> ownerSets = await _serviceAPIClient.GetOwnerSets(ownerId);
+            List<OwnerSets> ownerSets = await _ServiceApiClient.GetOwnerSets(ownerId);
 
             IndexViewModel indexPageData = new IndexViewModel
             {
@@ -35,8 +35,8 @@ namespace SamLearnsAzure.Web.Controllers
 
         public async Task<IActionResult> Set(string setnum)
         {
-            Sets set = await _serviceAPIClient.GetSet(setnum);
-            List<SetParts> setParts = await _serviceAPIClient.GetSetParts(setnum);
+            Sets set = await _ServiceApiClient.GetSet(setnum);
+            List<SetParts> setParts = await _ServiceApiClient.GetSetParts(setnum);
 
             SetViewModel setViewModel = new SetViewModel
             {
@@ -48,9 +48,9 @@ namespace SamLearnsAzure.Web.Controllers
             return View(setViewModel);
         }
 
-        public IActionResult Test()
+        public IActionResult CDNTest()
         {
-            CDNTestViewModel cdnTestViewModel = new CDNTestViewModel
+            CdnTestViewModel cdnTestViewModel = new CdnTestViewModel
             {
                 BaseSetPartsImagesStorageURL = _configuration["AppSettings:PartImagesStorageURL"],
                 BaseSetPartsImagesCDNURL = _configuration["AppSettings:PartImagesStorageCDNURL"]
@@ -72,6 +72,7 @@ namespace SamLearnsAzure.Web.Controllers
             return View();
         }
 
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

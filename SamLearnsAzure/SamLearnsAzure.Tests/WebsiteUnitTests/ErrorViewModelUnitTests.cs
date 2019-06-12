@@ -20,7 +20,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             {
                 RequestId = "abc123"
             };
-            //Mock<IServiceAPIClient> mockService = new Mock<IServiceAPIClient>();
+            //Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
             //Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
             //HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
 

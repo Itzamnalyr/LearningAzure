@@ -28,14 +28,6 @@ namespace SamLearnsAzure.Service.EFCore
         public virtual DbSet<Sets> Sets { get; set; }
         public virtual DbSet<Themes> Themes { get; set; }
 
-        //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //        {
-        //            if (!optionsBuilder.IsConfigured)
-        //            {
-        //                optionsBuilder.UseSqlServer("[ConnectionString Removed]");
-        //            }
-        //        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //The generated models

@@ -20,14 +20,28 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     [TestCategory("IntegrationTest")]
-    public class ServiceAPIClientIntegrationTests : BaseIntegrationTest
+    public class ServiceApiClientIntegrationTests : BaseIntegrationTest
     {
 
         [TestMethod]
-        public async Task GetServiceAPIClientOwnerSetsIntegrationTest()
+        public async Task GetServiceApiClientOwnersIntegrationTest()
         {
             //Arrange
-            ServiceAPIClient client = new ServiceAPIClient(base.Configuration);
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
+
+            //Act
+            List<Owners> owners = await client.GetOwners();
+
+
+            //Assert
+            Assert.IsTrue(owners.Any());
+        }
+
+        [TestMethod]
+        public async Task GetServiceApiClientOwnerSetsIntegrationTest()
+        {
+            //Arrange
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
             int ownerId = 1;
 
             //Act
@@ -35,14 +49,29 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
 
 
             //Assert
-            Assert.IsTrue(ownerSets.Count() >= 1);
+            Assert.IsTrue(ownerSets.Any());
         }
 
         [TestMethod]
-        public async Task GetServiceAPIClientSetIntegrationTest()
+        public async Task GetServiceApiClientSetsIntegrationTest()
         {
             //Arrange
-            ServiceAPIClient client = new ServiceAPIClient(base.Configuration);
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
+
+            //Act
+            List<Sets> sets = await client.GetSets();
+
+
+            //Assert
+            Assert.IsTrue(sets != null);
+            Assert.IsTrue(sets.Any());
+        }
+
+        [TestMethod]
+        public async Task GetServiceApiClientSetIntegrationTest()
+        {
+            //Arrange
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
             string setNum = "75218-1";
 
             //Act
@@ -54,10 +83,10 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         }
 
         [TestMethod]
-        public async Task GetServiceAPIClientSetPartsIntegrationTest()
+        public async Task GetServiceApiClientSetPartsIntegrationTest()
         {
             //Arrange
-            ServiceAPIClient client = new ServiceAPIClient(base.Configuration);
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
             string setNum = "75218-1";
 
             //Act
@@ -65,9 +94,22 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
 
 
             //Assert
-            Assert.IsTrue(setParts.Count() >= 1);
+            Assert.IsTrue(setParts.Any());
         }
 
+
+        [TestMethod]
+        public async Task GetServiceApiClientThemesIntegrationTest()
+        {
+            //Arrange
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
+
+            //Act
+            List<Themes> themes = await client.GetThemes();
+
+            //Assert
+            Assert.IsTrue(themes.Any());
+        }
 
 
 

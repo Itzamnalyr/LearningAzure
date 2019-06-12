@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace SamLearnsAzure.Web.Controllers
 {
-    public class ServiceAPIClient : IServiceAPIClient
+    public class ServiceApiClient : IServiceApiClient
     {
         private readonly IConfiguration _configuration;
         private readonly HttpClient _client;
 
-        public ServiceAPIClient(IConfiguration configuration)
+        public ServiceApiClient(IConfiguration configuration)
         {
             _configuration = configuration;
             _client = new HttpClient
@@ -22,11 +22,11 @@ namespace SamLearnsAzure.Web.Controllers
             };
         }
 
-        //public async Task<List<Owners>> GetOwners()
-        //{
-        //    Uri url = new Uri($"api/Owners/GetOwners", UriKind.Relative);
-        //    return await ReadMessageList<Owners>(url);
-        //}
+        public async Task<List<Owners>> GetOwners()
+        {
+            Uri url = new Uri($"api/Owners/GetOwners", UriKind.Relative);
+            return await ReadMessageList<Owners>(url);
+        }
 
         public async Task<List<OwnerSets>> GetOwnerSets(int ownerId)
         {
@@ -34,11 +34,11 @@ namespace SamLearnsAzure.Web.Controllers
             return await ReadMessageList<OwnerSets>(url);
         }
 
-        //public async Task<List<Sets>> GetSets()
-        //{
-        //    Uri url = new Uri($"api/Sets/GetSets" , UriKind.Relative);
-        //    return await ReadMessageList<Sets>(url);
-        //}
+        public async Task<List<Sets>> GetSets()
+        {
+            Uri url = new Uri($"api/Sets/GetSets", UriKind.Relative);
+            return await ReadMessageList<Sets>(url);
+        }
 
         public async Task<Sets> GetSet(string setNum)
         {
@@ -52,11 +52,11 @@ namespace SamLearnsAzure.Web.Controllers
             return await ReadMessageList<SetParts>(url);
         }
 
-        //public async Task<List<Themes>> GetThemes()
-        //{
-        //    Uri url = new Uri($"api/Themes/GetThemes", UriKind.Relative);
-        //    return await ReadMessageList<Themes>(url);
-        //}
+        public async Task<List<Themes>> GetThemes()
+        {
+            Uri url = new Uri($"api/Themes/GetThemes", UriKind.Relative);
+            return await ReadMessageList<Themes>(url);
+        }
 
         private async Task<List<T>> ReadMessageList<T>(Uri url)
         {

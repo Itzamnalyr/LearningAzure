@@ -16,7 +16,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
         public void GetAboutViewTest()
         {
             //Arrange
-            Mock<IServiceAPIClient> mockService = new Mock<IServiceAPIClient>();
+            Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
             Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
             HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
 
@@ -32,7 +32,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
         public void GetPrivacyViewTest()
         {
             //Arrange
-            Mock<IServiceAPIClient> mockService = new Mock<IServiceAPIClient>();
+            Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
             Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
             HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
 
@@ -45,15 +45,15 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
         }
 
         //[TestMethod]
-        //public void GetContactViewTest()
+        //public void GetCDNTestViewTest()
         //{
         //    //Arrange
-        //    Mock<IServiceAPIClient> mockService = new Mock<IServiceAPIClient>();
+        //    Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
         //    Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
         //    HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
 
         //    //Act
-        //    IActionResult result = controller.Contact();
+        //    IActionResult result = controller.CDNTest();
 
         //    //Assert
         //    ViewResult viewResult = result as ViewResult;
@@ -64,7 +64,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
         //public void GetErrorViewTest()
         //{
         //    //Arrange
-        //    Mock<IServiceAPIClient> mockService = new Mock<IServiceAPIClient>();
+        //    Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
         //    Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
         //    System.Diagnostics.Activity activity = new System.Diagnostics.Activity("mockoperation");
         //    HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);

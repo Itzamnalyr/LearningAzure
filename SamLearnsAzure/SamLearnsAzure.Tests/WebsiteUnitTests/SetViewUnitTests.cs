@@ -22,7 +22,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             //Arrange
             string setNum = "abc123";
             string configValue = "xyz321";
-            Mock<IServiceAPIClient> mockService = new Mock<IServiceAPIClient>();
+            Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
             Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
             mockService.Setup(repo => repo.GetSet(It.IsAny<string>())).Returns(Task.FromResult(GetSetTestData()));
             mockService.Setup(repo => repo.GetSetParts(It.IsAny<string>())).Returns(Task.FromResult(GetSetPartsTestData()));

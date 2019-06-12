@@ -10,6 +10,7 @@ body {
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    padding-top: 1.25em
 }
 
 /* Carousel */
@@ -49,10 +50,6 @@ body {
     text-decoration: none;
     font-size: 16pt;
     font-weight: bold;
-}
-
-.body-content {
-    padding-top: 1.25em
 }
 
 .samsAppPart {

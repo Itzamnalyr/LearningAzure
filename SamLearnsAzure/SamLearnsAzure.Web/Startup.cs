@@ -37,11 +37,11 @@ namespace SamLearnsAzure.Web
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             //Set a retry for the service API for 3 times
-            services.AddHttpClient<ServiceAPIClient>()
+            services.AddHttpClient<ServiceApiClient>()
               .AddTransientHttpErrorPolicy(policyBuilder => policyBuilder.RetryAsync(3));
 
             //Add DI for the service api client 
-            services.AddScoped<IServiceAPIClient, ServiceAPIClient>();
+            services.AddScoped<IServiceApiClient, ServiceApiClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
