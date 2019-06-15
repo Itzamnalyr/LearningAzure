@@ -87,7 +87,7 @@ do
 	catch 
 	{
 		$Counter = $Counter + 1
-		if ($Counter < 100)
+		if ($Counter -lt 100)
 		{
 			$DatabaseRestoreSuccessful = "false"
 			Write-Host "Import went awry. Waiting 10 seconds and then trying again!" (Get-Date).ToString("HH:mm:ss.ff")
