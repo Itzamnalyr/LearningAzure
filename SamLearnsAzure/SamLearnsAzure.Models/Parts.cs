@@ -13,6 +13,7 @@ namespace SamLearnsAzure.Models
         public string PartNum { get; set; }
         public string Name { get; set; }
         public int? PartCatId { get; set; }
+        public int? PartMaterialId { get; set; }
 
         public ICollection<InventoryParts> InventoryParts { get; set; }
     }
