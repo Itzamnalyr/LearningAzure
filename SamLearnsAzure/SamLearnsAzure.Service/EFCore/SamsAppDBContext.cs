@@ -249,6 +249,7 @@ namespace SamLearnsAzure.Service.EFCore
                     .IsUnicode(false);
 
                 entity.Property(e => e.PartCatId).HasColumnName("part_cat_id");
+                entity.Property(e => e.PartMaterialId).HasColumnName("part_material_id");
             });
 
             modelBuilder.Entity<Sets>(entity =>

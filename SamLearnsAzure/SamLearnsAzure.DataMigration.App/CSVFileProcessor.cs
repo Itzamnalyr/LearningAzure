@@ -70,12 +70,19 @@ namespace SamLearnsAzure.DataMigration.App
                 reader.Close();
             }
 
-            //Write the completed file back to the CSV file to overwrite the file we read earlier
-            using (StreamWriter writer = new StreamWriter(path + @"\" + fileName))
+            if (newCSVFile.Length == 0)
             {
-                Console.WriteLine("Writing clean CSV file '" + fileName + "'");
-                writer.Write(newCSVFile);
-                writer.Close();
+                throw new Exception("CSV file '" + fileName + "' was empty");
+            }
+            else
+            {
+                //Write the completed file back to the CSV file to overwrite the file we read earlier
+                using (StreamWriter writer = new StreamWriter(path + @"\" + fileName))
+                {
+                    Console.WriteLine("Writing clean CSV file '" + fileName + "'");
+                    writer.Write(newCSVFile);
+                    writer.Close();
+                }
             }
         }
 

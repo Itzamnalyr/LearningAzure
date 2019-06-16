@@ -24,7 +24,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             mock.Setup(repo => repo.GetParts(It.IsAny<IRedisService>(), It.IsAny<bool>())).Returns(Task.FromResult(GetPartsTestData()));
             PartsController controller = new PartsController(mock.Object, mockRedis.Object);
-            
+
             //Act
             IEnumerable<Parts> parts = await controller.GetParts();
 
@@ -39,7 +39,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             Assert.IsTrue(Part.PartNum == "abc");
             Assert.IsTrue(Part.Name == "def");
             Assert.IsTrue(Part.PartCatId == 1);
-            //Assert.IsTrue(Part.PartCategory != null);
+            Assert.IsTrue(Part.PartMaterialId == 2);
             Assert.IsTrue(Part.InventoryParts != null);
         }
 
@@ -58,9 +58,10 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             {
                 PartNum = "abc",
                 Name = "def",
-                PartCatId = 1//,
+                PartCatId = 1,
+                PartMaterialId = 2
                 //PartCategory = new PartCategories()
-    };
+            };
         }
 
     }

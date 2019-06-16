@@ -29,10 +29,9 @@ namespace SamLearnsAzure.DataMigration.App
                 string zippedPartsContainerName = "zippedparts";
                 string partsContainerName = "partimages";
 
-                bool uploadCSVFiles = true;
-                bool uploadNewPartZips = true;
-                bool unzipPartsInBlob = false;
-                bool unzipPartsWithHTTPFunction = false;
+                bool uploadCSVFiles = true; //This should normally be on
+                bool uploadNewPartZips = true; //This should normally be on
+                bool unzipPartsWithHTTPFunction = false; //This should normally be off, it's for debugging
 
 
                 //Confirm that the temp folder can be accessed and is clear
@@ -69,21 +68,9 @@ namespace SamLearnsAzure.DataMigration.App
                         //Download all files from URL to temp folder
                         await LocalFileManagement.DownloadFilesToTempFolder(partFilesToDownloadURL, tempFolderLocationParts, colorFiles);
 
-                        //Unzip all color zips into a new folder
-                        //LocalFileManagement.UnZipFiles(tempFolderLocationParts, tempFolderLocationPartsUnZipped, colorFiles);
-                        //Get the unzipped files
-                        //List<string> unzippedColorFiles = LocalFileManagement.GetUnZippedFiles(tempFolderLocationPartsUnZipped);
-                        //Upload unzipped files to Azure Blob
-                        //await AzureBlobManagement.UploadFilesToStorageAccountBlobs(storageConnectionString, "partimages", tempFolderLocationPartsUnZipped, unzippedColorFiles, true);
-
-                        //Upload zipped files to Azure Blob
+                                     //Upload zipped files to Azure Blob
                         await AzureBlobManagement.UploadFilesToStorageAccountBlobs(storageConnectionString, zippedPartsContainerName, tempFolderLocationParts, colorFiles, false, partsContainerName);
 
-                    }
-
-                    if (unzipPartsInBlob == true)
-                    {
-                        await AzureBlobManagement.UnZipFilesInStorageBlobs(storageConnectionString, zippedPartsContainerName, partsContainerName);
                     }
 
                     if (unzipPartsWithHTTPFunction == true)
@@ -187,7 +174,7 @@ namespace SamLearnsAzure.DataMigration.App
             //parts.csv
             CSVFile csvPartsFile = new CSVFile
             {
-                NumberOfColumns = 3,
+                NumberOfColumns = 4,
                 FileName = "parts.csv",
             };
             csvPartsFile.StringColumns.Add(1);
