@@ -144,14 +144,16 @@
     //    "description": "Object Id of the service principal that is used to run integration tests. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
     //  }
     //},
+    //The type of Redis cache to deploy. Valid values: (Basic, Standard, Premium). - Basic, Standard, Premium
     "redisCacheSKUName": {
       "type": "string",
       "allowedValues": [
         "Basic",
         "Standard"
       ],
-      "defaultValue": "Standard"
+      "defaultValue": "Basic"
     },
+    //The SKU family to use. Valid values: (C, P). (C = Basic/Standard, P = Premium)
     "redisCacheSKUFamily": {
       "type": "string",
       "allowedValues": [
@@ -159,6 +161,7 @@
       ],
       "defaultValue": "C"
     },
+    //The size of the Redis cache to deploy. Valid values: for C (Basic/Standard) family (0, 1, 2, 3, 4, 5, 6), for P (Premium) family (1, 2, 3, 4).
     "redisCacheSKUCapacity": {
       "type": "int",
       "allowedValues": [

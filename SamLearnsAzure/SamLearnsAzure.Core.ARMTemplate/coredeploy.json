@@ -730,6 +730,10 @@
               {
                 "name": "part_cat_id",
                 "type": "String"
+              },
+              {
+                "name": "part_material_id",
+                "type": "String"
               }
             ],
             "typeProperties": {
@@ -1111,6 +1115,10 @@
               },
               {
                 "name": "part_cat_id",
+                "type": "Int32"
+              },
+              {
+                "name": "part_material_id",
                 "type": "Int32"
               }
             ],
@@ -1536,7 +1544,8 @@
                     "columnMappings": {
                       "part_num": "part_num",
                       "name": "name",
-                      "part_cat_id": "part_cat_id"
+                      "part_cat_id": "part_cat_id",
+                      "part_material_id": "part_material_id"
                     }
                   }
                 },
