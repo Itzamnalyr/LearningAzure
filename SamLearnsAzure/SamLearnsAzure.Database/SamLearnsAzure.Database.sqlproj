@@ -76,11 +76,15 @@
     <Build Include="dbo\Tables\themes.sql" />
     <Build Include="dbo\Stored Procedures\ClearDataFromTables.sql" />
     <Build Include="dbo\Stored Procedures\GetSetParts.sql" />
+    <Build Include="dbo\Tables\set_images.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="StaticCodeAnalysis.SuppressMessages.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="SamLearnsAzure.Database.refactorlog" />
   </ItemGroup>
 </Project>

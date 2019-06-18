@@ -68,7 +68,7 @@ namespace SamLearnsAzure.DataMigration.App
                         //Download all files from URL to temp folder
                         await LocalFileManagement.DownloadFilesToTempFolder(partFilesToDownloadURL, tempFolderLocationParts, colorFiles);
 
-                                     //Upload zipped files to Azure Blob
+                        //Upload zipped files to Azure Blob
                         await AzureBlobManagement.UploadFilesToStorageAccountBlobs(storageConnectionString, zippedPartsContainerName, tempFolderLocationParts, colorFiles, false, partsContainerName);
 
                     }

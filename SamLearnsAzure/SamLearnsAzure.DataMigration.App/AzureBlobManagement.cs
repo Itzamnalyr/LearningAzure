@@ -37,10 +37,10 @@ namespace SamLearnsAzure.DataMigration.App
                         await cloudBlobContainer.CreateAsync();
                         Console.WriteLine("Created container '{0}'", cloudBlobContainer.Name);
                     }
-                    // Set the permissions so the blobs are offs. 
+                    // Set the permissions so the blobs are read only. 
                     BlobContainerPermissions permissions = new BlobContainerPermissions
                     {
-                        PublicAccess = BlobContainerPublicAccessType.Off
+                        PublicAccess = BlobContainerPublicAccessType.Blob
                     };
                     await cloudBlobContainer.SetPermissionsAsync(permissions);
 
@@ -52,10 +52,10 @@ namespace SamLearnsAzure.DataMigration.App
                         await partsContainer.CreateAsync();
                         Console.WriteLine("Created container '{0}'", partsContainer.Name);
                     }
-                    // Set the permissions so the blobs are offs. 
+                    // Set the permissions so the blobs are read only. 
                     BlobContainerPermissions permissions2 = new BlobContainerPermissions
                     {
-                        PublicAccess = BlobContainerPublicAccessType.Off
+                        PublicAccess = BlobContainerPublicAccessType.Blob
                     };
                     await partsContainer.SetPermissionsAsync(permissions2);
 
