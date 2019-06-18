@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SamLearnsAzure.Web.Models
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class CdnTestViewModel
     {
         public string BaseSetPartsImagesStorageURL { get; set; }

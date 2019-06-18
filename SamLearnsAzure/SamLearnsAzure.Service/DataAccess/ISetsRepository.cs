@@ -13,5 +13,6 @@ namespace SamLearnsAzure.Service.DataAccess
         Task<IEnumerable<SetParts>> GetSetParts(IRedisService redisService, bool useCache, string setNum);
 
         Task<Sets> GetSet(IRedisService redisService, bool useCache, string setNum);
+
     }
 }

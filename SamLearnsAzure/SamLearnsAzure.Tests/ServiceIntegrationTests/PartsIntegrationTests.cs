@@ -27,10 +27,11 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/parts/getparts");
             response.EnsureSuccessStatusCode();
             IEnumerable<Parts> items = await response.Content.ReadAsAsync<IEnumerable<Parts>>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one
+            Assert.IsTrue(items.Any()); //There is more than one
             Assert.IsTrue(items.FirstOrDefault().PartNum != ""); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
         }

@@ -17,15 +17,6 @@ namespace SamLearnsAzure.SetImageSearch.Function
 {
     public static class DownloadSetImageHttpTrigger
     {
-
-        // Replace the this string with your valid access key.
-        private static string cognitiveServicesSubscriptionKey = "cf0aed59678b485eab5e9101ffafdc0b";
-        private static string cognitiveServicesUriBase = "https://eastus.api.cognitive.microsoft.com/bing/v7.0/images/search";
-        private static string setName = "75955-1";
-        private static string storageConnectionString = @"DefaultEndpointsProtocol=https;AccountName=samsappdeveustorage;AccountKey=MQPU8OW4hCtfsKaiGc8NTQo+ciDYK8Q1RZmdgGl79Dlw26TyqYWmGRub9pyFEkQmtxbryZOFLBBfTJx/5ZmFXA==;EndpointSuffix=core.windows.net";
-        private static string tempFolderLocation = Path.GetTempPath() + "setimages";
-        private static string storageContainerName = "setimages";
-
         [FunctionName("DownloadSetImageHttpTrigger")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
@@ -33,14 +24,14 @@ namespace SamLearnsAzure.SetImageSearch.Function
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = req.Query["name"];
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+            string storageConnectionString = Environment.GetEnvironmentVariable("storageConnectionString");
+            string cognitiveServicesSubscriptionKey = Environment.GetEnvironmentVariable("cognitiveServicesSubscriptionKey");
+            string cognitiveServicesUriBase = Environment.GetEnvironmentVariable("cognitiveServicesUriBase");
+            string storageContainerName = Environment.GetEnvironmentVariable("storageContainerName");
+            string setName = req.Query["setName"];
 
             //1. Get image from Bing Image Search API
-            SearchResult result = BingImageSearch(setName);
+            SearchResult result = BingImageSearch(cognitiveServicesSubscriptionKey, cognitiveServicesUriBase, setName);
             dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(result.jsonResult);
 
             dynamic firstJsonObj = jsonObj["value"][0];
@@ -54,25 +45,20 @@ namespace SamLearnsAzure.SetImageSearch.Function
             //2. Save image into blob storage
             string fileName = GetFileNameFromURL(imageUrl);
             fileName = ConvertFileNameToSetNumber(setName, fileName);
-            bool saveResult = await SaveImageIntoBlob(storageConnectionString, storageContainerName, tempFolderLocation, imageUrl, fileName);
+            bool saveResult = await SaveImageIntoBlob(storageConnectionString, storageContainerName, imageUrl, fileName);
             Console.WriteLine("Image saved into blob successfully: " + saveResult + "\n");
 
             //3. Validate save was successful
-            bool imageExistsInBlob = CheckIfImageExistsInBlob(fileName);
+            bool imageExistsInBlob =  CheckIfImageExistsInBlob(storageConnectionString, storageContainerName, fileName);
             if (imageExistsInBlob == true)
             {
-                Console.WriteLine("Image successful saved into blob: " + setName + "\n");
+                return (ActionResult)new OkObjectResult("Image successful saved into blob: " + setName);
             }
             else
             {
-                Console.WriteLine("Poop. This didn't work: " + setName + "\n");
+                return new BadRequestObjectResult("This didn't work: " + setName);
             }
-
-            return name != null
-                ? (ActionResult)new OkObjectResult($"Hello, {name}")
-                : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
         }
-
 
         static string ConvertFileNameToSetNumber(string setNum, string fileName)
         {
@@ -81,7 +67,7 @@ namespace SamLearnsAzure.SetImageSearch.Function
 
         }
 
-        static bool CheckIfImageExistsInBlob(string searchTerm)
+        static bool CheckIfImageExistsInBlob(string storageConnectionString, string storageContainerName, string searchTerm)
         {
             if (CloudStorageAccount.TryParse(storageConnectionString, out CloudStorageAccount storageAccount))
             {
@@ -102,7 +88,7 @@ namespace SamLearnsAzure.SetImageSearch.Function
 
         //Load up to the storage account, adapted from the Azure quick start for blob storage: 
         //https://github.com/Azure-Samples/storage-blobs-dotnet-quickstart/blob/master/storage-blobs-dotnet-quickstart/Program.cs
-        static async Task<bool> SaveImageIntoBlob(string storageConnectionString, string containerName, string tempFolderLocation, string imageUrl, string fileName)
+        static async Task<bool> SaveImageIntoBlob(string storageConnectionString, string containerName, string imageUrl, string fileName)
         {
             //Download the image
             byte[] fileBytes = await DownloadFile(imageUrl);
@@ -174,7 +160,7 @@ namespace SamLearnsAzure.SetImageSearch.Function
 
             Console.WriteLine("Downloading file '" + imageUrl + "'");
             //Need to look and remove the items like a queue, but then skip to the next one and come back if there is a problem.
-            //TODO: Fix this retry loop
+            //retry the download 5 times 
             for (int retries = 0; retries < 5; retries++)
             {
                 try
@@ -200,7 +186,7 @@ namespace SamLearnsAzure.SetImageSearch.Function
 
         private static async Task<byte[]> DownloadFile(string url)
         {
-            //TODO: Fix this retry loop
+            //retry the download 5 times 
             for (int retries = 0; retries < 5; retries++)
             {
                 try
@@ -227,7 +213,7 @@ namespace SamLearnsAzure.SetImageSearch.Function
         }
 
 
-        static SearchResult BingImageSearch(string searchTerm)
+        static SearchResult BingImageSearch(string cognitiveServicesSubscriptionKey, string cognitiveServicesUriBase, string searchTerm)
         {
 
             string uriQuery = cognitiveServicesUriBase + "?q=" + Uri.EscapeDataString(searchTerm) + "&safeSearch=strict";

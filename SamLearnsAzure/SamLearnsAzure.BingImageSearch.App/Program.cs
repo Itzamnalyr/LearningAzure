@@ -7,23 +7,27 @@ using Microsoft.Azure.Storage.Blob;
 using System.Threading.Tasks;
 using Microsoft.Azure.Storage;
 using System.Net.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace SamLearnsAzure.BingImageSearch.App
 {
     class Program
     {
-        // Replace the this string with your valid access key.
-        private static string cognitiveServicesSubscriptionKey = "cf0aed59678b485eab5e9101ffafdc0b";
-        private static string cognitiveServicesUriBase = "https://eastus.api.cognitive.microsoft.com/bing/v7.0/images/search";
         private static string setName = "75955-1";
-        private static string storageConnectionString = @"DefaultEndpointsProtocol=https;AccountName=samsappdeveustorage;AccountKey=MQPU8OW4hCtfsKaiGc8NTQo+ciDYK8Q1RZmdgGl79Dlw26TyqYWmGRub9pyFEkQmtxbryZOFLBBfTJx/5ZmFXA==;EndpointSuffix=core.windows.net";
-        private static string tempFolderLocation = Path.GetTempPath() + "setimages";
-        private static string storageContainerName = "setimages";
 
         static async Task Main(string[] args)
         {
+            //Get configuration values from the appsettings.json file
+            IConfiguration config = new ConfigurationBuilder()
+                  .AddJsonFile("appsettings.json", true, true)
+                  .Build();
+            string storageConnectionString = config["storageConnectionString"];
+            string cognitiveServicesSubscriptionKey = config["cognitiveServicesSubscriptionKey"];
+            string cognitiveServicesUriBase = config["cognitiveServicesUriBase"];
+            string storageContainerName = config["storageContainerName"];
+
             //1. Get image from Bing Image Search API
-            SearchResult result = BingImageSearch(setName);
+            SearchResult result = BingImageSearch(cognitiveServicesSubscriptionKey, cognitiveServicesUriBase, setName);
             dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(result.jsonResult);
 
             dynamic firstJsonObj = jsonObj["value"][0];
@@ -37,11 +41,11 @@ namespace SamLearnsAzure.BingImageSearch.App
             //2. Save image into blob storage
             string fileName = GetFileNameFromURL(imageUrl);
             fileName = ConvertFileNameToSetNumber(setName, fileName);
-            bool saveResult = await SaveImageIntoBlob(storageConnectionString, storageContainerName, tempFolderLocation, imageUrl, fileName);
+            bool saveResult = await SaveImageIntoBlob(storageConnectionString, storageContainerName, imageUrl, fileName);
             Console.WriteLine("Image saved into blob successfully: " + saveResult + "\n");
 
             //3. Validate save was successful
-            bool imageExistsInBlob = CheckIfImageExistsInBlob(fileName);
+            bool imageExistsInBlob = CheckIfImageExistsInBlob(storageConnectionString, storageContainerName, fileName);
             if (imageExistsInBlob == true)
             {
                 Console.WriteLine("Image successful saved into blob: " + setName + "\n");
@@ -60,7 +64,7 @@ namespace SamLearnsAzure.BingImageSearch.App
 
         }
 
-        static bool CheckIfImageExistsInBlob(string searchTerm)
+        static bool CheckIfImageExistsInBlob(string storageConnectionString, string storageContainerName, string searchTerm)
         {
             if (CloudStorageAccount.TryParse(storageConnectionString, out CloudStorageAccount storageAccount))
             {
@@ -81,7 +85,7 @@ namespace SamLearnsAzure.BingImageSearch.App
 
         //Load up to the storage account, adapted from the Azure quick start for blob storage: 
         //https://github.com/Azure-Samples/storage-blobs-dotnet-quickstart/blob/master/storage-blobs-dotnet-quickstart/Program.cs
-        static async Task<bool> SaveImageIntoBlob(string storageConnectionString, string containerName, string tempFolderLocation, string imageUrl, string fileName)
+        static async Task<bool> SaveImageIntoBlob(string storageConnectionString, string containerName, string imageUrl, string fileName)
         {
             //Download the image
             byte[] fileBytes = await DownloadFile(imageUrl);
@@ -148,38 +152,9 @@ namespace SamLearnsAzure.BingImageSearch.App
             return fileName;
         }
 
-        public async static Task<bool> DownloadFileToTempFolder(string fileName, string imageUrl, string tempFolderLocation)
-        {
-
-            Console.WriteLine("Downloading file '" + imageUrl + "'");
-            //Need to look and remove the items like a queue, but then skip to the next one and come back if there is a problem.
-            //TODO: Fix this retry loop
-            for (int retries = 0; retries < 5; retries++)
-            {
-                try
-                {
-                    byte[] fileBytes = await DownloadFile(imageUrl);
-                    string downloadedFile = tempFolderLocation + @"\" + fileName;
-                    File.WriteAllBytes(downloadedFile, fileBytes);
-                    FileInfo fileInfo = new FileInfo(downloadedFile);
-                    break;
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Failed downloading file - let's try again... (" + (retries + 1).ToString() + "/5");
-                    if (retries == 4)
-                    {
-                        Console.WriteLine("Failed downloading file '" + imageUrl + "!!'");
-                    }
-                }
-            }
-
-            return true;
-        }
-
         private static async Task<byte[]> DownloadFile(string url)
         {
-            //TODO: Fix this retry loop
+            //retry the download 5 times 
             for (int retries = 0; retries < 5; retries++)
             {
                 try
@@ -206,7 +181,7 @@ namespace SamLearnsAzure.BingImageSearch.App
         }
 
 
-        static SearchResult BingImageSearch(string searchTerm)
+        static SearchResult BingImageSearch(string cognitiveServicesSubscriptionKey, string cognitiveServicesUriBase, string searchTerm)
         {
 
             string uriQuery = cognitiveServicesUriBase + "?q=" + Uri.EscapeDataString(searchTerm) + "&safeSearch=strict";

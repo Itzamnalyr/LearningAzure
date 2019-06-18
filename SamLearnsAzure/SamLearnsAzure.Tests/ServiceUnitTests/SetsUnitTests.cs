@@ -53,17 +53,17 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             TestSets(set);
         }
 
-        private void TestSets(Sets Set)
+        private void TestSets(Sets set)
         {
-            Assert.IsTrue(Set.SetNum == "abc");
-            Assert.IsTrue(Set.Name == "def");
-            Assert.IsTrue(Set.NumParts == 1);
-            Assert.IsTrue(Set.ThemeId == 2);
-            Assert.IsTrue(Set.Year == 3);
-            Assert.IsTrue(Set.Theme != null);
-            Assert.IsTrue(Set.Inventories != null);
-            Assert.IsTrue(Set.InventorySets != null);
-            Assert.IsTrue(Set.OwnerSets != null);
+            Assert.IsTrue(set.SetNum == "abc");
+            Assert.IsTrue(set.Name == "def");
+            Assert.IsTrue(set.NumParts == 1);
+            Assert.IsTrue(set.ThemeId == 2);
+            Assert.IsTrue(set.Year == 3);
+            Assert.IsTrue(set.Theme != null);
+            Assert.IsTrue(set.Inventories != null);
+            Assert.IsTrue(set.InventorySets != null);
+            Assert.IsTrue(set.OwnerSets != null);
         }
 
         private IEnumerable<Sets> GetSetsTestData()

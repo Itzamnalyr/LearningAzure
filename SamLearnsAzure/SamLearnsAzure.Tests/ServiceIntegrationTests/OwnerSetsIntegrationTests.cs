@@ -29,10 +29,11 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/getownersets?ownerid=" + ownerId + "&useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<OwnerSets> items = await response.Content.ReadAsAsync<IEnumerable<OwnerSets>>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one owner
+            Assert.IsTrue(items.Any()); //There is more than one owner
             OwnerSets item = items.FirstOrDefault();
             Assert.IsTrue(item.OwnerSetId > 0); //The first item has an id
             //Assert.IsTrue(item.Owner != null); //Ensure owner has been collected correctly
@@ -51,10 +52,11 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/getownersets?ownerid=" + ownerId + "&useCache=false");
             response.EnsureSuccessStatusCode();
             IEnumerable<OwnerSets> items = await response.Content.ReadAsAsync<IEnumerable<OwnerSets>>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one owner
+            Assert.IsTrue(items.Any()); //There is more than one owner
             OwnerSets item = items.FirstOrDefault();
             Assert.IsTrue(item.OwnerSetId > 0); //The first item has an id
             //Assert.IsTrue(item.Owner != null); //Ensure owner has been collected correctly

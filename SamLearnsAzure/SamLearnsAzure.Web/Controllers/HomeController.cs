@@ -48,6 +48,7 @@ namespace SamLearnsAzure.Web.Controllers
             return View(setViewModel);
         }
 
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public IActionResult CDNTest()
         {
             CdnTestViewModel cdnTestViewModel = new CdnTestViewModel

@@ -30,10 +30,11 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsetparts?setnum=" + setNum+ "&useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<SetParts> items = await response.Content.ReadAsAsync<IEnumerable<SetParts>>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one
+            Assert.IsTrue(items.Any()); //There is more than one
             Assert.IsTrue(items.FirstOrDefault().PartNum != ""); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().PartName.Length > 0); //The first item has an name
         }
@@ -48,10 +49,11 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsetparts?setnum=" + setNum+ "&useCache=false");
             response.EnsureSuccessStatusCode();
             IEnumerable<SetParts> items = await response.Content.ReadAsAsync<IEnumerable<SetParts>>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one
+            Assert.IsTrue(items.Any()); //There is more than one
             Assert.IsTrue(items.FirstOrDefault().PartNum != ""); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().PartName.Length > 0); //The first item has an name
         }

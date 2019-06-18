@@ -22,10 +22,11 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners?useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<Owners> items = await response.Content.ReadAsAsync<IEnumerable<Owners>>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one owner
+            Assert.IsTrue(items.Any()); //There is more than one owner
             Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first owner has an id
             Assert.IsTrue(items.FirstOrDefault().OwnerName.Length > 0); //The first owner has an name
         }
@@ -39,10 +40,11 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners?useCache=false");
             response.EnsureSuccessStatusCode();
             IEnumerable<Owners> items = await response.Content.ReadAsAsync<IEnumerable<Owners>>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() > 0); //There is more than one owner
+            Assert.IsTrue(items.Any()); //There is more than one owner
             Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first owner has an id
             Assert.IsTrue(items.FirstOrDefault().OwnerName.Length > 0); //The first owner has an name
         }
@@ -57,6 +59,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=true");
             response.EnsureSuccessStatusCode();
             Owners item = await response.Content.ReadAsAsync<Owners>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(item != null);
@@ -74,6 +77,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=false");
             response.EnsureSuccessStatusCode();
             Owners item = await response.Content.ReadAsAsync<Owners>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(item != null);

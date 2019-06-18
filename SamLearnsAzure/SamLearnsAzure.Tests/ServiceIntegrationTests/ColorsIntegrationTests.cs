@@ -22,6 +22,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/colors/getcolors?useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<Colors> items = await response.Content.ReadAsAsync<IEnumerable<Colors>>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(items != null);
@@ -39,6 +40,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/colors/getcolors?useCache=false");
             response.EnsureSuccessStatusCode();
             IEnumerable<Colors> items = await response.Content.ReadAsAsync<IEnumerable<Colors>>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(items != null);

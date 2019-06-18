@@ -20,6 +20,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             HttpResponseMessage response = await base.Client.GetAsync("/api/values");
             response.EnsureSuccessStatusCode();
             IEnumerable<string> items = await response.Content.ReadAsAsync<IEnumerable<string>>();
+            response.Dispose();
 
             //Assert
             Assert.IsTrue(items != null);

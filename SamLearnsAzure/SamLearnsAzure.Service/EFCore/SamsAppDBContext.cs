@@ -26,6 +26,7 @@ namespace SamLearnsAzure.Service.EFCore
         public virtual DbSet<PartRelationships> PartRelationships { get; set; }
         public virtual DbSet<Parts> Parts { get; set; }
         public virtual DbSet<Sets> Sets { get; set; }
+        public virtual DbSet<SetImages> SetImages { get; set; }
         public virtual DbSet<Themes> Themes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -274,6 +275,28 @@ namespace SamLearnsAzure.Service.EFCore
                 entity.Property(e => e.ThemeId).HasColumnName("theme_id");
 
                 entity.Property(e => e.Year).HasColumnName("year");
+
+            });
+
+            modelBuilder.Entity<SetImages>(entity =>
+            {
+                entity.HasKey(e => e.SetImageId);
+
+                entity.ToTable("set_images");
+
+                entity.Property(e => e.SetImageId)
+                    .HasColumnName("set_image_id")
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.SetImage).HasColumnName("set_image");
+
+                entity.Property(e => e.SetNum)
+                    .IsRequired()
+                    .HasColumnName("set_num")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
             });
 

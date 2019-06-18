@@ -24,6 +24,7 @@ parameters: # defaults for any parameters that aren't specified
   serviceStagingUrl: 'https://samsapp-dev-eu-service-staging.azurewebsites.net/'
   serviceUrl: 'https://samsapp-dev-eu-service.azurewebsites.net/'
   stagingSlotName: 'Staging'
+  storageAccountName: 'samsappdeveustorage'
   userPrincipalLogin: '***secret'
   vmImage: 'vs2017-win2016'
   websiteName: 'samsapp-dev-eu-web'

@@ -8,6 +8,5 @@ namespace SamLearnsAzure.Models
         public int SetImageId { get; set; }
         public string SetNum { get; set; }
         public string SetImage { get; set; }
-        public Sets Set { get; set; }
     }
 }

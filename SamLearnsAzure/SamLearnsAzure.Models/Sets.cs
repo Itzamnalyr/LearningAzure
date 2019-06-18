@@ -22,5 +22,6 @@ namespace SamLearnsAzure.Models
         public ICollection<Inventories> Inventories { get; set; }
         public ICollection<InventorySets> InventorySets { get; set; }
         public ICollection<OwnerSets> OwnerSets { get; set; }
+        
     }
 }

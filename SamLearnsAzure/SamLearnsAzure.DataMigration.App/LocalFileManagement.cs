@@ -38,7 +38,7 @@ namespace SamLearnsAzure.DataMigration.App
                 string fileToDownload = downloadURL + file;
                 Console.WriteLine("Downloading file '" + fileToDownload + "'");
                 //Need to look and remove the items like a queue, but then skip to the next one and come back if there is a problem.
-                //TODO: Fix this retry loop
+                //retry the download 5 times 
                 for (int retries = 0; retries < 5; retries++)
                 {
                     try
@@ -95,7 +95,7 @@ namespace SamLearnsAzure.DataMigration.App
         //Download the file
         private static async Task<byte[]> DownloadFile(string url)
         {
-            //TODO: Fix this retry loop
+            //retry the download 5 times 
             for (int retries = 0; retries < 5; retries++)
             {
                 try
