@@ -40,7 +40,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         }
 
         [TestMethod]
-        public async Task GetSetImageWithoutCacheTest()
+        public async Task GetSetImageWithoutCacheWith1ResultTest()
         {
             //Arrange
             string setNum = "75218-1";
@@ -58,7 +58,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         }
 
         [TestMethod]
-        public async Task GetSetImageWithoutCacheAndForceBingSearchTest()
+        public async Task GetSetImageWithoutCacheAndForceBingSearchWith1ResultTest()
         {
             //Arrange
             string setNum = "75218-1";
@@ -75,16 +75,35 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             Assert.IsTrue(setImage.SetImage != null); //We are including this in the repo, so want to test it specifically
         }
 
+        [TestMethod]
+        public async Task GetSetImageWithoutCacheAndForceBingSearchWith10ResultsTest()
+        {
+            //Arrange
+            string setNum = "30277-1";
+
+            //Act
+            HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimages?setnum=" + setNum + "&useCache=false&forceBingSearch=true&resultsToReturn=10");
+            response.EnsureSuccessStatusCode();
+            List<SetImages> setImages = await response.Content.ReadAsAsync<List<SetImages>>();
+            response.Dispose();
+
+            //Assert
+            Assert.IsTrue(setImages != null);
+            Assert.IsTrue(setImages.Count == 10);
+            Assert.IsTrue(setImages[0].SetNum == setNum);
+            Assert.IsTrue(setImages[0].SetImage != null); //We are including this in the repo, so want to test it specifically
+        }
+
 
         [TestMethod]
         public async Task SaveSetImageTest()
         {
             //Arrange
             string setNum = "75218-2";
-            string fileName = "testfilename.test";
+            string imageUrl = "https://samlearnsazure.files.wordpress.com/2019/01/microsoft-certified-azure-solutions-architect-expert.png";
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/savesetimage?setnum=" + setNum+ "&fileName="+ fileName);
+            HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/savesetimage?setnum=" + setNum+ "&imageUrl=" + imageUrl);
             response.EnsureSuccessStatusCode();
             SetImages setImage = await response.Content.ReadAsAsync<SetImages>();
             response.Dispose();
@@ -92,7 +111,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             //Assert
             Assert.IsTrue(setImage != null);
             Assert.IsTrue(setImage.SetNum == setNum);
-            Assert.IsTrue(setImage.SetImage != null); //We are including this in the repo, so want to test it specifically
+            Assert.IsTrue(setImage.SetImage == "75218-2.png"); //We are including this in the repo, so want to test it specifically
         }
     }
 }

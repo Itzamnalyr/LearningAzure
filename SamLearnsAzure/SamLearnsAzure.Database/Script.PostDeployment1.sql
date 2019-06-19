@@ -23,12 +23,16 @@ BEGIN
 	UNION
 	SELECT '41608-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted
 	UNION
-	SELECT '75955-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted
+	SELECT '75955-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --Hogwarts Express
 	UNION
-	SELECT '75218-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted
+	SELECT '75218-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --X-Wing Starfighter
 	UNION
-	SELECT '30277-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted
+	SELECT '30277-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --First Order Star Destroyer (50 pieces)
 	UNION
-	SELECT '30056-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted
+	SELECT '30056-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --Star Destroyer (50 pieces)
+	UNION
+	SELECT '75055-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --Imperial Star Destroyer (1400 pieces)
+	UNION
+	SELECT '75190-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --First Order Star Destroyer (1500 pieces)
 END
 GO

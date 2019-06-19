@@ -31,25 +31,51 @@ namespace SamLearnsAzure.Service.Controllers
             _configuration = configuration;
         }
 
+        [HttpGet("GetSetImages")]
+        public async Task<List<SetImages>> GetSetImages(string setNum, bool useCache = true, bool forceBingSearch = false, int resultsToReturn = 1)
+        {
+            List<SetImages> setImages = new List<SetImages>();
+
+            //1. We don't need the image from the repo/redis
+
+            //2. Get image from Bing Image Search API
+            string cognitiveServicesSubscriptionKey = _configuration["CognitiveServicesSubscriptionKey"];
+            string cognitiveServicesUriBase = _configuration["AppSettings:CognitiveServicesUriBase"];
+            SearchResult result = await BingImageSearch(cognitiveServicesSubscriptionKey, cognitiveServicesUriBase, setNum, resultsToReturn);
+            dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(result.jsonResult);
+
+            for (int i = 0; i < resultsToReturn; i++)
+            {
+                dynamic firstJsonObj = jsonObj["value"][i];
+                string title = firstJsonObj["name"];
+                string webUrl = firstJsonObj["webSearchUrl"];
+                string imageUrl = (string)jsonObj.SelectToken("value[" + i + "].contentUrl");
+                Console.WriteLine("Title for the " + i + " image result: " + title + "\n");
+                Console.WriteLine("Web Url for the " + i + " image result: " + webUrl + "\n");
+                Console.WriteLine("Image Url for the " + i + " image result: " + imageUrl + "\n");
+                SetImages newSetImage = new SetImages
+                {
+                    SetNum = setNum,
+                    SetImage = imageUrl
+                };
+                setImages.Add(newSetImage);
+            }
+
+            return setImages;
+        }
+
         [HttpGet("GetSetImage")]
-        public async Task<SetImages> GetSetImage(string setNum, bool useCache = true, bool forceBingSearch = false)
+        public async Task<SetImages> GetSetImage(string setNum, bool useCache = true, bool forceBingSearch = false, int resultsToReturn = 1)
         {
             //1. Service looks in database to see if image exists?
             SetImages setImage = await _repo.GetSetImage(_redisService, useCache, setNum);
 
             if (setImage == null || forceBingSearch == true)
             {
-                //2a. If image doesn't exist, call function to retrieve image with Bing search
-                string storageConnectionString = _configuration["AppSettings:StorageConnectionString"];
-                storageConnectionString = storageConnectionString.Replace("[ACCOUNTNAME]", _configuration["AppSettings:StorageAccountName"]);
-                storageConnectionString = storageConnectionString.Replace("[ACCOUNTKEY]", _configuration["StorageAccountKey" + _configuration["AppSettings:Environment"]]);
-
+                //2. Get image from Bing Image Search API
                 string cognitiveServicesSubscriptionKey = _configuration["CognitiveServicesSubscriptionKey"];
                 string cognitiveServicesUriBase = _configuration["AppSettings:CognitiveServicesUriBase"];
-                string storageContainerName = _configuration["AppSettings:StorageContainerName"];
-
-                //1. Get image from Bing Image Search API
-                SearchResult result = BingImageSearch(cognitiveServicesSubscriptionKey, cognitiveServicesUriBase, setNum);
+                SearchResult result = await BingImageSearch(cognitiveServicesSubscriptionKey, cognitiveServicesUriBase, setNum, resultsToReturn);
                 dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(result.jsonResult);
 
                 dynamic firstJsonObj = jsonObj["value"][0];
@@ -61,13 +87,8 @@ namespace SamLearnsAzure.Service.Controllers
                 Console.WriteLine("Image Url for the first image result: " + imageUrl + "\n");
 
                 //2. Save image into blob storage
-                string fileName = GetFileNameFromURL(imageUrl);
-                fileName = ConvertFileNameToSetNumber(setNum, fileName);
-                bool saveResult = await SaveImageIntoBlob(storageConnectionString, storageContainerName, imageUrl, fileName);
-                Console.WriteLine("Image saved into blob successfully: " + saveResult + "\n");
+                setImage = await SaveSetImage(setImage, setNum, imageUrl);
 
-                //2b. Update database with new image, but don't force it if there is a setimage already
-                setImage = await SaveSetImage(setImage, setNum, fileName);
             }
 
             //3. Service returns Image
@@ -75,13 +96,28 @@ namespace SamLearnsAzure.Service.Controllers
         }
 
         [HttpGet("SaveSetImage")]
-        public async Task<SetImages> SaveSetImage(string setNum, string fileName)
+        public async Task<SetImages> SaveSetImage(string setNum, string imageUrl)
         {
-            return await SaveSetImage(null, setNum, fileName);
+            //Update database with new image, but don't force it if there is a setimage already
+            return await SaveSetImage(null, setNum, imageUrl);
         }
 
-        private async Task<SetImages> SaveSetImage(SetImages setImage, string setNum, string fileName)
+        private async Task<SetImages> SaveSetImage(SetImages setImage, string setNum, string imageUrl)
         {
+            //Get the storage blob connection information
+            string storageContainerName = _configuration["AppSettings:StorageContainerName"];
+            string storageConnectionString = _configuration["AppSettings:StorageConnectionString"];
+            storageConnectionString = storageConnectionString.Replace("[ACCOUNTNAME]", _configuration["AppSettings:StorageAccountName"]);
+            storageConnectionString = storageConnectionString.Replace("[ACCOUNTKEY]", _configuration["StorageAccountKey" + _configuration["AppSettings:Environment"]]);
+
+            //extract the filename from the image url
+            string fileName = GetFileNameFromURL(imageUrl);
+            fileName = ConvertFileNameToSetNumber(setNum, fileName);
+
+            //Save the image to the storage blob
+            bool saveResult = await SaveImageIntoBlob(storageConnectionString, storageContainerName, imageUrl, fileName);
+            Console.WriteLine("Image saved into blob successfully: " + saveResult + "\n");
+
             if (setImage == null)
             {
                 setImage = new SetImages
@@ -181,17 +217,16 @@ namespace SamLearnsAzure.Service.Controllers
             return file;
         }
 
-
-        private SearchResult BingImageSearch(string cognitiveServicesSubscriptionKey, string cognitiveServicesUriBase, string searchTerm)
+        private async Task<SearchResult> BingImageSearch(string cognitiveServicesSubscriptionKey, string cognitiveServicesUriBase, string searchTerm, int resultsToReturn)
         {
 
-            string uriQuery = cognitiveServicesUriBase + "?q=" + Uri.EscapeDataString(searchTerm) + "&safeSearch=strict";
+            string uriQuery = cognitiveServicesUriBase + "?q=" + Uri.EscapeDataString(searchTerm) + "&safeSearch=strict&count=" + resultsToReturn.ToString();
 
             WebRequest request = WebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = cognitiveServicesSubscriptionKey;
-            HttpWebResponse response = (HttpWebResponse)request.GetResponseAsync().Result;
+            HttpWebResponse response =  (HttpWebResponse)request.GetResponseAsync().Result;
             StreamReader streamReader = new StreamReader(response.GetResponseStream());
-            string json = streamReader.ReadToEnd();
+            string json = await streamReader.ReadToEndAsync();
             streamReader.Dispose();
 
             // Create the result object for return
