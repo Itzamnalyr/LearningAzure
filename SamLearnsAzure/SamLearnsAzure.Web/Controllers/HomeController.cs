@@ -36,13 +36,16 @@ namespace SamLearnsAzure.Web.Controllers
         public async Task<IActionResult> Set(string setnum)
         {
             Sets set = await _ServiceApiClient.GetSet(setnum);
+            SetImages setImage = await _ServiceApiClient.GetSetImage(setnum);
             List<SetParts> setParts = await _ServiceApiClient.GetSetParts(setnum);
 
             SetViewModel setViewModel = new SetViewModel
             {
                 Set = set,
+                SetImage = setImage,
                 SetParts = setParts,
-                BaseSetPartsImagesStorageURL = _configuration["AppSettings:PartImagesStorageURL"]
+                BaseSetPartsImagesStorageURL = _configuration["AppSettings:ImagesStorageCDNURL"] + _configuration["AppSettings:PartImagesContainerName"],
+                BaseSetImagesStorageURL = _configuration["AppSettings:ImagesStorageCDNURL"] + _configuration["AppSettings:SetImagesContainerName"]
             };
 
             return View(setViewModel);
@@ -53,8 +56,8 @@ namespace SamLearnsAzure.Web.Controllers
         {
             CdnTestViewModel cdnTestViewModel = new CdnTestViewModel
             {
-                BaseSetPartsImagesStorageURL = _configuration["AppSettings:PartImagesStorageURL"],
-                BaseSetPartsImagesCDNURL = _configuration["AppSettings:PartImagesStorageCDNURL"]
+                BaseSetPartsImagesStorageURL = _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:PartImagesContainerName"],
+                BaseSetPartsImagesCDNURL = _configuration["AppSettings:ImagesStorageCDNURL"] + _configuration["AppSettings:PartImagesContainerName"]
             };
 
             return View(cdnTestViewModel);

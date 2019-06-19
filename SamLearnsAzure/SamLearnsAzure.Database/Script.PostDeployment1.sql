@@ -26,5 +26,9 @@ BEGIN
 	SELECT '75955-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted
 	UNION
 	SELECT '75218-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted
+	UNION
+	SELECT '30277-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted
+	UNION
+	SELECT '30056-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted
 END
 GO

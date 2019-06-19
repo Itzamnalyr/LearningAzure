@@ -25,6 +25,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
             Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
             mockService.Setup(repo => repo.GetSet(It.IsAny<string>())).Returns(Task.FromResult(GetSetTestData()));
+            mockService.Setup(repo => repo.GetSetImage(It.IsAny<string>())).Returns(Task.FromResult(GetSetImageTestData()));
             mockService.Setup(repo => repo.GetSetParts(It.IsAny<string>())).Returns(Task.FromResult(GetSetPartsTestData()));
             mockConfiguration.SetupGet(x => x[It.IsAny<string>()]).Returns(configValue);
             HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
@@ -40,7 +41,9 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             TestSet(setViewModel.Set);
             Assert.IsTrue(setViewModel.SetParts.Count() == 1);
             TestSetParts(setViewModel.SetParts.FirstOrDefault());
-            Assert.IsTrue(setViewModel.BaseSetPartsImagesStorageURL == configValue);
+            Assert.IsTrue(setViewModel.BaseSetPartsImagesStorageURL == (configValue + configValue));
+            Assert.IsTrue(setViewModel.BaseSetImagesStorageURL == (configValue + configValue));
+            TestSetImage(setViewModel.SetImage);
         }
 
         private void TestSetParts(SetParts setPart)
@@ -77,17 +80,17 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             };
         }
 
-        private void TestSet(Sets Set)
+        private void TestSet(Sets set)
         {
-            Assert.IsTrue(Set.SetNum == "abc");
-            Assert.IsTrue(Set.Name == "def");
-            Assert.IsTrue(Set.NumParts == 1);
-            Assert.IsTrue(Set.ThemeId == 2);
-            Assert.IsTrue(Set.Year == 3);
-            Assert.IsTrue(Set.Theme != null);
-            Assert.IsTrue(Set.Inventories != null);
-            Assert.IsTrue(Set.InventorySets != null);
-            Assert.IsTrue(Set.OwnerSets != null);
+            Assert.IsTrue(set.SetNum == "abc");
+            Assert.IsTrue(set.Name == "def");
+            Assert.IsTrue(set.NumParts == 1);
+            Assert.IsTrue(set.ThemeId == 2);
+            Assert.IsTrue(set.Year == 3);
+            Assert.IsTrue(set.Theme != null);
+            Assert.IsTrue(set.Inventories != null);
+            Assert.IsTrue(set.InventorySets != null);
+            Assert.IsTrue(set.OwnerSets != null);
         }
 
         private Sets GetSetTestData()
@@ -107,6 +110,23 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
                 ThemeId = 2,
                 Year = 3,
                 Theme = Theme
+            };
+        }
+
+        private void TestSetImage(SetImages setImage)
+        {
+            Assert.IsTrue(setImage.SetNum == "abc");
+            Assert.IsTrue(setImage.SetImage == "def");
+            Assert.IsTrue(setImage.SetImageId == 1);
+        }
+
+        private SetImages GetSetImageTestData()
+        {
+            return new SetImages()
+            {
+                SetNum = "abc",
+                SetImage = "def",
+                SetImageId = 1
             };
         }
 

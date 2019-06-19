@@ -12,8 +12,10 @@ parameters: # defaults for any parameters that aren't specified
   keyVaultName: 'samsapp-data-eu-keyvault'
   keyVaultURL: 'https://samsapp-data-eu-keyvault.vault.azure.net/'
   letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02145'
-  partImagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/partimages'
-  partImagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/partimages'
+  imagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/partimages'
+  imagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/partimages'
+  partImagesContainerName: 'partimages'
+  setImagesContainerName: 'setimages'
   redisCacheConnectionString: '***secret'
   resourceGroupName: 'SamLearnsAzureDev'
   resourceGroupLocation: 'East US'
@@ -41,8 +43,10 @@ jobs:
       ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
       AppSettings.Environment: ${{parameters.environment}}
       AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
-      AppSettings.PartImagesStorageCDNURL: ${{parameters.partImagesStorageCDNURL}}
-      AppSettings.PartImagesStorageURL: ${{parameters.partImagesStorageURL}}
+      AppSettings.ImagesStorageCDNURL: ${{parameters.imagesStorageCDNURL}}
+      AppSettings.ImagesStorageURL: ${{parameters.imagesStorageURL}}
+      AppSettings.PartImagesContainerName": ${{parameters.partImagesContainerName}},
+      AppSettings.SetImagesContainerName": ${{parameters.setImagesContainerName}},
       AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
       AppSettings.WebServiceURL: ${{parameters.serviceURL}}
       ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}}      

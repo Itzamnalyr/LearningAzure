@@ -48,8 +48,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AI", "AI", "{C0D844E8-32B8-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamLearnsAzure.BingImageSearch.App", "SamLearnsAzure.BingImageSearch.App\SamLearnsAzure.BingImageSearch.App.csproj", "{6503FEEA-7525-4997-A0B9-A1E4F1AC8C80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamLearnsAzure.SetImageSearch.Function", "SamLearnsAzure.SetImageSearch.Function\SamLearnsAzure.SetImageSearch.Function.csproj", "{7056C75A-474E-41AA-A9C2-3ADC3046EEF8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,10 +100,6 @@ Global
 		{6503FEEA-7525-4997-A0B9-A1E4F1AC8C80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6503FEEA-7525-4997-A0B9-A1E4F1AC8C80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6503FEEA-7525-4997-A0B9-A1E4F1AC8C80}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7056C75A-474E-41AA-A9C2-3ADC3046EEF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7056C75A-474E-41AA-A9C2-3ADC3046EEF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7056C75A-474E-41AA-A9C2-3ADC3046EEF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7056C75A-474E-41AA-A9C2-3ADC3046EEF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,7 +116,6 @@ Global
 		{58EDD3C4-3B77-4655-B24C-82A1A60BF35E} = {76875B17-4BFB-489B-8023-B0F3352EAC30}
 		{50DD37AD-58DD-4697-84EC-F28FB5935B50} = {B307C0F9-E5A1-4486-9700-9F03FC1AF6B7}
 		{6503FEEA-7525-4997-A0B9-A1E4F1AC8C80} = {C0D844E8-32B8-45DA-A300-52CD4E2555F8}
-		{7056C75A-474E-41AA-A9C2-3ADC3046EEF8} = {C0D844E8-32B8-45DA-A300-52CD4E2555F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE0C1147-8732-43B2-9F0E-E52D337C8BA3}

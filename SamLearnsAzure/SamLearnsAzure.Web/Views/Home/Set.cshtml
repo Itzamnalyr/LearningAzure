@@ -6,10 +6,18 @@
 
 <div class="BreadCrumbs">
     <br />@Html.ActionLink("Home", "Index", "Home") &gt;
+    <span style="font-size: 24px;"><strong>@Model.Set.Name</strong> (@Model.Set.Year)</span>
 </div>
-<h3><strong>@Model.Set.Name</strong> (@Model.Set.Year)</h3>
-<span><strong>Total parts: </strong>@(((int)Model.Set.NumParts).ToString("#,##0"))</span><br />
-<span><strong>Theme: </strong>@Model.Set.Theme.Name</span><br />
+<div class="row">
+    <div class="col-md-3">
+        <span><img src="@(Model.BaseSetImagesStorageURL)/@(Model.SetImage.SetImage)" style="max-width:200px; max-height:200px;" alt="@Model.Set.Name set image" /></span><br />
+    </div>
+    <div class="col-md-9">
+        <span><strong>Total parts: </strong>@(((int)Model.Set.NumParts).ToString("#,##0"))</span><br />
+        <span><strong>Theme: </strong>@Model.Set.Theme.Name</span><br />
+    </div>
+</div>
+<hr />
 <span><strong>Parts: </strong></span><br />
 <div class="row">
     <div class="col-md-12">
@@ -26,7 +34,7 @@
                     <img src="@(Model.BaseSetPartsImagesStorageURL)/@(item.ColorId)/@(item.PartNum).png"
                          class="img-rounded samsAppImage"
                          onerror="if (this.src != '/images/lego.gif') { this.src = '/images/lego.gif'; }" 
-                         /><br />
+                         alt="@(item.PartNum) part image"/><br />
                     <span class="samsAppImageText">@item.ColorName</span><br />
                     <span class="samsAppImageText">PartNum: @item.PartNum</span><br />
                 </div>

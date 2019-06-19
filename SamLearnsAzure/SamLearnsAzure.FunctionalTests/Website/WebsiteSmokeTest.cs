@@ -52,7 +52,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
             string webURL = _webUrl + "home/set?setnum=" + setNum;
             _driver.Navigate().GoToUrl(webURL);
             webLoaded = (_driver.Url == webURL);
-            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/h3/strong");
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/span/strong");
             //System.Diagnostics.Debug.WriteLine(data.ToString());
 
             //Assert

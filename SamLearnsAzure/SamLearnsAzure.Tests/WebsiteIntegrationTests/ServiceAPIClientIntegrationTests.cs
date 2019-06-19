@@ -32,7 +32,6 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             //Act
             List<Owners> owners = await client.GetOwners();
 
-
             //Assert
             Assert.IsTrue(owners.Any());
         }
@@ -47,7 +46,6 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             //Act
             List<OwnerSets> ownerSets = await client.GetOwnerSets(ownerId);
 
-
             //Assert
             Assert.IsTrue(ownerSets.Any());
         }
@@ -60,7 +58,6 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
 
             //Act
             List<Sets> sets = await client.GetSets();
-
 
             //Assert
             Assert.IsTrue(sets != null);
@@ -77,9 +74,22 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             //Act
             Sets set = await client.GetSet(setNum);
 
-
             //Assert
             Assert.IsTrue(set != null);
+        }
+
+        [TestMethod]
+        public async Task GetServiceApiClientSetImageIntegrationTest()
+        {
+            //Arrange
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
+            string setNum = "75218-1";
+
+            //Act
+            SetImages setImage = await client.GetSetImage(setNum);
+
+            //Assert
+            Assert.IsTrue(setImage != null);
         }
 
         [TestMethod]
@@ -91,7 +101,6 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
 
             //Act
             List<SetParts> setParts = await client.GetSetParts(setNum);
-
 
             //Assert
             Assert.IsTrue(setParts.Any());
@@ -110,8 +119,6 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             //Assert
             Assert.IsTrue(themes.Any());
         }
-
-
 
     }
 }
