@@ -19,9 +19,7 @@
 <div class="row">
     @for (int i = 0; i < 5; i++)
     {<div class="col-md-2">
-
-        <span><img id="@Model.SetImages[i].SetImage" src="@(Model.SetImages[i].SetImage)" style="max-width:200px; max-height:200px;" alt="@Model.SetImages[i].SetImage" /></span><br />
-
+        <a href='@Url.Action("UpdateImageSave", "Home", new { setNum = Model.Set.SetNum, imageUrl = Model.SetImages[i].SetImage })'><img id="@Model.SetImages[i].SetImage" src="@(Model.SetImages[i].SetImage)" style="max-width:200px; max-height:200px;" alt="@Model.SetImages[i].SetImage" /></a><br />
     </div>
     }
 </div>
@@ -29,8 +27,7 @@
     @for (int i = 5; i < 10; i++)
     {
     <div class="col-md-2">
-        <span><img id="@Model.SetImages[i].SetImage" src="@(Model.SetImages[i].SetImage)" style="max-width:200px; max-height:200px;" alt="@Model.SetImages[i].SetImage" /></span><br />
-
+        <a href='@Url.Action("UpdateImageSave", "Home", new { setNum = Model.Set.SetNum, imageUrl = Model.SetImages[i].SetImage })'><img id="@Model.SetImages[i].SetImage" src="@(Model.SetImages[i].SetImage)" style="max-width:200px; max-height:200px;" alt="@Model.SetImages[i].SetImage" /></a><br />
     </div>
     }
 </div>

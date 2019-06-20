@@ -4,6 +4,7 @@ using SamLearnsAzure.Models;
 using SamLearnsAzure.Web.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace SamLearnsAzure.Web.Controllers
@@ -19,6 +20,7 @@ namespace SamLearnsAzure.Web.Controllers
             _configuration = configuration;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             int ownerId = 1; //Sam
@@ -33,6 +35,7 @@ namespace SamLearnsAzure.Web.Controllers
             return View(indexPageData);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Set(string setnum)
         {
             Sets set = await _ServiceApiClient.GetSet(setnum);
@@ -51,6 +54,7 @@ namespace SamLearnsAzure.Web.Controllers
             return View(setViewModel);
         }
 
+        [HttpGet]
         public async Task<IActionResult> UpdateImage(string setnum)
         {
             Sets set = await _ServiceApiClient.GetSet(setnum);
@@ -65,6 +69,14 @@ namespace SamLearnsAzure.Web.Controllers
             return View(updateImageModel);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UpdateImageSave(string setNum, string imageUrl)
+        {
+            await _ServiceApiClient.SaveSetImage(setNum, imageUrl);
+
+            return RedirectToAction("Set", new { setNum = setNum });
+        }
+
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public IActionResult CDNTest()
         {
@@ -77,6 +89,7 @@ namespace SamLearnsAzure.Web.Controllers
             return View(cdnTestViewModel);
         }
 
+        [HttpGet]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
@@ -84,6 +97,7 @@ namespace SamLearnsAzure.Web.Controllers
             return View();
         }
 
+        [HttpGet]
         public IActionResult Privacy()
         {
             ViewData["Message"] = "Your privacy page.";

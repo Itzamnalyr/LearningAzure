@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace SamLearnsAzure.Web.Controllers
 {
@@ -48,7 +49,7 @@ namespace SamLearnsAzure.Web.Controllers
 
         public async Task<SetImages> GetSetImage(string setNum)
         {
-            Uri url = new Uri($"api/SetImages/GetSetImage?setnum=" + setNum, UriKind.Relative);
+            Uri url = new Uri($"api/SetImages/GetSetImage?setnum=" + setNum + "&useCache=false", UriKind.Relative);
             return await ReadMessageItem<SetImages>(url);
         }
 
@@ -56,6 +57,12 @@ namespace SamLearnsAzure.Web.Controllers
         {
             Uri url = new Uri($"api/SetImages/GetSetImages?setnum=" + setNum + "&useCache=false&forceBingSearch=true&resultsToReturn=10", UriKind.Relative);
             return await ReadMessageList<SetImages>(url);
+        }
+
+        public async Task<SetImages> SaveSetImage(string setNum, string imageUrl)
+        {
+            Uri url = new Uri($"api/SetImages/SaveSetImage?setnum=" + setNum + "&imageUrl=" + HttpUtility.UrlEncode(imageUrl), UriKind.Relative);
+            return await ReadMessageItem<SetImages>(url);
         }
 
         public async Task<List<SetParts>> GetSetParts(string setNum)

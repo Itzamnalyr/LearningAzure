@@ -10,7 +10,7 @@
 </div>
 <div class="row">
     <div class="col-md-3">
-        <span><img src="@(Model.BaseSetImagesStorageURL)/@(Model.SetImage.SetImage)" style="max-width:200px; max-height:200px;" alt="@Model.Set.Name set image" /></span><br />
+        <span><img src="@(Model.BaseSetImagesStorageURL)/@(Model.SetImage.SetImage)" style="max-width:200px; max-height:200px;" alt="@(Model.Set.Name) set image" /></span><br />
     </div>
     <div class="col-md-9">
         <span><strong>Total parts: </strong>@(((int)Model.Set.NumParts).ToString("#,##0"))</span><br />

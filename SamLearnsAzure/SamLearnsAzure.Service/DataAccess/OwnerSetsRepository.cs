@@ -43,7 +43,7 @@ namespace SamLearnsAzure.Service.DataAccess
                     .ThenInclude(t => t.Theme)
                 .Include(l => l.Owner)
                 .Where(p => p.OwnerId == ownerId)
-                .OrderBy(p => p.OwnerId)
+                .OrderBy(p => p.Set.Name)
                 .ToListAsync();
 
                 if (redisService != null)

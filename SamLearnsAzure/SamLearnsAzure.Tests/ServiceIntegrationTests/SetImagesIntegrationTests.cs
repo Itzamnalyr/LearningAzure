@@ -25,7 +25,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         public async Task GetSetImageWithCacheTest()
         {
             //Arrange
-            string setNum = "75218-1";
+            string setNum = "41608-1";
 
             //Act
             HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimage?setnum=" + setNum + "&useCache=true");
@@ -43,7 +43,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         public async Task GetSetImageWithoutCacheWith1ResultTest()
         {
             //Arrange
-            string setNum = "75218-1";
+            string setNum = "41608-1";
 
             //Act
             HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimage?setnum=" + setNum + "&useCache=false");

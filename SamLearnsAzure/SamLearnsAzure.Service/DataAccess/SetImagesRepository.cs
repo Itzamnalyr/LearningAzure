@@ -7,6 +7,8 @@ using SamLearnsAzure.Models;
 using Microsoft.EntityFrameworkCore;
 using SamLearnsAzure.Service.EFCore;
 using Newtonsoft.Json;
+using System.Reflection.Metadata.Ecma335;
+using System.Collections;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
@@ -38,7 +40,8 @@ namespace SamLearnsAzure.Service.DataAccess
             else
             {
                 result = await _context.SetImages
-                    .SingleOrDefaultAsync(b => b.SetNum == setNum);
+                    .OrderByDescending(p => p.SetImageId)
+                    .FirstOrDefaultAsync(b => b.SetNum == setNum);
 
                 if (redisService != null)
                 {
@@ -57,11 +60,19 @@ namespace SamLearnsAzure.Service.DataAccess
 
         public async Task<SetImages> SaveSetImage(SetImages setImage)
         {
+            //Remove all set images for this set num
+            IEnumerable<SetImages> setImagesToUpdate = _context.SetImages.Where(b => b.SetNum == setImage.SetNum);
+            _context.SetImages.RemoveRange(setImagesToUpdate);
+            await _context.SaveChangesAsync();
+
+            //Add the new set image
             await _context.SetImages.AddAsync(setImage);
             await _context.SaveChangesAsync();
 
+            //Return the updated result
             SetImages result = await _context.SetImages
-                    .FirstOrDefaultAsync(b => b.SetNum == setImage.SetNum);
+                .OrderByDescending(p => p.SetImageId)
+                .FirstOrDefaultAsync(b => b.SetNum == setImage.SetNum);
 
             return result;
         }
