@@ -15,6 +15,7 @@
     <div class="col-md-9">
         <span><strong>Total parts: </strong>@(((int)Model.Set.NumParts).ToString("#,##0"))</span><br />
         <span><strong>Theme: </strong>@Model.Set.Theme.Name</span><br />
+        @Html.ActionLink("Update set image", "UpdateImage", "Home", new { setNum = Model.Set.SetNum })
     </div>
 </div>
 <hr />

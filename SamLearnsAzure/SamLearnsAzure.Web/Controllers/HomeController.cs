@@ -51,6 +51,20 @@ namespace SamLearnsAzure.Web.Controllers
             return View(setViewModel);
         }
 
+        public async Task<IActionResult> UpdateImage(string setnum)
+        {
+            Sets set = await _ServiceApiClient.GetSet(setnum);
+            List<SetImages> setImages = await _ServiceApiClient.GetSetImages(setnum);
+
+            UpdateImageViewModel updateImageModel = new UpdateImageViewModel
+            {
+                Set = set,
+                SetImages = setImages
+            };
+
+            return View(updateImageModel);
+        }
+
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public IActionResult CDNTest()
         {

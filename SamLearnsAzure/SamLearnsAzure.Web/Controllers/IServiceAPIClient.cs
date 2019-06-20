@@ -16,6 +16,7 @@ namespace SamLearnsAzure.Web.Controllers
         //Task<List<Sets>> GetSets();
         Task<Sets> GetSet(string setNum);
         Task<SetImages> GetSetImage(string setNum);
+        Task<List<SetImages>> GetSetImages(string setNum);
         Task<List<SetParts>> GetSetParts(string setNum);
         //Task<List<Themes>> GetThemes();
     }

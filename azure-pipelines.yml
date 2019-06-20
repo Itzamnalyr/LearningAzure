@@ -31,6 +31,7 @@ stages:
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
       applicationInsightsLocation: 'East US'
       appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'Dev'  
       environmentLowercase: 'dev'
       databaseLoginName: $(databaseLoginNameDev) 
@@ -68,6 +69,7 @@ stages:
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyQA)
       applicationInsightsLocation: 'East US'
       appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'QA'  
       environmentLowercase: 'qa'
       databaseLoginName: $(databaseLoginNameQA) 
@@ -105,6 +107,7 @@ stages:
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyProd)
       applicationInsightsLocation: 'East US'
       appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'Prod'  
       environmentLowercase: 'prod'
       databaseLoginName: $(databaseLoginNameProd) 

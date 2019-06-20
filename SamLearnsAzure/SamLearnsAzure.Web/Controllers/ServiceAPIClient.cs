@@ -52,6 +52,12 @@ namespace SamLearnsAzure.Web.Controllers
             return await ReadMessageItem<SetImages>(url);
         }
 
+        public async Task<List<SetImages>> GetSetImages(string setNum)
+        {
+            Uri url = new Uri($"api/SetImages/GetSetImages?setnum=" + setNum + "&useCache=false&forceBingSearch=true&resultsToReturn=10", UriKind.Relative);
+            return await ReadMessageList<SetImages>(url);
+        }
+
         public async Task<List<SetParts>> GetSetParts(string setNum)
         {
             Uri url = new Uri($"api/Sets/GetSetParts?setNum=" + setNum, UriKind.Relative);

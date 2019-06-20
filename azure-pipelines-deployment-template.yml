@@ -4,6 +4,7 @@ parameters: # defaults for any parameters that aren't specified
   applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
   applicationInsightsLocation: 'East US'
   appServiceContributerClientSecret: '***secret'
+  cognitiveServicesSubscriptionKey: '***secret'
   environment: 'Dev'  
   environmentLowercase: 'dev'
   databaseLoginName: '***secret'
@@ -49,6 +50,8 @@ jobs:
       AppSettings.SetImagesContainerName": ${{parameters.setImagesContainerName}},
       AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
       AppSettings.WebServiceURL: ${{parameters.serviceURL}}
+      AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
+      AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
       ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}}      
     steps:
     - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
