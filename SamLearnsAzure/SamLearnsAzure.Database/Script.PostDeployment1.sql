@@ -16,6 +16,7 @@ BEGIN
 	SELECT 3, 'Stella'
 END 
 
+DELETE os FROM owner_sets os WHERE os.owner_id = 1
 IF (NOT EXISTS (SELECT 1 FROM owner_sets os WHERE os.owner_id = 1) AND EXISTS (SELECT 1 FROM [sets]))
 BEGIN
 	INSERT INTO owner_sets 

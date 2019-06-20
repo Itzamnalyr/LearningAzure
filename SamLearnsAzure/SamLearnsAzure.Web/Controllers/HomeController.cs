@@ -48,7 +48,7 @@ namespace SamLearnsAzure.Web.Controllers
                 SetImage = setImage,
                 SetParts = setParts,
                 BaseSetPartsImagesStorageURL = _configuration["AppSettings:ImagesStorageCDNURL"] + _configuration["AppSettings:PartImagesContainerName"],
-                BaseSetImagesStorageURL = _configuration["AppSettings:ImagesStorageCDNURL"] + _configuration["AppSettings:SetImagesContainerName"]
+                BaseSetImagesStorageURL = _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:SetImagesContainerName"]
             };
 
             return View(setViewModel);
