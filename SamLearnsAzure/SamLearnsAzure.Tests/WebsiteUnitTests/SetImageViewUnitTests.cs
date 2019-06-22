@@ -16,33 +16,33 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
     [TestCategory("UnitTest")]
     public class SetImageViewUnitTests : BaseUnitTest
     {
-        [TestMethod]
-        public async Task GetSetImagesViewMockTest()
-        {
-            //Arrange
-            string setNum = "abc123";
-            string configValue = "xyz321";
-            Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
-            Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
-            mockService.Setup(repo => repo.GetSet(It.IsAny<string>())).Returns(Task.FromResult(GetSetTestData()));
-            mockService.Setup(repo => repo.GetSetImages(It.IsAny<string>())).Returns(Task.FromResult(GetSetImagesTestData()));
-            mockConfiguration.SetupGet(x => x[It.IsAny<string>()]).Returns(configValue);
-            HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
+        //[TestMethod]
+        //public async Task GetSetImagesViewMockTest()
+        //{
+        //    //Arrange
+        //    string setNum = "abc123";
+        //    string configValue = "xyz321";
+        //    Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
+        //    Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
+        //    mockService.Setup(repo => repo.GetSet(It.IsAny<string>())).Returns(Task.FromResult(GetSetTestData()));
+        //    mockService.Setup(repo => repo.GetSetImages(It.IsAny<string>())).Returns(Task.FromResult(GetSetImagesTestData()));
+        //    mockConfiguration.SetupGet(x => x[It.IsAny<string>()]).Returns(configValue);
+        //    HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
 
-            //Act
-            IActionResult result = await controller.UpdateImage(setNum);
+        //    //Act
+        //    IActionResult result = await controller.UpdateImage(setNum);
 
-            //Assert
-            ViewResult viewResult = (ViewResult)result;
-            UpdateImageViewModel updateImageViewModel = (UpdateImageViewModel)viewResult.Model;
-            Assert.IsTrue(updateImageViewModel != null);
-            Assert.IsTrue(updateImageViewModel.Set != null);
-            TestSet(updateImageViewModel.Set);
-            Assert.IsTrue(updateImageViewModel.BaseSetImagesStorageURL == null);
-            Assert.IsTrue(updateImageViewModel.SetImages != null);
-            Assert.IsTrue(updateImageViewModel.SetImages.Any());
-            TestSetImages(updateImageViewModel.SetImages[0]);
-        }
+        //    //Assert
+        //    ViewResult viewResult = (ViewResult)result;
+        //    UpdateImageViewModel updateImageViewModel = (UpdateImageViewModel)viewResult.Model;
+        //    Assert.IsTrue(updateImageViewModel != null);
+        //    Assert.IsTrue(updateImageViewModel.Set != null);
+        //    TestSet(updateImageViewModel.Set);
+        //    Assert.IsTrue(updateImageViewModel.BaseSetImagesStorageURL == null);
+        //    Assert.IsTrue(updateImageViewModel.SetImages != null);
+        //    Assert.IsTrue(updateImageViewModel.SetImages.Any());
+        //    TestSetImages(updateImageViewModel.SetImages[0]);
+        //}
 
         [TestMethod]
         public async Task GetSetViewMockTest()

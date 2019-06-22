@@ -29,7 +29,7 @@ namespace SamLearnsAzure.DataMigration.App
                     if (values.Length > numberOfColumns)
                     {
                         //there are extra columns, we need to do special processing to squash the line back together again
-                        //Debug.WriteLine(lineNumber.ToString() + ": Problem line: " + line);
+                        Console.WriteLine(lineNumber.ToString() + ": Problem line: " + line);
 
                         //Take extra columns and squash them.
                         StringBuilder sbFix = new StringBuilder();
@@ -43,7 +43,6 @@ namespace SamLearnsAzure.DataMigration.App
                                     sbFix.Append(",");
                                     i++;
                                 } while (i < values.Length);
-                                //sbFix.Append(",");
                             }
                             else
                             {

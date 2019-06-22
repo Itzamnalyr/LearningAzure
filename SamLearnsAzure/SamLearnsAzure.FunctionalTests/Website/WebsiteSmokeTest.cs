@@ -31,8 +31,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
             _driver.Navigate().GoToUrl(webURL);
             webLoaded = (_driver.Url == webURL);
             OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/h2");
-            //System.Diagnostics.Debug.WriteLine(data.ToString());
-
+       
             //Assert
             Assert.IsTrue(webLoaded);
             Assert.IsTrue(data != null);
@@ -53,8 +52,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
             _driver.Navigate().GoToUrl(webURL);
             webLoaded = (_driver.Url == webURL);
             OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/span/strong");
-            //System.Diagnostics.Debug.WriteLine(data.ToString());
-
+           
             //Assert
             Assert.IsTrue(webLoaded);
             Assert.IsTrue(data != null);
@@ -76,8 +74,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
             webLoaded = (_driver.Url == webURL);
             OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/div[1]/span/strong");
             OpenQA.Selenium.IWebElement imageData = _driver.FindElementByXPath(@"/html/body/div/div[3]/div[1]/a/img");
-            //System.Diagnostics.Debug.WriteLine(data.ToString());
-
+            
             //Assert
             Assert.IsTrue(webLoaded);
             Assert.IsTrue(data != null);
