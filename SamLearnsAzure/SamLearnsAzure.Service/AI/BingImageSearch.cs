@@ -4,16 +4,20 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using SamLearnsAzure.Models;
 
 namespace SamLearnsAzure.Service.AI
 {
     public class BingImageSearch
     {
-        public async Task<SearchResult> PerformBingImageSearch(string cognitiveServicesSubscriptionKey, string cognitiveServicesBingSearchUriBase, string searchTerm, int resultsToReturn)
+        public async Task<List<SetImages>> PerformBingImageSearch(string cognitiveServicesSubscriptionKey, 
+            string cognitiveServicesBingSearchUriBase, string cognitiveServicesImageAnalysisUriBase, 
+            string searchTerm, int resultsToReturn, int resultsToSearch, string tagFilter)
         {
+            List<SetImages> setImages = new List<SetImages>();
 
-            string uriQuery = cognitiveServicesBingSearchUriBase + "?q=" + Uri.EscapeDataString(searchTerm) + "&safeSearch=strict&count=" + resultsToReturn.ToString();
-
+            //create query and send request
+            string uriQuery = cognitiveServicesBingSearchUriBase + "?q=" + Uri.EscapeDataString(searchTerm) + "&safeSearch=strict&count=" + resultsToSearch.ToString();
             WebRequest request = WebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = cognitiveServicesSubscriptionKey;
             HttpWebResponse response = (HttpWebResponse)request.GetResponseAsync().Result;
@@ -36,7 +40,38 @@ namespace SamLearnsAzure.Service.AI
                     searchResult.relevantHeaders[header] = response.Headers[header];
                 }
             }
-            return searchResult;
+
+            //Process the results
+            dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(searchResult.jsonResult);
+            for (int i = 0; i < jsonObj["value"].Count; i++)
+            {
+                dynamic firstJsonObj = jsonObj["value"][i];
+                string title = firstJsonObj["name"];
+                string webUrl = firstJsonObj["webSearchUrl"];
+                string imageUrl = (string)jsonObj.SelectToken("value[" + i + "].contentUrl");
+                Console.WriteLine("Title for the " + i + " image result: " + title + "\n");
+                Console.WriteLine("Web Url for the " + i + " image result: " + webUrl + "\n");
+                Console.WriteLine("Image Url for the " + i + " image result: " + imageUrl + "\n");
+
+                //Make sure that the image contains the search term we are looking for
+                ImageAnalysis imageAnalysisAI = new ImageAnalysis();
+                bool imageContainsSearchTerm = await imageAnalysisAI.PerformImageAnalysisSearch(cognitiveServicesSubscriptionKey, cognitiveServicesImageAnalysisUriBase, imageUrl, tagFilter);
+                if (imageContainsSearchTerm == true)
+                {
+                    SetImages newSetImage = new SetImages
+                    {
+                        SetNum = searchTerm,
+                        SetImage = imageUrl
+                    };
+                    setImages.Add(newSetImage);
+                }
+                if (setImages.Count >= resultsToReturn)
+                {
+                    break;
+                }
+            }
+
+            return setImages;
         }
 
         public struct SearchResult

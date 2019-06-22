@@ -13,7 +13,7 @@ namespace SamLearnsAzure.Service.AI
 {
     public class ImageAnalysis
     {
-        public async  Task<bool> PerformImageAnalysisSearch(string cognitiveServicesSubscriptionKey, string cognitiveServicesBingSearchUriBase, string imageUrl, string searchTerm)
+        public async Task<bool> PerformImageAnalysisSearch(string cognitiveServicesSubscriptionKey, string cognitiveServicesBingSearchUriBase, string imageUrl, string searchTerm)
         {
             HttpClient client = new HttpClient();
             NameValueCollection queryString = HttpUtility.ParseQueryString(string.Empty);
@@ -37,6 +37,8 @@ namespace SamLearnsAzure.Service.AI
             // Post request
             HttpResponseMessage response = await client.PostAsync(uri, content);
             string contentString = await response.Content.ReadAsStringAsync();
+            content.Dispose();
+            response.Dispose();
             client.Dispose();
 
             // Process response
@@ -44,16 +46,19 @@ namespace SamLearnsAzure.Service.AI
             Console.WriteLine("\nResponse:\n\n{0}\n", joResponse.ToString());
             JArray array = (JArray)joResponse["tags"];
             bool foundSearchTerm = false;
-            foreach (dynamic item in array)
+            if (array != null)
             {
-                //Search for the term - note: exact matches only!
-                if (item.name.ToString().ToLower() == searchTerm)
+                foreach (dynamic item in array)
                 {
-                    foundSearchTerm = true;
-                    break;
-                }
+                    //Search for the term - note: exact matches only!
+                    if (item.name.ToString().ToLower() == searchTerm)
+                    {
+                        foundSearchTerm = true;
+                        break;
+                    }
 
-                Console.WriteLine("Tag: {0}, Confidence: {1}\n", item.name.ToString(), item.confidence.ToString("0.00%"));
+                    Console.WriteLine("Tag: {0}, Confidence: {1}\n", item.name.ToString(), item.confidence.ToString("0.00%"));
+                }
             }
 
             return foundSearchTerm;

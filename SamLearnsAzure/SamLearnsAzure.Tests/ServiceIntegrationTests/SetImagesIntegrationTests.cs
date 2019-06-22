@@ -80,9 +80,11 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         {
             //Arrange
             string setNum = "75218-1";
+            int resultsToReturn = 10;
+            int resultsToSearch = 20;
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimages?setnum=" + setNum + "&useCache=false&forceBingSearch=true&resultsToReturn=10");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimages?setnum=" + setNum + "&resultsToReturn=" + resultsToReturn + "&resultsToSearch=" + resultsToSearch);
             response.EnsureSuccessStatusCode();
             List<SetImages> setImages = await response.Content.ReadAsAsync<List<SetImages>>();
             response.Dispose();
@@ -103,7 +105,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             string imageUrl = "https://samlearnsazure.files.wordpress.com/2019/01/microsoft-certified-azure-solutions-architect-expert.png";
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/savesetimage?setnum=" + setNum+ "&imageUrl=" + imageUrl);
+            HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/savesetimage?setnum=" + setNum + "&imageUrl=" + imageUrl);
             response.EnsureSuccessStatusCode();
             SetImages setImage = await response.Content.ReadAsAsync<SetImages>();
             response.Dispose();

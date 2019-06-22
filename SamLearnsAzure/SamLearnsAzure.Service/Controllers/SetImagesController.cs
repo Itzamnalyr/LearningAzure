@@ -29,72 +29,46 @@ namespace SamLearnsAzure.Service.Controllers
         }
 
         [HttpGet("GetSetImages")]
-        public async Task<List<SetImages>> GetSetImages(string setNum, bool useCache = true, bool forceBingSearch = false, int resultsToReturn = 1)
+        public async Task<List<SetImages>> GetSetImages(string setNum, int resultsToReturn = 1, int resultsToSearch = 1)
         {
-            List<SetImages> setImages = new List<SetImages>();
-
-            //1. Get image from Bing Image Search API
+            string tagFilter = "lego";
             string cognitiveServicesSubscriptionKey = _configuration["CognitiveServicesSubscriptionKey"]; // The subscription key is coming from key vault
             string cognitiveServicesBingSearchUriBase = _configuration["AppSettings:CognitiveServicesBingSearchUriBase"];
             string cognitiveServicesImageAnalysisUriBase = _configuration["AppSettings:CognitiveServicesImageAnalysisUriBase"];
+
+            //1. Get image from Bing Image Search API
             BingImageSearch bingImageSearchAI = new BingImageSearch();
-            BingImageSearch.SearchResult result = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey, cognitiveServicesBingSearchUriBase, setNum, resultsToReturn);
-            dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(result.jsonResult);
-
-            for (int i = 0; i < resultsToReturn; i++)
-            {
-                dynamic firstJsonObj = jsonObj["value"][i];
-                string title = firstJsonObj["name"];
-                string webUrl = firstJsonObj["webSearchUrl"];
-                string imageUrl = (string)jsonObj.SelectToken("value[" + i + "].contentUrl");
-                Console.WriteLine("Title for the " + i + " image result: " + title + "\n");
-                Console.WriteLine("Web Url for the " + i + " image result: " + webUrl + "\n");
-                Console.WriteLine("Image Url for the " + i + " image result: " + imageUrl + "\n");
-
-                //Make sure that the image contains the search term we are looking for
-                string searchTerm = "lego";
-                ImageAnalysis imageAnalysisAI = new ImageAnalysis();
-                bool imageContainsSearchTerm = await imageAnalysisAI.PerformImageAnalysisSearch(cognitiveServicesSubscriptionKey, cognitiveServicesImageAnalysisUriBase, imageUrl, searchTerm);
-                if (imageContainsSearchTerm == true)
-                {
-                    SetImages newSetImage = new SetImages
-                    {
-                        SetNum = setNum,
-                        SetImage = imageUrl
-                    };
-                    setImages.Add(newSetImage);
-                }
-            }
+            List<SetImages> setImages = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
+                cognitiveServicesBingSearchUriBase, cognitiveServicesImageAnalysisUriBase,
+                setNum, resultsToReturn, resultsToSearch, tagFilter);
 
             return setImages;
         }
 
         [HttpGet("GetSetImage")]
-        public async Task<SetImages> GetSetImage(string setNum, bool useCache = true, bool forceBingSearch = false, int resultsToReturn = 1)
+        public async Task<SetImages> GetSetImage(string setNum, bool useCache = true, bool forceBingSearch = false, int resultsToReturn = 1, int resultsToSearch = 10)
         {
             //1. Service looks in database to see if image exists?
             SetImages setImage = await _repo.GetSetImage(_redisService, useCache, setNum);
 
             if (setImage == null || forceBingSearch == true)
             {
-                //2. Get image from Bing Image Search API
-                string cognitiveServicesSubscriptionKey = _configuration["CognitiveServicesSubscriptionKey"];
+                string tagFilter = "lego";
+                string cognitiveServicesSubscriptionKey = _configuration["CognitiveServicesSubscriptionKey"]; // The subscription key is coming from key vault
                 string cognitiveServicesBingSearchUriBase = _configuration["AppSettings:CognitiveServicesBingSearchUriBase"];
-                BingImageSearch bingImageSearchAI = new BingImageSearch();
-                BingImageSearch.SearchResult result = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey, cognitiveServicesBingSearchUriBase, setNum, resultsToReturn);
-                dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(result.jsonResult);
+                string cognitiveServicesImageAnalysisUriBase = _configuration["AppSettings:CognitiveServicesImageAnalysisUriBase"];
 
-                dynamic firstJsonObj = jsonObj["value"][0];
-                string title = firstJsonObj["name"];
-                string webUrl = firstJsonObj["webSearchUrl"];
-                string imageUrl = (string)jsonObj.SelectToken("value[0].contentUrl");
-                Console.WriteLine("Title for the first image result: " + title + "\n");
-                Console.WriteLine("Web Url for the first image result: " + webUrl + "\n");
-                Console.WriteLine("Image Url for the first image result: " + imageUrl + "\n");
+                //1. Get image from Bing Image Search API
+                BingImageSearch bingImageSearchAI = new BingImageSearch();
+                List<SetImages> setImages = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
+                    cognitiveServicesBingSearchUriBase, cognitiveServicesImageAnalysisUriBase,
+                    setNum, resultsToReturn, resultsToSearch, tagFilter);
 
                 //2. Save image into blob storage
-                setImage = await SaveSetImage(setImage, setNum, imageUrl);
-
+                if (setImages.Count > 0)
+                {
+                    setImage = await SaveSetImage(setImages[0], setNum, setImages[0].SetImage);
+                }
             }
 
             //3. Service returns Image
@@ -223,9 +197,9 @@ namespace SamLearnsAzure.Service.Controllers
             return file;
         }
 
-     
 
-      
+
+
 
     }
 }
