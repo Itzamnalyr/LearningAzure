@@ -67,7 +67,7 @@ namespace SamLearnsAzure.Service.Controllers
                 //2. Save image into blob storage
                 if (setImages.Count > 0)
                 {
-                    setImage = await SaveSetImage(setImages[0], setNum, setImages[0].SetImage);
+                    setImage = await SaveSetImageToStorageAndDatabase(setNum, setImages[0].SetImage);
                 }
             }
 
@@ -79,10 +79,10 @@ namespace SamLearnsAzure.Service.Controllers
         public async Task<SetImages> SaveSetImage(string setNum, string imageUrl)
         {
             //Update database with new image, but don't force it if there is a setimage already
-            return await SaveSetImage(null, setNum, imageUrl);
+            return await SaveSetImageToStorageAndDatabase(setNum, imageUrl);
         }
 
-        private async Task<SetImages> SaveSetImage(SetImages setImage, string setNum, string imageUrl)
+        private async Task<SetImages> SaveSetImageToStorageAndDatabase(string setNum, string imageUrl)
         {
             //Get the storage blob connection information
             string storageContainerName = _configuration["AppSettings:StorageContainerName"];
@@ -98,15 +98,12 @@ namespace SamLearnsAzure.Service.Controllers
             bool saveResult = await SaveImageIntoBlob(storageConnectionString, storageContainerName, imageUrl, fileName);
             Console.WriteLine("Image saved into blob successfully: " + saveResult + "\n");
 
-            if (setImage == null)
+            SetImages setImage = new SetImages
             {
-                setImage = new SetImages
-                {
-                    SetNum = setNum,
-                    SetImage = fileName
-                };
-                setImage = await _repo.SaveSetImage(setImage);
-            }
+                SetNum = setNum,
+                SetImage = fileName
+            };
+            setImage = await _repo.SaveSetImage(setImage);
             return setImage;
         }
 

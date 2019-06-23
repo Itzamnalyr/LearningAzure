@@ -25,7 +25,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         public async Task GetSetImageWithCacheTest()
         {
             //Arrange
-            string setNum = "41608-1";
+            string setNum = "75168-1";
 
             //Act
             HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimage?setnum=" + setNum + "&useCache=true");
