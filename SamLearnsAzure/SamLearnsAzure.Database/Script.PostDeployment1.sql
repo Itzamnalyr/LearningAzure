@@ -34,6 +34,18 @@ BEGIN
 	UNION
 	SELECT '75055-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --Imperial Star Destroyer (1400 pieces)
 	UNION
-	SELECT '75190-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --First Order Star Destroyer (1500 pieces)
+	SELECT '75190-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --First Order Star Destroyer (1500 pieces)	
+	UNION
+	SELECT '7658-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --
+	UNION
+	SELECT '75175-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --
+	UNION
+	SELECT '75168-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --
+	UNION
+	SELECT '7153-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --
+	UNION
+	SELECT '75179-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --
+	UNION
+	SELECT '8017-1' AS set_num, 1 AS owner_id, 1 AS owned, 1 AS wanted --	
 END
 GO
