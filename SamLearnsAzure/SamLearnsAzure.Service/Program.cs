@@ -27,12 +27,12 @@ namespace SamLearnsAzure.Service
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     //Load the appsettings.json configuration file
-                    IConfigurationRoot builtConfig = config.Build();
+                    IConfigurationRoot buildConfig = config.Build();
 
                     //Load a connection to our Azure key vault instance
                     AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
                     KeyVaultClient keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
-                    config.AddAzureKeyVault(builtConfig["AppSettings:KeyVaultURL"], keyVaultClient, new DefaultKeyVaultSecretManager());
+                    config.AddAzureKeyVault(buildConfig["AppSettings:KeyVaultURL"], keyVaultClient, new DefaultKeyVaultSecretManager());
 
                 })
                 .UseApplicationInsights()

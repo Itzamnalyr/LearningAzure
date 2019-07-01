@@ -7,13 +7,22 @@
     <ApplicationInsightsAnnotationResourceId>/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourcegroups/SamLearnsAzureDev/providers/microsoft.insights/components/samsapp-dev-eu-appinsights</ApplicationInsightsAnnotationResourceId>
     <!-- SonarQube needs this -->
     <ProjectGuid>{50dd37ad-58dd-4697-84ec-f28fb5935b52}</ProjectGuid>
+    <!--Identity setup-->
+    <UserSecretsId>aspnet-SamLearnsAzure.Web-EC7A5BD7-9D8E-4C05-A118-AADC7F40C1BA</UserSecretsId>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="app.db" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.KeyVault" Version="1.0.6" />
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="2.2.0" />
     <PackageReference Include="SamLearnsAzure.Models" Version="1.0.1811" />
   </ItemGroup>

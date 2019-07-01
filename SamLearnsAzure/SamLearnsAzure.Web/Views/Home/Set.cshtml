@@ -15,7 +15,10 @@
     <div class="col-md-9">
         <span><strong>Total parts: </strong>@(((int)Model.Set.NumParts).ToString("#,##0"))</span><br />
         <span><strong>Theme: </strong>@Model.Set.Theme.Name</span><br />
-        @Html.ActionLink("Update set image", "UpdateImage", "Home", new { setNum = Model.Set.SetNum })
+        @if (User.Identity.IsAuthenticated == true)
+        {
+            @Html.ActionLink("Update set image", "UpdateImage", "Home", new { setNum = Model.Set.SetNum })
+        }
     </div>
 </div>
 <hr />
@@ -34,8 +37,8 @@
                     <strong>@(item.Quantity)x</strong><br />
                     <img src="@(Model.BaseSetPartsImagesStorageURL)/@(item.ColorId)/@(item.PartNum).png"
                          class="img-rounded samsAppImage"
-                         onerror="if (this.src != '/images/lego.gif') { this.src = '/images/lego.gif'; }" 
-                         alt="@(item.PartNum) part image"/><br />
+                         onerror="if (this.src != '/images/lego.gif') { this.src = '/images/lego.gif'; }"
+                         alt="@(item.PartNum) part image" /><br />
                     <span class="samsAppImageText">@item.ColorName</span><br />
                     <span class="samsAppImageText">PartNum: @item.PartNum</span><br />
                 </div>

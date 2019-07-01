@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using SamLearnsAzure.Models;
 using SamLearnsAzure.Web.Models;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SamLearnsAzure.Web.Controllers
 {
@@ -54,6 +57,7 @@ namespace SamLearnsAzure.Web.Controllers
             return View(setViewModel);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> UpdateImage(string setnum)
         {
@@ -69,6 +73,7 @@ namespace SamLearnsAzure.Web.Controllers
             return View(updateImageModel);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> UpdateImageSave(string setNum, string imageUrl)
         {
