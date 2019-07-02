@@ -43,7 +43,7 @@ namespace SamLearnsAzure.Web
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("IdentityConnection")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -54,16 +54,16 @@ namespace SamLearnsAzure.Web
                     microsoftOptions.ClientId = Configuration["IdentityMicrosoftClientId"];
                     microsoftOptions.ClientSecret = Configuration["IdentityMicrosoftClientSecret"];
                 })
-            .AddTwitter(twitterOptions =>
-            {
-                twitterOptions.ConsumerKey = Configuration["IdentityTwitterApiKey"];
-                twitterOptions.ConsumerSecret = Configuration["IdentityTwitterApiSecretKey"];
-            })
-            .AddGoogle(googleOptions =>
-            {
-                googleOptions.ClientId = Configuration["IdentityGoogleClientId"];
-                googleOptions.ClientSecret = Configuration["IdentityGoogleSecret"];
-            });
+                .AddTwitter(twitterOptions =>
+                {
+                    twitterOptions.ConsumerKey = Configuration["IdentityTwitterApiKey"];
+                    twitterOptions.ConsumerSecret = Configuration["IdentityTwitterApiSecretKey"];
+                })
+                .AddGoogle(googleOptions =>
+                {
+                    googleOptions.ClientId = Configuration["IdentityGoogleClientId"];
+                    googleOptions.ClientSecret = Configuration["IdentityGoogleSecret"];
+                });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
