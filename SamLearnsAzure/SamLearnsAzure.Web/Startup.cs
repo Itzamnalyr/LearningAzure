@@ -63,6 +63,11 @@ namespace SamLearnsAzure.Web
                 {
                     googleOptions.ClientId = Configuration["IdentityGoogleClientId"];
                     googleOptions.ClientSecret = Configuration["IdentityGoogleSecret"];
+                })
+                .AddFacebook(facebookOptions =>
+                {
+                    facebookOptions.AppId = Configuration["IdentityFacebookAppId"];
+                    facebookOptions.AppSecret = Configuration["IdentityFacebookAppSecret"];
                 });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
