@@ -43,7 +43,7 @@ namespace SamLearnsAzure.Service
                 options.UseSqlServer(Configuration[sqlConnectionStringName]));
 
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 //This JSON setting stops the JSON from being truncated
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
