@@ -30,7 +30,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
             string webURL = _webUrl + "home";
             _driver.Navigate().GoToUrl(webURL);
             webLoaded = (_driver.Url == webURL);
-            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/h2");
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/main/h2");
        
             //Assert
             Assert.IsTrue(webLoaded);
@@ -51,7 +51,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
             string webURL = _webUrl + "home/set?setnum=" + setNum;
             _driver.Navigate().GoToUrl(webURL);
             webLoaded = (_driver.Url == webURL);
-            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/span/strong");
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/main/div[1]/span/strong");
            
             //Assert
             Assert.IsTrue(webLoaded);
@@ -59,31 +59,31 @@ namespace SamLearnsAzure.FunctionalTests.Website
             Assert.IsTrue(data.Text != null);
         }
 
-        [TestMethod]
-        [TestCategory("SkipWhenLiveUnitTesting")]
-        [TestCategory("SmokeTest")]
-        public void GotoSamLearnsAzureWebHomeSetImagesUpdatePageTest()
-        {
-            //Arrange
-            bool webLoaded;
-            string setNum = "75218-1";
+        //[TestMethod]
+        //[TestCategory("SkipWhenLiveUnitTesting")]
+        //[TestCategory("SmokeTest")]
+        //public void GotoSamLearnsAzureWebHomeSetImagesUpdatePageTest()
+        //{
+        //    //Arrange
+        //    bool webLoaded;
+        //    string setNum = "75218-1";
 
-            //Act
-            string webURL = _webUrl + "home/updateimage?setnum=" + setNum;
-            _driver.Navigate().GoToUrl(webURL);
-            webLoaded = (_driver.Url == webURL);
-            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/div[1]/span/strong");
-            OpenQA.Selenium.IWebElement imageData = _driver.FindElementByXPath(@"/html/body/div/div[3]/div[1]/a/img");
+        //    //Act
+        //    string webURL = _webUrl + "home/updateimage?setnum=" + setNum;
+        //    _driver.Navigate().GoToUrl(webURL);
+        //    webLoaded = (_driver.Url == webURL);
+        //    OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/div[1]/span/strong");
+        //    OpenQA.Selenium.IWebElement imageData = _driver.FindElementByXPath(@"/html/body/div/div[3]/div[1]/a/img");
             
-            //Assert
-            Assert.IsTrue(webLoaded);
-            Assert.IsTrue(data != null);
-            Assert.IsTrue(data.Text != null);
-            Assert.IsTrue(imageData != null);
-            Assert.IsTrue(imageData.Text != null);
-            System.Diagnostics.Debug.WriteLine(imageData.GetAttribute("src"));
-            Assert.IsTrue(imageData.GetAttribute("src") != null); //Make sure the element was assigned an image, and hence the bing search is working
-        }
+        //    //Assert
+        //    Assert.IsTrue(webLoaded);
+        //    Assert.IsTrue(data != null);
+        //    Assert.IsTrue(data.Text != null);
+        //    Assert.IsTrue(imageData != null);
+        //    Assert.IsTrue(imageData.Text != null);
+        //    System.Diagnostics.Debug.WriteLine(imageData.GetAttribute("src"));
+        //    Assert.IsTrue(imageData.GetAttribute("src") != null); //Make sure the element was assigned an image, and hence the bing search is working
+        //}
 
         [TestInitialize]
         public void SetupTests()

@@ -120,8 +120,9 @@ jobs:
     - task: VSTest@2
       displayName: 'Run functional smoke tests on website and web service'
       inputs:
+        searchFolder: '$(build.artifactstagingdirectory)'
         testAssemblyVer2: |
-         **\*functionaltests*.dll
+          **\SamLearnsAzure.FunctionalTests\SamLearnsAzure.FunctionalTests.dll
         uiTests: true
         runSettingsFile: '$(build.artifactstagingdirectory)/drop/FunctionalTests/SamLearnsAzure.FunctionalTests/test.runsettings'
         overrideTestrunParameters: |
