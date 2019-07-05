@@ -37,6 +37,8 @@ stages:
       databaseLoginName: $(databaseLoginNameDev) 
       databaseLoginPassword: $(databaseLoginPasswordDev)
       databaseServerName: 'samsapp-dev-eu-sqlserver'
+      keyVaultClientId: '$(KeyVaultClientId)'
+      keyVaultClientSecret: '$(KeyVaultClientSecret)'
       letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02145'
       imagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/'
@@ -75,6 +77,8 @@ stages:
       databaseLoginName: $(databaseLoginNameQA) 
       databaseLoginPassword: $(databaseLoginPasswordQA)
       databaseServerName: 'samsapp-qa-eu-sqlserver'
+      keyVaultClientId: '$(KeyVaultClientId)'
+      keyVaultClientSecret: '$(KeyVaultClientSecret)'
       letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02146'
       imagesStorageCDNURL: 'https://samsapp-qa-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsappqaeustorage.blob.core.windows.net/'
@@ -113,6 +117,8 @@ stages:
       databaseLoginName: $(databaseLoginNameProd) 
       databaseLoginPassword: $(databaseLoginPasswordProd)
       databaseServerName: 'samsapp-prod-eu-sqlserver'
+      keyVaultClientId: '$(KeyVaultClientId)'
+      keyVaultClientSecret: '$(KeyVaultClientSecret)'
       letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02147'
       imagesStorageCDNURL: 'https://samsapp-prod-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsappprodeustorage.blob.core.windows.net/'

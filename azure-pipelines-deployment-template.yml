@@ -12,6 +12,8 @@ parameters: # defaults for any parameters that aren't specified
   databaseServerName: 'samsapp-dev-eu-sqlserver'
   keyVaultName: 'samsapp-data-eu-keyvault'
   keyVaultURL: 'https://samsapp-data-eu-keyvault.vault.azure.net/'
+  keyVaultClientId: '***secret'
+  keyVaultClientSecret: '***secret'
   letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02145'
   imagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/partimages'
   imagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/partimages'
@@ -127,8 +129,11 @@ jobs:
         runSettingsFile: '$(build.artifactstagingdirectory)/drop/FunctionalTests/SamLearnsAzure.FunctionalTests/test.runsettings'
         overrideTestrunParameters: |
          -ServiceUrl=${{parameters.serviceStagingUrl}}; 
-         -websiteUrl=${{parameters.websiteStagingUrl}};
+         -WebsiteUrl=${{parameters.websiteStagingUrl}};
          -TestEnvironment=${{parameters.environment}};
+         -KeyVaultURL=${{parameters.keyVaultURL}};
+         -KeyVaultClientId=${{parameters.keyVaultClientId}};
+         -KeyVaultClientSecret=${{parameters.keyVaultClientSecret}};
     - task: AzureAppServiceManage@0
       displayName: 'Swap Slots: web service'
       inputs:
