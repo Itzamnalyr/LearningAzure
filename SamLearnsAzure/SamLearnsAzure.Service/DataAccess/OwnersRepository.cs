@@ -40,7 +40,7 @@ namespace SamLearnsAzure.Service.DataAccess
                   .OrderBy(p => p.OwnerName)
                   .ToListAsync();
 
-                if (redisService != null)
+                if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
                     string json = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
@@ -78,7 +78,7 @@ namespace SamLearnsAzure.Service.DataAccess
                 .Where(p => p.Id == ownerId)
                 .FirstOrDefaultAsync<Owners>();
 
-                if (redisService != null)
+                if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
                     string json = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });

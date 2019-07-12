@@ -53,7 +53,7 @@ namespace SamLearnsAzure.Service.DataAccess
                     .FromSql("EXECUTE dbo.GetSetParts @SetNum", setNumParameter)
                     .ToListAsync();
 
-                if (redisService != null)
+                if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
                     string json = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
@@ -90,7 +90,7 @@ namespace SamLearnsAzure.Service.DataAccess
                     .Include(t => t.Theme)
                     .SingleAsync(b => b.SetNum == setNum);
 
-                if (redisService != null)
+                if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
                     string json = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });

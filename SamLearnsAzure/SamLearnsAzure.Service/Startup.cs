@@ -76,6 +76,7 @@ namespace SamLearnsAzure.Service
             services.AddScoped<IPartCategoriesRepository, PartCategoriesRepository>();
             services.AddScoped<IPartRelationshipsRepository, PartRelationshipsRepository>();
             services.AddScoped<IPartsRepository, PartsRepository>();
+            services.AddScoped<ISetPartsRepository, SetPartsRepository>();
             services.AddScoped<ISetsRepository, SetsRepository>();
             services.AddScoped<ISetImagesRepository, SetImagesRepository>();
             services.AddScoped<IThemesRepository, ThemesRepository>();

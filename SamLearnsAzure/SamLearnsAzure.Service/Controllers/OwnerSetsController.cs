@@ -34,6 +34,12 @@ namespace SamLearnsAzure.Service.Controllers
         {
             return await _repo.GetOwnerSets(_redisService, useCache, ownerId);
         }
+        
+        [HttpGet("SaveOwnerSet")]
+        public async Task<bool> SaveOwnerSet(int ownerId, string setNum)
+        {
+            return await _repo.SaveOwnerSet(ownerId, setNum);
+        }
 
     }
 }

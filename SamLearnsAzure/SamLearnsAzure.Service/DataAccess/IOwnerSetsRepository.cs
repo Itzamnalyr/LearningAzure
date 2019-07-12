@@ -9,5 +9,7 @@ namespace SamLearnsAzure.Service.DataAccess
     public interface IOwnerSetsRepository
     {
         Task<IEnumerable<OwnerSets>> GetOwnerSets(IRedisService redisService, bool useCache, int ownerId);
+
+        Task<bool> SaveOwnerSet(int ownerId, string setNum);
     }
 }

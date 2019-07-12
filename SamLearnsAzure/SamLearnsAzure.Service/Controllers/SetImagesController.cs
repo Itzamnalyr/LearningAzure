@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using SamLearnsAzure.Models;
 using SamLearnsAzure.Service.AI;
 using SamLearnsAzure.Service.DataAccess;
+using static SamLearnsAzure.Service.AI.BingImageSearch;
 
 namespace SamLearnsAzure.Service.Controllers
 {
@@ -38,11 +39,22 @@ namespace SamLearnsAzure.Service.Controllers
 
             //1. Get image from Bing Image Search API
             BingImageSearch bingImageSearchAI = new BingImageSearch();
-            List<SetImages> setImages = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
+            List<BingSearchResult> images = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
                 cognitiveServicesBingSearchUriBase, cognitiveServicesImageAnalysisUriBase,
                 setNum, resultsToReturn, resultsToSearch, tagFilter);
 
-            return setImages;
+            List<SetImages> results = new List<SetImages>();
+            foreach (BingSearchResult item in images)
+            {
+                SetImages newImage = new SetImages
+                {
+                    SetNum = item.SearchTerm,
+                    SetImage = item.ImageUrl
+                };
+                results.Add(newImage);
+            }
+
+            return results;
         }
 
         [HttpGet("GetSetImage")]
@@ -60,14 +72,14 @@ namespace SamLearnsAzure.Service.Controllers
 
                 //1. Get image from Bing Image Search API
                 BingImageSearch bingImageSearchAI = new BingImageSearch();
-                List<SetImages> setImages = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
+                List<BingSearchResult> images = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
                     cognitiveServicesBingSearchUriBase, cognitiveServicesImageAnalysisUriBase,
                     setNum, resultsToReturn, resultsToSearch, tagFilter);
 
                 //2. Save image into blob storage
-                if (setImages.Count > 0)
+                if (images.Count > 0)
                 {
-                    setImage = await SaveSetImageToStorageAndDatabase(setNum, setImages[0].SetImage);
+                    setImage = await SaveSetImageToStorageAndDatabase(setNum, images[0].ImageUrl);
                 }
             }
 
@@ -85,7 +97,7 @@ namespace SamLearnsAzure.Service.Controllers
         private async Task<SetImages> SaveSetImageToStorageAndDatabase(string setNum, string imageUrl)
         {
             //Get the storage blob connection information
-            string storageContainerName = _configuration["AppSettings:StorageContainerName"];
+            string storageContainerSetImagesName = _configuration["AppSettings:StorageContainerSetImagesName"];
             string storageConnectionString = _configuration["AppSettings:StorageConnectionString"];
             storageConnectionString = storageConnectionString.Replace("[ACCOUNTNAME]", _configuration["AppSettings:StorageAccountName"]);
             storageConnectionString = storageConnectionString.Replace("[ACCOUNTKEY]", _configuration["StorageAccountKey" + _configuration["AppSettings:Environment"]]);
@@ -95,7 +107,7 @@ namespace SamLearnsAzure.Service.Controllers
             fileName = ConvertFileNameToSetNumber(setNum, fileName);
 
             //Save the image to the storage blob
-            bool saveResult = await SaveImageIntoBlob(storageConnectionString, storageContainerName, imageUrl, fileName);
+            bool saveResult = await SaveImageIntoBlob(storageConnectionString, storageContainerSetImagesName, imageUrl, fileName);
             Console.WriteLine("Image saved into blob successfully: " + saveResult + "\n");
 
             SetImages setImage = new SetImages

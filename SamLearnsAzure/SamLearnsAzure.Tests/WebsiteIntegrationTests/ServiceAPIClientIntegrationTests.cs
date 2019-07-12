@@ -106,7 +106,6 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             Assert.IsTrue(setParts.Any());
         }
 
-
         [TestMethod]
         public async Task GetServiceApiClientThemesIntegrationTest()
         {

@@ -46,7 +46,7 @@ namespace SamLearnsAzure.Service.DataAccess
                 .OrderBy(p => p.Set.Name)
                 .ToListAsync();
 
-                if (redisService != null)
+                if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
                     string json = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
@@ -59,6 +59,13 @@ namespace SamLearnsAzure.Service.DataAccess
             }
 
             return result;
+        }
+
+        public async Task<bool> SaveOwnerSet(int ownerId, string setNum)
+        {
+            //Save owner set
+            //TODO: Add logic to database 
+            return true;
         }
     }
 }

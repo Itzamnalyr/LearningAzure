@@ -317,7 +317,7 @@ namespace SamLearnsAzure.Service.EFCore
             });
 
             //Create a custom query
-            modelBuilder.Query<SetParts>();
+            modelBuilder.Query<SetParts>();            
         }
     }
 }

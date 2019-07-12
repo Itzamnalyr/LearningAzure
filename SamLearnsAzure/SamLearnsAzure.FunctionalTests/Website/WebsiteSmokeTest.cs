@@ -72,53 +72,53 @@ namespace SamLearnsAzure.FunctionalTests.Website
             Assert.IsTrue(data.Text != null);
         }
 
-        [TestMethod]
-        [TestCategory("SkipWhenLiveUnitTesting")]
-        [TestCategory("SmokeTest")]
-        public void GotoSamLearnsAzureWebHomeSetImagesUpdatePageTest()
-        {
-            bool webLoaded;
-            string setNum = "75218-1";
+        //[TestMethod]
+        //[TestCategory("SkipWhenLiveUnitTesting")]
+        //[TestCategory("SmokeTest")]
+        //public void GotoSamLearnsAzureWebHomeSetImagesUpdatePageTest()
+        //{
+        //    bool webLoaded;
+        //    string setNum = "75218-1";
 
-            //Act - login: check that if the login link is showing, the page needs to log in
-            string homePageLoginText = CheckForLogin();
+        //    //Act - login: check that if the login link is showing, the page needs to log in
+        //    string homePageLoginText = CheckForLogin();
 
-            bool successfullyLoggedin = false;
-            if (homePageLoginText == "Login")
-            {
-                //we need to log in
-                Login();
+        //    bool successfullyLoggedin = false;
+        //    if (homePageLoginText == "Login")
+        //    {
+        //        //we need to log in
+        //        Login();
 
-                homePageLoginText = CheckForLogin();
-                if (homePageLoginText == "Logout")
-                {
-                    successfullyLoggedin = true;
-                }
-            }
-            else if (homePageLoginText == "Logout")
-            {
-                //we don't need to log in, we can continue successfully
-                successfullyLoggedin = true;
-            }
+        //        homePageLoginText = CheckForLogin();
+        //        if (homePageLoginText == "Logout")
+        //        {
+        //            successfullyLoggedin = true;
+        //        }
+        //    }
+        //    else if (homePageLoginText == "Logout")
+        //    {
+        //        //we don't need to log in, we can continue successfully
+        //        successfullyLoggedin = true;
+        //    }
 
-            Assert.IsTrue(successfullyLoggedin);
+        //    Assert.IsTrue(successfullyLoggedin);
 
-            //Act
-            string webURL = _webUrl + "home/updateimage?setnum=" + setNum;
-            _driver.Navigate().GoToUrl(webURL);
-            webLoaded = (_driver.Url == webURL);
-            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/main/div[1]/span/strong");
-            OpenQA.Selenium.IWebElement imageData = _driver.FindElementByXPath(@"/html/body/div/main/div[3]/div[1]/a/img");
+        //    //Act
+        //    string webURL = _webUrl + "home/updateimage?setnum=" + setNum;
+        //    _driver.Navigate().GoToUrl(webURL);
+        //    webLoaded = (_driver.Url == webURL);
+        //    OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/main/div[1]/span/strong");
+        //    OpenQA.Selenium.IWebElement imageData = _driver.FindElementByXPath(@"/html/body/div/main/div[3]/div[1]/a/img");
 
-            //Assert
-            Assert.IsTrue(webLoaded);
-            Assert.IsTrue(data != null);
-            Assert.IsTrue(data.Text != null);
-            Assert.IsTrue(imageData != null);
-            Assert.IsTrue(imageData.Text != null);
-            System.Diagnostics.Debug.WriteLine(imageData.GetAttribute("src"));
-            Assert.IsTrue(imageData.GetAttribute("src") != null); //Make sure the element was assigned an image, and hence the bing search is working
-        }
+        //    //Assert
+        //    Assert.IsTrue(webLoaded);
+        //    Assert.IsTrue(data != null);
+        //    Assert.IsTrue(data.Text != null);
+        //    Assert.IsTrue(imageData != null);
+        //    Assert.IsTrue(imageData.Text != null);
+        //    System.Diagnostics.Debug.WriteLine(imageData.GetAttribute("src"));
+        //    Assert.IsTrue(imageData.GetAttribute("src") != null); //Make sure the element was assigned an image, and hence the bing search is working
+        //}
 
         private string CheckForLogin()
         {
@@ -127,7 +127,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
             _driver.Navigate().GoToUrl(webLoginURL);
             IWebElement loginHeader;
             IEnumerable<IWebElement> elements = _driver.FindElements(By.XPath(@"/html/body/header/nav/div/div/ul[1]/li[2]/a"));
-            if (elements.Count() > 0)
+            if (elements.Any())
             {
                 loginHeader = _driver.FindElementByXPath(@"/html/body/header/nav/div/div/ul[1]/li[2]/a");
             }
@@ -177,9 +177,11 @@ namespace SamLearnsAzure.FunctionalTests.Website
 
         private void SetupKeyVault()
         {
-            KeyVaultClient keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(GetToken));
-            _email = keyVaultClient.GetSecretAsync(_keyVaultURL, "IdentitySamsAppEmail").Result.Value;
-            _password = keyVaultClient.GetSecretAsync(_keyVaultURL, "IdentitySamsAppPassword").Result.Value;
+            using (KeyVaultClient keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(GetToken)))
+            {
+                _email = keyVaultClient.GetSecretAsync(_keyVaultURL, "IdentitySamsAppEmail").Result.Value;
+                _password = keyVaultClient.GetSecretAsync(_keyVaultURL, "IdentitySamsAppPassword").Result.Value;
+            }
         }
 
         [TestInitialize]

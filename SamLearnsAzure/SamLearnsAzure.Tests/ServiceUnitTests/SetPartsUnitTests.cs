@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SamLearnsAzure.Service.EFCore;
+using Microsoft.Extensions.Configuration;
 
 namespace SamLearnsAzure.Tests.ServiceUnitTests
 {
@@ -20,10 +21,11 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         {
             //Arrange
             SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
-            Mock<ISetsRepository> mock = new Mock<ISetsRepository>();
+            Mock<ISetPartsRepository> mock = new Mock<ISetPartsRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
+            Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();
             mock.Setup(repo => repo.GetSetParts(It.IsAny<IRedisService>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(Task.FromResult(GetSetPartsTestData()));
-            SetsController controller = new SetsController(mock.Object, mockRedis.Object);
+            SetPartsController controller = new SetPartsController(mock.Object, mockRedis.Object, mockConfig.Object);
             string setNum = "abc123";
 
             //Act

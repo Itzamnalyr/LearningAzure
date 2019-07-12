@@ -10,11 +10,11 @@ namespace SamLearnsAzure.Service.AI
 {
     public class BingImageSearch
     {
-        public async Task<List<SetImages>> PerformBingImageSearch(string cognitiveServicesSubscriptionKey, 
-            string cognitiveServicesBingSearchUriBase, string cognitiveServicesImageAnalysisUriBase, 
+        public async Task<List<BingSearchResult>> PerformBingImageSearch(string cognitiveServicesSubscriptionKey,
+            string cognitiveServicesBingSearchUriBase, string cognitiveServicesImageAnalysisUriBase,
             string searchTerm, int resultsToReturn, int resultsToSearch, string tagFilter)
         {
-            List<SetImages> setImages = new List<SetImages>();
+            List<BingSearchResult> images = new List<BingSearchResult>();
 
             //create query and send request
             string uriQuery = cognitiveServicesBingSearchUriBase + "?q=" + Uri.EscapeDataString(searchTerm) + "&safeSearch=strict&count=" + resultsToSearch.ToString();
@@ -54,25 +54,45 @@ namespace SamLearnsAzure.Service.AI
                 Console.WriteLine("Image Url for the " + i + " image result: " + imageUrl + "\n");
 
                 //Make sure that the image contains the search term we are looking for
-                ImageAnalysis imageAnalysisAI = new ImageAnalysis();
-                bool imageContainsSearchTerm = await imageAnalysisAI.PerformImageAnalysisSearch(cognitiveServicesSubscriptionKey, cognitiveServicesImageAnalysisUriBase, imageUrl, tagFilter);
-                if (imageContainsSearchTerm == true)
+                if (tagFilter != null)
                 {
-                    SetImages newSetImage = new SetImages
+                    ImageAnalysis imageAnalysisAI = new ImageAnalysis();
+                    bool imageContainsSearchTerm = await imageAnalysisAI.PerformImageAnalysisSearch(cognitiveServicesSubscriptionKey, cognitiveServicesImageAnalysisUriBase, imageUrl, tagFilter);
+                    if (imageContainsSearchTerm == true)
                     {
-                        SetNum = searchTerm,
-                        SetImage = imageUrl
-                    };
-                    setImages.Add(newSetImage);
+                        BingSearchResult newImage = new BingSearchResult
+                        {
+                            SearchTerm = searchTerm,
+                            ImageUrl = imageUrl
+                        };
+                        images.Add(newImage);
+                    }
+                    if (images.Count >= resultsToReturn)
+                    {
+                        break;
+                    }
                 }
-                if (setImages.Count >= resultsToReturn)
+                else
                 {
+                    BingSearchResult newImage = new BingSearchResult
+                    {
+                        SearchTerm = searchTerm,
+                        ImageUrl = imageUrl
+                    };
+                    images.Add(newImage);
                     break;
                 }
             }
 
-            return setImages;
+            return images;
         }
+
+        public class BingSearchResult
+        {
+            public string SearchTerm { get; set; }            
+            public string ImageUrl { get; set; }
+        }
+
 
         public struct SearchResult
         {

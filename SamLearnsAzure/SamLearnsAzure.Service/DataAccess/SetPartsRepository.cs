@@ -7,25 +7,23 @@ using SamLearnsAzure.Models;
 using Microsoft.EntityFrameworkCore;
 using SamLearnsAzure.Service.EFCore;
 using Newtonsoft.Json;
-using System.Reflection.Metadata.Ecma335;
-using System.Collections;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class SetImagesRepository : ISetImagesRepository
+    public class SetPartsRepository : ISetPartsRepository
     {
         private readonly SamsAppDBContext _context;
 
-        public SetImagesRepository(SamsAppDBContext context)
+        public SetPartsRepository(SamsAppDBContext context)
         {
             _context = context;
         }
 
-        public async Task<SetImages> GetSetImage(IRedisService redisService, bool useCache, string setNum)
+        public async Task<IEnumerable<SetParts>> GetSetParts(IRedisService redisService, bool useCache, string setNum)
         {
-            string cacheKeyName = "SetImage-" + setNum;
+            string cacheKeyName = "SetParts-" + setNum;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            SetImages result = null;
+            IEnumerable<SetParts> result;
 
             //Check the cache
             string cachedJSON = null;
@@ -35,13 +33,16 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             if (cachedJSON != null) //This will be null if we aren't using Redis or the item doesn't exist in Redis
             {
-                result = JsonConvert.DeserializeObject<SetImages>(cachedJSON);
+                result = JsonConvert.DeserializeObject<IEnumerable<SetParts>>(cachedJSON);
             }
             else
             {
-                result = await _context.SetImages
-                    .OrderByDescending(p => p.SetImageId)
-                    .FirstOrDefaultAsync(b => b.SetNum == setNum);
+                SqlParameter setNumParameter = new SqlParameter("SetNum", setNum);
+
+                result = await _context
+                    .Query<SetParts>()
+                    .FromSql("EXECUTE dbo.GetSetParts @SetNum", setNumParameter)
+                    .ToListAsync();
 
                 if (result != null && redisService != null)
                 {
@@ -58,14 +59,5 @@ namespace SamLearnsAzure.Service.DataAccess
             return result;
         }
 
-        public async Task<SetImages> SaveSetImage(SetImages setImage)
-        {
-            SqlParameter setNumParameter = new SqlParameter("@SetNum", setImage.SetNum);
-            SqlParameter setImageParameter = new SqlParameter("@SetImage", setImage.SetImage);
-
-            await _context.Database.ExecuteSqlCommandAsync("dbo.SaveSetImage @SetNum={0}, @SetImage={1}", setNumParameter, setImageParameter);
-
-            return await GetSetImage(null, false, setImage.SetNum);
-        }
     }
 }

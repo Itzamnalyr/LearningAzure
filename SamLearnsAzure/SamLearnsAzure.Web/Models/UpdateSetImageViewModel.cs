@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace SamLearnsAzure.Web.Models
 {
-    public class UpdateImageViewModel
+    public class UpdateSetImageViewModel
     {
         public Sets Set { get; set; }
-        public List<SetImages> SetImages { get; set; }
+        public List<SetImages> PotentialSetImages { get; set; }
         public string BaseSetImagesStorageURL{ get; set; }
     }
 }

@@ -67,8 +67,14 @@ namespace SamLearnsAzure.Web.Controllers
 
         public async Task<List<SetParts>> GetSetParts(string setNum)
         {
-            Uri url = new Uri($"api/Sets/GetSetParts?setNum=" + setNum, UriKind.Relative);
+            Uri url = new Uri($"api/SetParts/GetSetParts?setNum=" + setNum, UriKind.Relative);
             return await ReadMessageList<SetParts>(url);
+        }
+
+        public async Task<bool> RefreshSetParts(string setNum)
+        {
+            Uri url = new Uri($"api/SetParts/RefreshSetParts?setNum=" + setNum, UriKind.Relative);
+            return await ReadMessageItem<bool>(url);
         }
 
         public async Task<List<Themes>> GetThemes()

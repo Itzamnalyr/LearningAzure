@@ -19,7 +19,6 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     [TestCategory("RedisTest")]
     public class SetPartsIntegrationTests : BaseIntegrationTest
     {
-
         [TestMethod]
         public async Task GetSetPartsIntegrationWithCacheTest()
         {
@@ -27,7 +26,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             string setNum = "75218-1";
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsetparts?setnum=" + setNum+ "&useCache=true");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/setparts/getsetparts?setnum=" + setNum + "&useCache=true");
             response.EnsureSuccessStatusCode();
             IEnumerable<SetParts> items = await response.Content.ReadAsAsync<IEnumerable<SetParts>>();
             response.Dispose();
@@ -46,7 +45,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             string setNum = "75218-1";
 
             //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsetparts?setnum=" + setNum+ "&useCache=false");
+            HttpResponseMessage response = await base.Client.GetAsync("/api/setparts/getsetparts?setnum=" + setNum + "&useCache=false");
             response.EnsureSuccessStatusCode();
             IEnumerable<SetParts> items = await response.Content.ReadAsAsync<IEnumerable<SetParts>>();
             response.Dispose();
@@ -57,6 +56,23 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             Assert.IsTrue(items.FirstOrDefault().PartNum != ""); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().PartName.Length > 0); //The first item has an name
         }
+
+
+        //[TestMethod]
+        //public async Task RefreshSetPartsIntegrationTest()
+        //{
+        //    //Arrange
+        //    string setNum = "75175-1";
+
+        //    //Act
+        //    HttpResponseMessage response = await base.Client.GetAsync("/api/setparts/refreshsetparts?setnum=" + setNum);
+        //    response.EnsureSuccessStatusCode();
+        //    bool result = await response.Content.ReadAsAsync<bool>();
+        //    response.Dispose();
+
+        //    //Assert
+        //    Assert.IsTrue(result);
+        //}
 
     }
 }

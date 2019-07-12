@@ -59,27 +59,37 @@ namespace SamLearnsAzure.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> UpdateImage(string setnum)
+        public async Task<IActionResult> UpdateSetImage(string setnum)
         {
             Sets set = await _ServiceApiClient.GetSet(setnum);
             List<SetImages> setImages = await _ServiceApiClient.GetSetImages(setnum);
 
-            UpdateImageViewModel updateImageModel = new UpdateImageViewModel
+            UpdateSetImageViewModel updateSetImageModel = new UpdateSetImageViewModel
             {
                 Set = set,
-                SetImages = setImages
+                PotentialSetImages = setImages
             };
 
-            return View(updateImageModel);
+            return View(updateSetImageModel);
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> UpdateImageSave(string setNum, string imageUrl)
+        public async Task<IActionResult> UpdateSetImageSave(string setNum, string imageUrl)
         {
             await _ServiceApiClient.SaveSetImage(setNum, imageUrl);
 
-            return RedirectToAction("Set", new { setNum = setNum });
+            return RedirectToAction("Set", new { setNum });
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> RefreshSetParts(string setNum)
+        {
+            await _ServiceApiClient.RefreshSetParts(setNum);
+
+            return RedirectToAction("Set", new { setNum });
         }
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
