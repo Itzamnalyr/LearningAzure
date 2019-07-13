@@ -7,4 +7,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="set_image_id" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="8b5f1eee-1a05-4c91-83b8-b19429323b9a" ChangeDateTime="07/13/2019 13:21:35">
+    <Property Name="ElementName" Value="[dbo].[part_images].[new_custom_image_url]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[part_images]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="color_id" />
+  </Operation>
 </Operations>
