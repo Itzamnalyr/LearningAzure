@@ -79,6 +79,7 @@
     <Build Include="dbo\Tables\set_images.sql" />
     <Build Include="dbo\Tables\part_images.sql" />
     <Build Include="dbo\Stored Procedures\SaveSetImage.sql" />
+    <Build Include="dbo\Stored Procedures\SavePartImage.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
