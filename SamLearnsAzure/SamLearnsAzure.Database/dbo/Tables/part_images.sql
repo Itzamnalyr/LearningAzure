@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[part_images]
 (
-	[part_num] VARCHAR(100) NOT NULL PRIMARY KEY,
+	[part_image_id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+	[part_num] VARCHAR(100) NOT NULL,
 	[source_image_url] VARCHAR(2000) NULL,
 	[color_id] INT NOT NULL,
 	[last_updated] DATETIME NOT NULL
