@@ -24,12 +24,14 @@ namespace SamLearnsAzure.Service.Controllers
     public class SetPartsController : ControllerBase
     {
         private readonly ISetPartsRepository _repo;
+        private readonly IPartImagesRepository _repoPartImages;
         private readonly IRedisService _redisService;
         private readonly IConfiguration _configuration;
 
-        public SetPartsController(ISetPartsRepository repo, IRedisService redisService, IConfiguration configuration)
+        public SetPartsController(ISetPartsRepository repo, IPartImagesRepository repoPartImages, IRedisService redisService, IConfiguration configuration)
         {
             _repo = repo;
+            _repoPartImages = repoPartImages;
             _redisService = redisService;
             _configuration = configuration;
         }
@@ -47,12 +49,12 @@ namespace SamLearnsAzure.Service.Controllers
         }
 
         /// <summary>
-        /// Refresh all the parts, checking that the parts exist in storage, and downloading the parts if needed.
+        /// Search for missing parts in a set, checking that the parts exist in storage, and downloading the parts if needed.
         /// </summary>
         /// <param name="setNum"></param>
         /// <returns></returns>
-        [HttpGet("RefreshSetParts")]
-        public async Task<bool> RefreshSetParts(string setNum)
+        [HttpGet("SearchForMissingParts")]
+        public async Task<bool> SearchForMissingParts(string setNum)
         {
             //Get a list of all parts for this set
             IEnumerable<SetParts> setParts = await _repo.GetSetParts(_redisService, false, setNum);
@@ -83,14 +85,24 @@ namespace SamLearnsAzure.Service.Controllers
                         string cognitiveServicesBingSearchUriBase = _configuration["AppSettings:CognitiveServicesBingSearchUriBase"];
                         string cognitiveServicesImageAnalysisUriBase = _configuration["AppSettings:CognitiveServicesImageAnalysisUriBase"];
                         string tagFilter = "lego";
+                        string searchTerm = item.PartNum + " lego " + item.ColorName;
 
                         //Search Bing for the image
                         List<BingSearchResult> newImageParts = await bingImageSearchAPI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
                                                                         cognitiveServicesBingSearchUriBase, cognitiveServicesImageAnalysisUriBase,
-                                                                        item.PartNum, 1, 10, tagFilter);
+                                                                        searchTerm, 1, 10, tagFilter);
                         //Process the image parts
                         if (newImageParts.Any())
                         {
+                            //Save the new part into the custom part images database table
+                            PartImages newPartImages = new PartImages
+                            {
+                                PartNum = item.PartNum,
+                                SourceImageUrl = newImageParts[0].ImageUrl,
+                                ColorId = item.ColorId
+                            };
+                            await _repoPartImages.SavePartImage(newPartImages);
+
                             //Download the image into storage
                             CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference(storageContainerPartImagesName);
                             CloudBlockBlob blob = cloudBlobContainer.GetBlockBlobReference(newImageName);
@@ -100,6 +112,7 @@ namespace SamLearnsAzure.Service.Controllers
                             {
                                 await blob.UploadFromStreamAsync(dataStream);
                             }
+
 
                         }
                     }

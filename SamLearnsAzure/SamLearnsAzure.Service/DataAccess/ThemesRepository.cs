@@ -23,7 +23,6 @@ namespace SamLearnsAzure.Service.DataAccess
         {
             string cacheKeyName = "Themes-all";
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-
             List<Themes> result = null;
 
             //Check the cache

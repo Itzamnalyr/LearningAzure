@@ -36,6 +36,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first item has an id
             Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
         }
+
         [TestMethod]
         public async Task GetThemesIntegrationWithoutCacheTest()
         {

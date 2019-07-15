@@ -21,11 +21,12 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         {
             //Arrange
             SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
-            Mock<ISetPartsRepository> mock = new Mock<ISetPartsRepository>();
+            Mock<ISetPartsRepository> mockSetParts = new Mock<ISetPartsRepository>();
+            Mock<IPartImagesRepository> mockImageParts = new Mock<IPartImagesRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();
-            mock.Setup(repo => repo.GetSetParts(It.IsAny<IRedisService>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(Task.FromResult(GetSetPartsTestData()));
-            SetPartsController controller = new SetPartsController(mock.Object, mockRedis.Object, mockConfig.Object);
+            mockSetParts.Setup(repo => repo.GetSetParts(It.IsAny<IRedisService>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(Task.FromResult(GetSetPartsTestData()));
+            SetPartsController controller = new SetPartsController(mockSetParts.Object, mockImageParts.Object, mockRedis.Object, mockConfig.Object);
             string setNum = "abc123";
 
             //Act

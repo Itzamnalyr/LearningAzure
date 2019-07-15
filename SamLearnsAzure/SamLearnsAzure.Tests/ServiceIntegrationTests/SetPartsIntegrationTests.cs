@@ -58,21 +58,21 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         }
 
 
-        //[TestMethod]
-        //public async Task RefreshSetPartsIntegrationTest()
-        //{
-        //    //Arrange
-        //    string setNum = "75175-1";
+        [TestMethod]
+        public async Task SearchForMissingPartsIntegrationTest()
+        {
+            //Arrange
+            string setNum = "75168-1"; //Yoda's Jedi starfighter
 
-        //    //Act
-        //    HttpResponseMessage response = await base.Client.GetAsync("/api/setparts/refreshsetparts?setnum=" + setNum);
-        //    response.EnsureSuccessStatusCode();
-        //    bool result = await response.Content.ReadAsAsync<bool>();
-        //    response.Dispose();
+            //Act
+            HttpResponseMessage response = await base.Client.GetAsync("/api/setparts/SearchForMissingParts?setnum=" + setNum);
+            response.EnsureSuccessStatusCode();
+            bool result = await response.Content.ReadAsAsync<bool>();
+            response.Dispose();
 
-        //    //Assert
-        //    Assert.IsTrue(result);
-        //}
+            //Assert
+            Assert.IsTrue(result);
+        }
 
     }
 }

@@ -17,8 +17,8 @@
         <span><strong>Theme: </strong>@Model.Set.Theme.Name</span><br />
         @if (User.Identity.IsAuthenticated == true)
         {
-            @Html.ActionLink("Update set image", "UpdateSetImage", "Home", new { setNum = Model.Set.SetNum })
-            @Html.ActionLink("Search for missing part images", "RefreshSetParts", "Home", new { setNum = Model.Set.SetNum })
+            @Html.ActionLink("Update set image", "UpdateSetImage", "Home", new { setNum = Model.Set.SetNum })<br />
+            @Html.ActionLink("Search for missing parts", "SearchForMissingParts", "Home", new { setNum = Model.Set.SetNum })
         }
     </div>
 </div>

@@ -28,6 +28,7 @@ namespace SamLearnsAzure.Service.EFCore
         public virtual DbSet<Sets> Sets { get; set; }
         public virtual DbSet<SetImages> SetImages { get; set; }
         public virtual DbSet<Themes> Themes { get; set; }
+        public virtual DbSet<PartImages> PartImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -314,6 +315,39 @@ namespace SamLearnsAzure.Service.EFCore
                     .IsUnicode(false);
 
                 entity.Property(e => e.ParentId).HasColumnName("parent_id");
+            });
+
+            modelBuilder.Entity<PartImages>(entity =>
+            {
+                entity.HasKey(e => e.PartImageId);
+
+                entity.ToTable("part_images");
+
+                entity.Property(e => e.PartImageId)
+                    .HasColumnName("part_image_id")
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.PartNum)
+                     .IsRequired()
+                     .HasColumnName("part_num")
+                     .HasMaxLength(100)
+                     .IsUnicode(false);
+
+                entity.Property(e => e.SourceImageUrl)
+                    .HasColumnName("source_image_url")
+                    .HasMaxLength(2000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ColorId).HasColumnName("color_id");
+
+                //entity.HasOne(d => d.Color)
+                //    .WithMany(p => p.PartImages)
+                //    .HasForeignKey(d => d.ColorId)
+                //    .HasConstraintName("FK_part_images_colors");
+
+                entity.Property(e => e.LastUpdated).HasColumnName("last_updated");
             });
 
             //Create a custom query

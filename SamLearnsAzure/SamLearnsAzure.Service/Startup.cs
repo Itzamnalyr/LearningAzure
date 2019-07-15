@@ -80,6 +80,7 @@ namespace SamLearnsAzure.Service
             services.AddScoped<ISetsRepository, SetsRepository>();
             services.AddScoped<ISetImagesRepository, SetImagesRepository>();
             services.AddScoped<IThemesRepository, ThemesRepository>();
+            services.AddScoped<IPartImagesRepository, PartImagesRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

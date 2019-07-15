@@ -71,9 +71,9 @@ namespace SamLearnsAzure.Web.Controllers
             return await ReadMessageList<SetParts>(url);
         }
 
-        public async Task<bool> RefreshSetParts(string setNum)
+        public async Task<bool> SearchForMissingParts(string setNum)
         {
-            Uri url = new Uri($"api/SetParts/RefreshSetParts?setNum=" + setNum, UriKind.Relative);
+            Uri url = new Uri($"api/SetParts/SearchForMissingParts?setNum=" + setNum, UriKind.Relative);
             return await ReadMessageItem<bool>(url);
         }
 
@@ -81,6 +81,12 @@ namespace SamLearnsAzure.Web.Controllers
         {
             Uri url = new Uri($"api/Themes/GetThemes", UriKind.Relative);
             return await ReadMessageList<Themes>(url);
+        }
+
+        public async Task<List<PartImages>> GetPartImages()
+        {
+            Uri url = new Uri($"api/PartImages/GetPartImages", UriKind.Relative);
+            return await ReadMessageList<PartImages>(url);
         }
 
         private async Task<List<T>> ReadMessageList<T>(Uri url)

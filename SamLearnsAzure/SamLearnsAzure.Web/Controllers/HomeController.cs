@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace SamLearnsAzure.Web.Controllers
 {
@@ -85,11 +86,51 @@ namespace SamLearnsAzure.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> RefreshSetParts(string setNum)
+        public async Task<IActionResult> SearchForMissingParts(string setNum)
         {
-            await _ServiceApiClient.RefreshSetParts(setNum);
+            await _ServiceApiClient.SearchForMissingParts(setNum);
 
             return RedirectToAction("Set", new { setNum });
+        }
+
+        //[Authorize]
+        [HttpGet]
+        public IActionResult Admin()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PartImages()
+        {
+
+            //Get all custom, downloaded parts
+            List<PartImages> partImages = await _ServiceApiClient.GetPartImages();
+
+            PartImagesViewModel partImagesViewModel = new PartImagesViewModel
+            {
+                PartImages = partImages,
+                BasePartsImagesStorageURL = _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:PartImagesContainerName"]
+            };
+
+            return View(partImagesViewModel);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult UpdatePartImage(string partNum)
+        {
+            //Part part = await _ServiceApiClient.GetPart(partNum);
+            //List<PartImages> partImages = await _ServiceApiClient.GetPartImages(partNum);
+
+            //UpdatePartImageViewModel updatePartImageModel = new UpdatePartImageViewModel
+            //{
+            //    Part = part,
+            //    PotentialPartImages = partImages
+            //};
+
+            //return View(updatePartImageModel);
+            return View();
         }
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]

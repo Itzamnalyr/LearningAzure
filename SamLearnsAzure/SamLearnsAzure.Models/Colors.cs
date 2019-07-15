@@ -28,5 +28,6 @@ namespace SamLearnsAzure.Models
         /// A collection of inventory parts with this color
         /// </summary>
         public ICollection<InventoryParts> InventoryParts { get; set; }
+        public ICollection<PartImages> PartImages { get; set; }
     }
 }

@@ -1,0 +1,36 @@
+﻿@using SamLearnsAzure.Models
+@model PartImagesViewModel
+@{
+    ViewData["Title"] = "Custom part image details";
+}
+
+<div class="BreadCrumbs">
+    <br />@Html.ActionLink("Home", "Index", "Home") &gt; @Html.ActionLink("Administration", "Admin", "Home") &gt;
+    <span style="font-size: 24px;"><strong>Part Images</strong></span>
+</div>
+
+<hr />
+<span><strong>Parts: </strong></span><br />
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            @for (int i = 0; i < Model.PartImages.Count; i++)
+            {
+                PartImages item = Model.PartImages[i];
+                if (i % 12 == 0)
+                {
+                    <div></div>
+                }
+                <div class="col-sm-1 col-xs-2 samsAppPart">
+                    <img src="@(Model.BasePartsImagesStorageURL)/@(item.ColorId)/@(item.PartNum).png"
+                         class="img-rounded samsAppImage"
+                         onerror="if (this.src != '/images/lego.gif') { this.src = '/images/lego.gif'; }"
+                         alt="@(item.PartNum) part image sourced from: @(Model.BasePartsImagesStorageURL)/@(item.ColorId)/@(item.PartNum).png" /><br />
+                    @*<span class="samsAppImageText">@item.Color.ColorName</span><br />*@
+                    <span class="samsAppImageText">PartNum: @item.PartNum</span><br />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
