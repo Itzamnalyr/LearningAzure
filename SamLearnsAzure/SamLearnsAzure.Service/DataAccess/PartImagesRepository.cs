@@ -24,7 +24,7 @@ namespace SamLearnsAzure.Service.DataAccess
         public async Task<List<PartImages>> GetPartImages(IRedisService redisService, bool useCache)
         {
             string cacheKeyName = "PartImages";
-            TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
+            TimeSpan cacheExpirationTime = new TimeSpan(0, 30, 0);
             List<PartImages> result = null;
 
             //Check the cache
@@ -62,7 +62,7 @@ namespace SamLearnsAzure.Service.DataAccess
         public async Task<PartImages> GetPartImage(IRedisService redisService, bool useCache, string partNum)
         {
             string cacheKeyName = "PartImage-" + partNum;
-            TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
+            TimeSpan cacheExpirationTime = new TimeSpan(0, 30, 0);
             PartImages result = null;
 
             //Check the cache
@@ -78,7 +78,6 @@ namespace SamLearnsAzure.Service.DataAccess
             else
             {
                 result = await _context.PartImages
-                    .OrderBy(p => p.PartNum)
                     .FirstOrDefaultAsync(b => b.PartNum == partNum);
 
                 if (result != null && redisService != null)
@@ -99,7 +98,7 @@ namespace SamLearnsAzure.Service.DataAccess
         public async Task<PartImages> SavePartImage(PartImages partImage)
         {
             SqlParameter partNumParameter = new SqlParameter("@PartNum", partImage.PartNum);
-            SqlParameter partImageParameter = new SqlParameter("@SourceImage", partImage.SourceImageUrl);
+            SqlParameter partImageParameter = new SqlParameter("@SourceImage", partImage.SourceImage);
             SqlParameter colorIdParameter = new SqlParameter("@ColorId", partImage.ColorId);
 
             await _context.Database.ExecuteSqlCommandAsync("dbo.SavePartImage @PartNum={0}, @SourceImage={1}, @ColorId={2}", partNumParameter, partImageParameter, colorIdParameter);

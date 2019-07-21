@@ -24,7 +24,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
     {
 
         [TestMethod]
-        public async Task GetServiceApiClientOwnersIntegrationTest()
+        public async Task GetOwnersServiceApiIntegrationTest()
         {
             //Arrange
             ServiceApiClient client = new ServiceApiClient(base.Configuration);
@@ -37,7 +37,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         }
 
         [TestMethod]
-        public async Task GetServiceApiClientOwnerSetsIntegrationTest()
+        public async Task GetOwnerSetsServiceApiIntegrationTest()
         {
             //Arrange
             ServiceApiClient client = new ServiceApiClient(base.Configuration);
@@ -51,7 +51,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         }
 
         [TestMethod]
-        public async Task GetServiceApiClientSetsIntegrationTest()
+        public async Task GetSetsServiceApiIntegrationTest()
         {
             //Arrange
             ServiceApiClient client = new ServiceApiClient(base.Configuration);
@@ -65,7 +65,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         }
 
         [TestMethod]
-        public async Task GetServiceApiClientSetIntegrationTest()
+        public async Task GetSetServiceApiIntegrationTest()
         {
             //Arrange
             ServiceApiClient client = new ServiceApiClient(base.Configuration);
@@ -79,7 +79,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         }
 
         [TestMethod]
-        public async Task GetServiceApiClientSetImageIntegrationTest()
+        public async Task GetSetImageServiceApiIntegrationTest()
         {
             //Arrange
             ServiceApiClient client = new ServiceApiClient(base.Configuration);
@@ -93,7 +93,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         }
 
         [TestMethod]
-        public async Task GetServiceApiClientSetPartsIntegrationTest()
+        public async Task GetSetPartsServiceApiIntegrationTest()
         {
             //Arrange
             ServiceApiClient client = new ServiceApiClient(base.Configuration);
@@ -107,7 +107,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         }
 
         [TestMethod]
-        public async Task GetServiceApiClientThemesIntegrationTest()
+        public async Task GetThemesServiceApiIntegrationTest()
         {
             //Arrange
             ServiceApiClient client = new ServiceApiClient(base.Configuration);
@@ -117,6 +117,64 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
 
             //Assert
             Assert.IsTrue(themes.Any());
+        }
+
+        [TestMethod]
+        public async Task GetPartImagesServiceApiIntegrationTest()
+        {
+            //Arrange
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
+
+            //Act
+            List<PartImages> partImages = await client.GetPartImages();
+
+            //Assert
+            Assert.IsTrue(partImages.Any());
+        }
+
+        [TestMethod]
+        public async Task GetSetImagesServiceApiIntegrationTest()
+        {
+            //Arrange
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
+            string setNum = "75218-1";
+            int resultsToReturn = 2;
+            int resultsToSearch = 4;
+
+            //Act
+            List<SetImages> setImages = await client.GetSetImages(setNum, resultsToReturn, resultsToSearch);
+
+            //Assert
+            Assert.IsTrue(setImages.Any());
+        }
+
+        [TestMethod]
+        public async Task SaveSetImageServiceApiIntegrationTest()
+        {
+            //Arrange
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
+            string setNum = "75218-2";
+            string imageUrl = "https://samlearnsazure.files.wordpress.com/2019/01/microsoft-certified-azure-solutions-architect-expert.png";
+
+            //Act
+            SetImages setImage = await client.SaveSetImage(setNum, imageUrl);
+
+            //Assert
+            Assert.IsTrue(setImage != null);
+        }
+
+        [TestMethod]
+        public async Task SearchForMissingPartsServiceApiIntegrationTest()
+        {
+            //Arrange
+            ServiceApiClient client = new ServiceApiClient(base.Configuration);
+            string setNum = "75168-1"; //Yoda's Jedi starfighter
+
+            //Act
+            bool result = await client.SearchForMissingParts(setNum);
+
+            //Assert
+            Assert.IsTrue(result);
         }
 
     }

@@ -10,7 +10,7 @@ namespace SamLearnsAzure.Web.Models
     {
         public Sets Set{ get; set; }
         public SetParts CurrentSetPart { get; set; }
-        public List<SetPartImages> PotentialSetParts { get; set; }
+        public List<PartImages> PotentialSetParts { get; set; }
         public string BaseSetImagesStorageURL { get; set; }
     }
 

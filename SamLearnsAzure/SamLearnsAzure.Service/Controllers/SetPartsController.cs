@@ -98,7 +98,7 @@ namespace SamLearnsAzure.Service.Controllers
                             PartImages newPartImages = new PartImages
                             {
                                 PartNum = item.PartNum,
-                                SourceImageUrl = newImageParts[0].ImageUrl,
+                                SourceImage = newImageParts[0].ImageUrl,
                                 ColorId = item.ColorId
                             };
                             await _repoPartImages.SavePartImage(newPartImages);
@@ -118,11 +118,6 @@ namespace SamLearnsAzure.Service.Controllers
                     }
                 }
             }
-
-            //TODO:
-            //1.1.1. Farm out all parts in a set to functions to process quickly?
-            //4. Log this all somehow? Perhaps to a page where we can see all of the sets, pieces, method uses, and the resultant image?
-            //4.1. Need to have an override if the wrong part is found - probably from the log page
 
             return true;
         }

@@ -60,10 +60,10 @@ namespace SamLearnsAzure.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> UpdateSetImage(string setnum)
+        public async Task<IActionResult> UpdateSetImage(string setnum, int resultsToReturn, int resultsToSearch)
         {
             Sets set = await _ServiceApiClient.GetSet(setnum);
-            List<SetImages> setImages = await _ServiceApiClient.GetSetImages(setnum);
+            List<SetImages> setImages = await _ServiceApiClient.GetSetImages(setnum, resultsToReturn, resultsToSearch);
 
             UpdateSetImageViewModel updateSetImageModel = new UpdateSetImageViewModel
             {
@@ -118,19 +118,21 @@ namespace SamLearnsAzure.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult UpdatePartImage(string partNum)
+        public async Task<IActionResult> UpdatePartImage(string partNum, int colorId, string colorName)
         {
-            //Part part = await _ServiceApiClient.GetPart(partNum);
-            //List<PartImages> partImages = await _ServiceApiClient.GetPartImages(partNum);
+            int resultsToReturn = 10;
+            int resultsToSearch = 20;
 
-            //UpdatePartImageViewModel updatePartImageModel = new UpdatePartImageViewModel
-            //{
-            //    Part = part,
-            //    PotentialPartImages = partImages
-            //};
+            List<SetParts> setParts = await _ServiceApiClient.GetSetParts(partNum);
+            List<PartImages> partImages = await _ServiceApiClient.SearchForPotentialPartImages(partNum, colorId, colorName, resultsToReturn, resultsToSearch); 
 
-            //return View(updatePartImageModel);
-            return View();
+            UpdatePartImageViewModel updatePartImageModel = new UpdatePartImageViewModel
+            {
+                CurrentSetPart = setParts.SingleOrDefault(t => t.PartNum == partNum),
+                PotentialSetParts = partImages
+            };
+
+            return View(updatePartImageModel);
         }
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -148,15 +150,14 @@ namespace SamLearnsAzure.Web.Controllers
         [HttpGet]
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
-
+            ViewData["Message"] = "Sam Learns Azure.";
             return View();
         }
 
         [HttpGet]
         public IActionResult Privacy()
         {
-            ViewData["Message"] = "Your privacy page.";
+            ViewData["Message"] = "Sam Learns Azure privacy page.";
             return View();
         }
 

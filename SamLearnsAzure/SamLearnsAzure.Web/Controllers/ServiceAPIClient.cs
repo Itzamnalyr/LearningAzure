@@ -53,9 +53,9 @@ namespace SamLearnsAzure.Web.Controllers
             return await ReadMessageItem<SetImages>(url);
         }
 
-        public async Task<List<SetImages>> GetSetImages(string setNum)
+        public async Task<List<SetImages>> GetSetImages(string setNum, int resultsToReturn, int resultsToSearch)
         {
-            Uri url = new Uri($"api/SetImages/GetSetImages?setnum=" + setNum + "&useCache=false&forceBingSearch=true&resultsToReturn=10&resultsToSearch=20", UriKind.Relative);
+            Uri url = new Uri($"api/SetImages/GetSetImages?setnum=" + setNum + "&useCache=false&forceBingSearch=true&resultsToReturn=" + resultsToReturn + "&resultsToSearch=" + resultsToSearch, UriKind.Relative);
             return await ReadMessageList<SetImages>(url);
         }
 
@@ -85,7 +85,13 @@ namespace SamLearnsAzure.Web.Controllers
 
         public async Task<List<PartImages>> GetPartImages()
         {
-            Uri url = new Uri($"api/PartImages/GetPartImages", UriKind.Relative);
+            Uri url = new Uri($"api/PartImages/GetPartImages?useCache=false", UriKind.Relative);
+            return await ReadMessageList<PartImages>(url);
+        }
+
+        public async Task<List<PartImages>> SearchForPotentialPartImages(string partNum, int colorId, string colorName, int resultsToReturn = 1, int resultsToSearch = 1)
+        {
+            Uri url = new Uri($"api/PartImages/SearchForPotentialPartImages?partNum=" + partNum + "&colorId=" + colorId + "&colorName=" + colorName + "&resultsToReturn=" + resultsToReturn + "&resultsToSearch=" + resultsToSearch, UriKind.Relative);
             return await ReadMessageList<PartImages>(url);
         }
 

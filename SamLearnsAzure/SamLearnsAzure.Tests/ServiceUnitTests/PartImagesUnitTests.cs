@@ -82,7 +82,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         private void TestPartImages(PartImages PartImages)
         {
             Assert.IsTrue(PartImages.PartNum == "abc");
-            Assert.IsTrue(PartImages.SourceImageUrl == "def");
+            Assert.IsTrue(PartImages.SourceImage == "def");
             Assert.IsTrue(PartImages.ColorId == 1);
             Assert.IsTrue(PartImages.LastUpdated > DateTime.MinValue);
         }
@@ -101,7 +101,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             return new PartImages()
             {
                 PartNum = "abc",
-                SourceImageUrl = "def",
+                SourceImage = "def",
                 ColorId = 1,
                 LastUpdated = DateTime.Now
             };

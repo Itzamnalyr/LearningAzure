@@ -34,7 +34,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
 
             //Act
             HttpResponseMessage response = await client.GetAsync("home/index");
-           
+
             //Assert
             response.EnsureSuccessStatusCode();
             Assert.IsTrue(true);
@@ -52,6 +52,41 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
 
             //Act
             HttpResponseMessage response = await client.GetAsync("home/set?setnum=" + setNum);
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task GetSearchForMissingPartsViewIntegrationTest()
+        {
+            //Arrange
+            string setNum = "75218-1";
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
+
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/searchformissingparts?setnum=" + setNum);
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task GetPartImagesViewIntegrationTest()
+        {
+            //Arrange
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
+
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/PartImages");
 
             //Assert
             response.EnsureSuccessStatusCode();

@@ -35,6 +35,27 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             TestOwnerSets(sets.FirstOrDefault());
         }
 
+        [TestMethod]
+        public async Task SaveOwnerSetsMockTest()
+        {
+            //Arrange
+            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
+            Mock<IOwnerSetsRepository> mock = new Mock<IOwnerSetsRepository>();
+            Mock<IRedisService> mockRedis = new Mock<IRedisService>();
+            mock.Setup(repo => repo.SaveOwnerSet(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(Task.FromResult(true));
+            OwnerSetsController controller = new OwnerSetsController(mock.Object, mockRedis.Object);
+            int ownerId = 1;
+            string setNum = "abc123";
+            bool owned = true;
+            bool wanted = false;
+
+            //Act
+            bool result = await controller.SaveOwnerSet(setNum, ownerId, owned, wanted);
+
+            //Assert
+            Assert.IsTrue(result == true);
+        }
+
         private void TestOwnerSets(OwnerSets OwnerSet)
         {
             Assert.IsTrue(OwnerSet.SetNum == "abc");

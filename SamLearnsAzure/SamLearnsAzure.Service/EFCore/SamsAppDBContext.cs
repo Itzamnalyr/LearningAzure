@@ -335,17 +335,17 @@ namespace SamLearnsAzure.Service.EFCore
                      .HasMaxLength(100)
                      .IsUnicode(false);
 
-                entity.Property(e => e.SourceImageUrl)
+                entity.Property(e => e.SourceImage)
                     .HasColumnName("source_image_url")
                     .HasMaxLength(2000)
                     .IsUnicode(false);
 
                 entity.Property(e => e.ColorId).HasColumnName("color_id");
 
-                //entity.HasOne(d => d.Color)
-                //    .WithMany(p => p.PartImages)
-                //    .HasForeignKey(d => d.ColorId)
-                //    .HasConstraintName("FK_part_images_colors");
+                entity.HasOne(d => d.Color)
+                    .WithMany(p => p.PartImages)
+                    .HasForeignKey(d => d.ColorId)
+                    .HasConstraintName("FK_part_images_colors");
 
                 entity.Property(e => e.LastUpdated).HasColumnName("last_updated");
             });

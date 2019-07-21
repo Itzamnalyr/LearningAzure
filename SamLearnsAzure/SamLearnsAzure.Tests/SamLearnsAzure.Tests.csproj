@@ -28,7 +28,7 @@
     <PackageReference Include="Moq" Version="4.12.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
-    <PackageReference Include="SamLearnsAzure.Models" Version="1.0.1939" />
+    <PackageReference Include="SamLearnsAzure.Models" Version="1.0.1944" />
   </ItemGroup>
 
   <ItemGroup>

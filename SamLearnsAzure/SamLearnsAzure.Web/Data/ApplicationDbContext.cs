@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SamLearnsAzure.Web.Data
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

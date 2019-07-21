@@ -80,6 +80,7 @@
     <Build Include="dbo\Tables\part_images.sql" />
     <Build Include="dbo\Stored Procedures\SaveSetImage.sql" />
     <Build Include="dbo\Stored Procedures\SavePartImage.sql" />
+    <Build Include="dbo\Stored Procedures\SaveOwnerSet.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

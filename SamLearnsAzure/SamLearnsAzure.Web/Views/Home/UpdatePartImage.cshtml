@@ -28,11 +28,11 @@
     @for (int i = 0; i < firstLoopLimit; i++)
     {
         <div class="col-md-2">
-            <a href='@Url.Action("UpdatePartImagesave", "Home", new { setNum = Model.Set.SetNum, imageUrl = Model.PotentialSetParts[i].PartImage })'>
-                <img id="@Model.PotentialSetParts[i].PartImage"
-                     src="@(Model.PotentialSetParts[i].PartImage)"
+            <a href='@Url.Action("UpdatePartImagesave", "Home", new { setNum = Model.Set.SetNum, imageUrl = Model.PotentialSetParts[i].SourceImage })'>
+                <img id="@Model.PotentialSetParts[i].SourceImage"
+                     src="@(Model.PotentialSetParts[i].SourceImage)"
                      style="max-width:200px; max-height:200px;"
-                     alt="@Model.PotentialSetParts[i].PartImage" />
+                     alt="@Model.PotentialSetParts[i].SourceImage" />
             </a><br />
         </div>
     }
@@ -41,11 +41,11 @@
     @for (int i = 0; i < secondLoopLimit; i++)
     {
         <div class="col-md-2">
-            <a href='@Url.Action("UpdatePartImagesave", "Home", new { setNum = Model.Set.SetNum, imageUrl = Model.PotentialSetParts[i+5].PartImage })'>
-                <img id="@Model.PotentialSetParts[i+5].PartImage"
-                     src="@(Model.PotentialSetParts[i+5].PartImage)"
+            <a href='@Url.Action("UpdatePartImagesave", "Home", new { setNum = Model.Set.SetNum, imageUrl = Model.PotentialSetParts[i+5].SourceImage })'>
+                <img id="@Model.PotentialSetParts[i+5].SourceImage"
+                     src="@(Model.PotentialSetParts[i+5].SourceImage)"
                      style="max-width:200px; max-height:200px;"
-                     alt="@Model.PotentialSetParts[i+5].PartImage" />
+                     alt="@Model.PotentialSetParts[i+5].SourceImage" />
             </a><br />
         </div>
     }

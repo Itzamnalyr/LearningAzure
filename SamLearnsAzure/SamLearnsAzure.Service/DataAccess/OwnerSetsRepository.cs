@@ -61,10 +61,15 @@ namespace SamLearnsAzure.Service.DataAccess
             return result;
         }
 
-        public async Task<bool> SaveOwnerSet(int ownerId, string setNum)
+        public async Task<bool> SaveOwnerSet(string setNum, int ownerId, bool owned, bool wanted)
         {
-            //Save owner set
-            //TODO: Add logic to database 
+            SqlParameter setNumParameter = new SqlParameter("@SetNum", setNum);
+            SqlParameter ownerIdParameter = new SqlParameter("@OwnerId", ownerId);
+            SqlParameter ownedParameter = new SqlParameter("@Owned", owned);
+            SqlParameter wantedParameter = new SqlParameter("@Wanted", wanted);
+
+            await _context.Database.ExecuteSqlCommandAsync("dbo.SaveOwnerSet @SetNum={0}, @OwnerId={1}, @Owned={2}, @Wanted={3}", setNumParameter, ownerIdParameter, ownedParameter, wantedParameter);
+
             return true;
         }
     }

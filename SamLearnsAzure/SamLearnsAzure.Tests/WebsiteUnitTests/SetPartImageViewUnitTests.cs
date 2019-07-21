@@ -14,12 +14,12 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
     [TestCategory("UnitTest")]
-    public class SetImageViewUnitTests : BaseUnitTest
+    public class SetPartImageViewUnitTests : BaseUnitTest
     {
         [TestMethod]
-        public async Task GetSetImagesViewMockTest()
+        public async Task GetSetPartImagesViewMockTest()
         {
-            //Arrange           
+            //Arrange
             int resultsToReturn = 10;
             int resultsToSearch = 20;
             string setNum = "abc123";

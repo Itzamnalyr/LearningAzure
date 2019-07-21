@@ -10,6 +10,6 @@ namespace SamLearnsAzure.Service.DataAccess
     {
         Task<IEnumerable<OwnerSets>> GetOwnerSets(IRedisService redisService, bool useCache, int ownerId);
 
-        Task<bool> SaveOwnerSet(int ownerId, string setNum);
+        Task<bool> SaveOwnerSet(string setNum, int ownerId, bool owned, bool wanted);
     }
 }

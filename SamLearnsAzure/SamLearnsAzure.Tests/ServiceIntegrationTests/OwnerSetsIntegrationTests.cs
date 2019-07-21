@@ -65,5 +65,24 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             Assert.IsTrue(item.Set.Theme != null); //Ensure theme has been collected correctly
         }
 
+        [TestMethod]
+        public async Task SaveOwnerSetsIntegrationTest()
+        {
+            //Arrange
+            string setNum = "75218-1";
+            int ownerId = 1;
+            bool owned = true;
+            bool wanted = true;
+
+            //Act
+            HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/SaveOwnerSet?setnum=" + setNum + "&ownerid=" + ownerId + "&owned=" + owned + "&wanted=" + wanted);
+            response.EnsureSuccessStatusCode();
+            bool result = await response.Content.ReadAsAsync<bool>();
+            response.Dispose();
+
+            //Assert
+            Assert.IsTrue(result == true);
+        }
+
     }
 }

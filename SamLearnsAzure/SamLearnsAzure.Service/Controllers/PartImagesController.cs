@@ -30,17 +30,17 @@ namespace SamLearnsAzure.Service.Controllers
         }
 
         [HttpGet("GetPartImages")]
-        public async Task<List<PartImages>> GetPartImages()
+        public async Task<List<PartImages>> GetPartImages(bool useCache = true)
         {
-            List<PartImages> results = await _repo.GetPartImages(_redisService, false);
+            List<PartImages> results = await _repo.GetPartImages(_redisService, useCache);
 
             return results;
         }
 
         [HttpGet("GetPartImage")]
-        public async Task<PartImages> GetPartImage(string partNum)
+        public async Task<PartImages> GetPartImage(string partNum, bool useCache = true)
         {
-            PartImages result = await _repo.GetPartImage(_redisService, false, partNum);
+            PartImages result = await _repo.GetPartImage(_redisService, useCache, partNum);
 
             return result;
         }
@@ -51,12 +51,43 @@ namespace SamLearnsAzure.Service.Controllers
             PartImages newPartImage = new PartImages
             {
                 PartNum = partNum,
-                SourceImageUrl = sourceImage,
+                SourceImage = sourceImage,
                 ColorId = colorId
             };
             PartImages result = await _repo.SavePartImage(newPartImage);
 
             return result;
+        }
+
+        [HttpGet("SearchForPotentialPartImages")]
+        public async Task<List<PartImages>> SearchForPotentialPartImages(string partNum, int colorId, string colorName, int resultsToReturn = 1, int resultsToSearch = 1)
+        {
+            string cognitiveServicesSubscriptionKey = _configuration["CognitiveServicesSubscriptionKey"]; // The subscription key is coming from key vault
+            string cognitiveServicesBingSearchUriBase = _configuration["AppSettings:CognitiveServicesBingSearchUriBase"];
+            string cognitiveServicesImageAnalysisUriBase = _configuration["AppSettings:CognitiveServicesImageAnalysisUriBase"];
+            string tagFilter = "lego";
+            string searchTerm = partNum + " lego " + colorName;
+
+            //1. Get image from Bing Image Search API
+            BingImageSearch bingImageSearchAI = new BingImageSearch();
+            List<BingSearchResult> images = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
+                cognitiveServicesBingSearchUriBase, cognitiveServicesImageAnalysisUriBase,
+                searchTerm, resultsToReturn, resultsToSearch, tagFilter);
+
+            //2. Process the results
+            List<PartImages> results = new List<PartImages>();
+            foreach (BingSearchResult item in images)
+            {
+                PartImages newImage = new PartImages
+                {
+                    PartNum = partNum,
+                    ColorId = colorId,
+                    SourceImage = item.ImageUrl
+                };
+                results.Add(newImage);
+            }
+
+            return results;
         }
 
 
