@@ -193,6 +193,13 @@
         "description": "A Guid that will serve as the name for the roleAssignment. Should be unique and remain constant"
       }
     },
+    "letsEncryptEmailAddress": {
+      "type": "string",
+      "defaultValue": "samsmithnz@gmail.com",
+      "metadata": {
+        "description": "The contact email address for this certificate"
+      }
+    },
     "appServiceContributerClientId": {
       "type": "string",
       "defaultValue": "c6193b13-08e7-4519-b7b4-e6b1875b15a8",
@@ -832,6 +839,14 @@
             "DefaultConnection": {
               "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('databaseName'), ';User Id=', parameters('databaseLoginName'), '@', variables('sqlserverName'), ';Password=', parameters('databaseLoginPassword'), ';')]",
               "type": "SQLServer"
+            },
+            "AzureWebJobsDashboard": {
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]",
+              "type": "Custom"
+            },
+            "AzureWebJobsStorage": {
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]",
+              "type": "Custom"
             }
           }
         },
@@ -885,7 +900,8 @@
             "letsencrypt:ResourceGroupName": "[resourceGroup().name]",
             "letsencrypt:ServicePlanResourceGroupName": "[resourceGroup().name]",
             "letsencrypt:ClientId": "[parameters('appServiceContributerClientId')]",
-            "letsencrypt:ClientSecret": "[parameters('appServiceContributerClientSecret')]"
+            "letsencrypt:ClientSecret": "[parameters('appServiceContributerClientSecret')]",
+            "letsencrypt:Email": "[parameters('letsEncryptEmailAddress')]"
           }
         }
       ]
