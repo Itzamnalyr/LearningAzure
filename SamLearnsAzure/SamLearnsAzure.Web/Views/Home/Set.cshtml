@@ -23,7 +23,8 @@
     </div>
 </div>
 <hr />
-<span><strong>Parts: </strong></span><br />
+<span><strong>Parts: </strong></span>
+<br />
 <div class="row">
     <div class="col-md-12">
         <div class="row">
@@ -41,7 +42,14 @@
                          onerror="if (this.src != '/images/lego.gif') { this.src = '/images/lego.gif'; }"
                          alt="@(item.PartNum) part image" /><br />
                     <span class="samsAppImageText">@item.ColorName</span><br />
-                    <span class="samsAppImageText">PartNum: @item.PartNum</span><br />
+                    @if (User.Identity.IsAuthenticated == true)
+                    {
+                        <span class="samsAppImageText">PartNum: @Html.ActionLink(item.PartNum, "UpdatePartImage", "Home", new { setNum = Model.Set.SetNum, partNum = item.PartNum, colorId = item.ColorId, item.ColorName })</span><br />
+                    }
+                    else
+                    {
+                        <span class="samsAppImageText">PartNum: @item.PartNum</span><br />
+                    }
                 </div>
             }
         </div>

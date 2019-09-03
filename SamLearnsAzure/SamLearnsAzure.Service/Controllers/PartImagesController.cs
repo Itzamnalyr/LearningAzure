@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -66,25 +67,42 @@ namespace SamLearnsAzure.Service.Controllers
             string cognitiveServicesBingSearchUriBase = _configuration["AppSettings:CognitiveServicesBingSearchUriBase"];
             string cognitiveServicesImageAnalysisUriBase = _configuration["AppSettings:CognitiveServicesImageAnalysisUriBase"];
             string tagFilter = "lego";
-            string searchTerm = partNum + " lego " + colorName;
 
-            //1. Get image from Bing Image Search API
+            //1a. Get image from Bing Image Search API, including all terms
+            string searchTerm = partNum + " lego " + colorName;
             BingImageSearch bingImageSearchAI = new BingImageSearch();
-            List<BingSearchResult> images = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
+            List<BingSearchResult> images1 = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
+                cognitiveServicesBingSearchUriBase, cognitiveServicesImageAnalysisUriBase,
+                searchTerm, resultsToReturn, resultsToSearch, tagFilter);
+
+            //1b. Get image from Bing Image Search API, excluding color
+            searchTerm = partNum + " lego";
+            List<BingSearchResult> images2 = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
+                cognitiveServicesBingSearchUriBase, cognitiveServicesImageAnalysisUriBase,
+                searchTerm, resultsToReturn, resultsToSearch, tagFilter);
+
+            //1a. Get image from Bing Image Search API, including only the part num
+            searchTerm = partNum;
+            List<BingSearchResult> images3 = await bingImageSearchAI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
                 cognitiveServicesBingSearchUriBase, cognitiveServicesImageAnalysisUriBase,
                 searchTerm, resultsToReturn, resultsToSearch, tagFilter);
 
             //2. Process the results
             List<PartImages> results = new List<PartImages>();
-            foreach (BingSearchResult item in images)
+            images1.AddRange(images2);
+            images1.AddRange(images3);
+            foreach (BingSearchResult item in images1)
             {
-                PartImages newImage = new PartImages
+                if (results.Any(r => r.SourceImage == item.ImageUrl) == false)
                 {
-                    PartNum = partNum,
-                    ColorId = colorId,
-                    SourceImage = item.ImageUrl
-                };
-                results.Add(newImage);
+                    PartImages newImage = new PartImages
+                    {
+                        PartNum = partNum,
+                        ColorId = colorId,
+                        SourceImage = item.ImageUrl
+                    };
+                    results.Add(newImage);
+                }
             }
 
             return results;

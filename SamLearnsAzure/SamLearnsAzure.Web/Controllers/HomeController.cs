@@ -118,18 +118,21 @@ namespace SamLearnsAzure.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> UpdatePartImage(string partNum, int colorId, string colorName)
+        public async Task<IActionResult> UpdatePartImage(string setNum, string partNum, int colorId, string colorName)
         {
             int resultsToReturn = 10;
             int resultsToSearch = 20;
 
-            List<SetParts> setParts = await _ServiceApiClient.GetSetParts(partNum);
+            Sets set = await _ServiceApiClient.GetSet(setNum);
+            List<SetParts> setParts = await _ServiceApiClient.GetSetParts(setNum);
             List<PartImages> partImages = await _ServiceApiClient.SearchForPotentialPartImages(partNum, colorId, colorName, resultsToReturn, resultsToSearch); 
 
             UpdatePartImageViewModel updatePartImageModel = new UpdatePartImageViewModel
             {
+                Set = set,
                 CurrentSetPart = setParts.SingleOrDefault(t => t.PartNum == partNum),
-                PotentialSetParts = partImages
+                PotentialSetParts = partImages,
+                BasePartsImagesStorageURL = _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:PartImagesContainerName"]
             };
 
             return View(updatePartImageModel);
