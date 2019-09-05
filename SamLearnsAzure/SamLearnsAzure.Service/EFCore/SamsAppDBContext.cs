@@ -29,6 +29,7 @@ namespace SamLearnsAzure.Service.EFCore
         public virtual DbSet<SetImages> SetImages { get; set; }
         public virtual DbSet<Themes> Themes { get; set; }
         public virtual DbSet<PartImages> PartImages { get; set; }
+        //public virtual DbSet<FeatureFlags> FeatureFlags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -349,6 +350,32 @@ namespace SamLearnsAzure.Service.EFCore
 
                 entity.Property(e => e.LastUpdated).HasColumnName("last_updated");
             });
+
+            //modelBuilder.Entity<FeatureFlags>(entity =>
+            //{
+            //    entity.HasKey(e => e.Id);
+
+            //    entity.ToTable("feature_flags");
+
+            //    entity.Property(e => e.Id)
+            //        .HasColumnName("Id")
+            //        .HasMaxLength(100)
+            //        .IsUnicode(false)
+            //        .ValueGeneratedOnAdd();
+
+            //    entity.Property(e => e.Name)
+            //         .IsRequired()
+            //         .HasColumnName("Name")
+            //         .HasMaxLength(100)
+            //         .IsUnicode(false);
+
+            //    entity.Property(e => e.EnabledInDev).HasColumnName("EnabledInDev");
+            //    entity.Property(e => e.EnabledInQA).HasColumnName("EnabledInQA");
+            //    entity.Property(e => e.EnabledInProd).HasColumnName("EnabledInProd");
+
+            //    entity.Property(e => e.LastUpdated).HasColumnName("LastUpdated");
+
+            //});
 
             //Create a custom query
             modelBuilder.Query<SetParts>();            
