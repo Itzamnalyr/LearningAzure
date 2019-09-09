@@ -22,10 +22,11 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             //Arrange
             string environmentName = "DevResult";
             Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
+            Mock<IFeatureFlagsServiceApiClient> mockFFService = new Mock<IFeatureFlagsServiceApiClient>();
             Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
             mockService.Setup(repo => repo.GetOwnerSets(It.IsAny<int>())).Returns(Task.FromResult(GetOwnerSetsTestData()));
             mockConfiguration.SetupGet(x => x[It.IsAny<string>()]).Returns(environmentName);
-            HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
+            HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object, mockFFService.Object);
 
             //Act
             IActionResult result = await controller.Index();

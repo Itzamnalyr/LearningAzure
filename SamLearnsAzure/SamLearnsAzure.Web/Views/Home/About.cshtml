@@ -1,6 +1,16 @@
-﻿@{
+﻿@model bool
+@{
     ViewData["Title"] = "About";
 }
 <h2>@ViewData["Title"]</h2>
 
 <p>Visit the <a href="https://samlearnsazure.blog" target="_blank">SamLearnsAzure Blog</a> for more information about what purpose this site was created for.</p>
+
+@if (Model == true)
+{
+    <p>The about page feature flag is enabled!</p>
+}
+else
+{
+    <p>The about page feature flag is disabled...</p>
+}

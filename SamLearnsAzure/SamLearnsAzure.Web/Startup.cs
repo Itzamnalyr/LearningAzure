@@ -78,6 +78,9 @@ namespace SamLearnsAzure.Web
 
             //Add DI for the service api client 
             services.AddScoped<IServiceApiClient, ServiceApiClient>();
+
+            //Add DI for the feature flags service api client 
+            services.AddScoped<IFeatureFlagsServiceApiClient, FeatureFlagsServiceApiClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

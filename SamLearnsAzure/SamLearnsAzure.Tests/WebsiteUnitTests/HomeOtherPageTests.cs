@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,19 +14,21 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
     public class HomeOtherPageTests : BaseUnitTest
     {
         [TestMethod]
-        public void GetAboutViewTest()
+        public async Task GetAboutViewTest()
         {
             //Arrange
             Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
+            Mock<IFeatureFlagsServiceApiClient> mockFFService = new Mock<IFeatureFlagsServiceApiClient>();
             Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
-            HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
+            mockConfiguration.SetupGet(x => x[It.IsAny<string>()]).Returns("dev");
+
+            HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object, mockFFService.Object);
 
             //Act
-            IActionResult result = controller.About();
+            IActionResult result = await controller.About();
 
             //Assert
             ViewResult viewResult = result as ViewResult;
-            //Assert.IsTrue(viewResult.ViewData["Message"] != null);
         }
 
         [TestMethod]
@@ -33,8 +36,9 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
         {
             //Arrange
             Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
+            Mock<IFeatureFlagsServiceApiClient> mockFFService = new Mock<IFeatureFlagsServiceApiClient>();
             Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
-            HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
+            HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object, mockFFService.Object);
 
             //Act
             IActionResult result = controller.Privacy();
@@ -43,23 +47,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             ViewResult viewResult = result as ViewResult;
             Assert.IsTrue(viewResult.ViewData["Message"] != null);
         }
-
-        //[TestMethod]
-        //public void GetCDNTestViewTest()
-        //{
-        //    //Arrange
-        //    Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
-        //    Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
-        //    HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
-
-        //    //Act
-        //    IActionResult result = controller.CDNTest();
-
-        //    //Assert
-        //    ViewResult viewResult = result as ViewResult;
-        //    Assert.IsTrue(viewResult.ViewData["Message"] != null);
-        //}
-
+        
         //[TestMethod]
         //public void GetErrorViewTest()
         //{

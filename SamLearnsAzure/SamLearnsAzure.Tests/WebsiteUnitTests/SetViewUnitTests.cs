@@ -23,12 +23,13 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             string setNum = "abc123";
             string configValue = "xyz321";
             Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
+            Mock<IFeatureFlagsServiceApiClient> mockFFService = new Mock<IFeatureFlagsServiceApiClient>();
             Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
             mockService.Setup(repo => repo.GetSet(It.IsAny<string>())).Returns(Task.FromResult(GetSetTestData()));
             mockService.Setup(repo => repo.GetSetImage(It.IsAny<string>())).Returns(Task.FromResult(GetSetImageTestData()));
             mockService.Setup(repo => repo.GetSetParts(It.IsAny<string>())).Returns(Task.FromResult(GetSetPartsTestData()));
             mockConfiguration.SetupGet(x => x[It.IsAny<string>()]).Returns(configValue);
-            HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);
+            HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object, mockFFService.Object);
 
             //Act
             IActionResult result = await controller.Set(setNum);

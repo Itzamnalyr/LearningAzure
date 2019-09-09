@@ -17,11 +17,13 @@ namespace SamLearnsAzure.Web.Controllers
     {
         private readonly IServiceApiClient _ServiceApiClient;
         private readonly IConfiguration _configuration;
+        private readonly IFeatureFlagsServiceApiClient _featureFlagsServiceApiClient;
 
-        public HomeController(IServiceApiClient ServiceApiClient, IConfiguration configuration)
+        public HomeController(IServiceApiClient ServiceApiClient, IConfiguration configuration, IFeatureFlagsServiceApiClient featureFlagsServiceApiClient)
         {
             _ServiceApiClient = ServiceApiClient;
             _configuration = configuration;
+            _featureFlagsServiceApiClient = featureFlagsServiceApiClient;
         }
 
         [HttpGet]
@@ -35,6 +37,15 @@ namespace SamLearnsAzure.Web.Controllers
                 Environment = _configuration["AppSettings:Environment"],
                 OwnerSets = ownerSets
             };
+
+            //Divide by zero feature flag
+            bool featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("DivideByZero", _configuration["AppSettings:Environment"].ToString());
+            if (featureFlagResult == true)
+            {
+                int i = 1;
+                int j = 0;
+                int k = i / j;
+            }
 
             return View(indexPageData);
         }
@@ -125,7 +136,7 @@ namespace SamLearnsAzure.Web.Controllers
 
             Sets set = await _ServiceApiClient.GetSet(setNum);
             List<SetParts> setParts = await _ServiceApiClient.GetSetParts(setNum);
-            List<PartImages> partImages = await _ServiceApiClient.SearchForPotentialPartImages(partNum, colorId, colorName, resultsToReturn, resultsToSearch); 
+            List<PartImages> partImages = await _ServiceApiClient.SearchForPotentialPartImages(partNum, colorId, colorName, resultsToReturn, resultsToSearch);
 
             UpdatePartImageViewModel updatePartImageModel = new UpdatePartImageViewModel
             {
@@ -151,10 +162,14 @@ namespace SamLearnsAzure.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
             ViewData["Message"] = "Sam Learns Azure.";
-            return View();
+
+            //About upgrade feature flag
+            bool featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("SiteAboutPageUpgrade", _configuration["AppSettings:Environment"].ToString());
+
+            return View(featureFlagResult);
         }
 
         [HttpGet]
