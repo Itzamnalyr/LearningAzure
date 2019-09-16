@@ -39,12 +39,13 @@ namespace SamLearnsAzure.Web.Controllers
             };
 
             //Divide by zero feature flag
-            bool featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("DivideByZero", _configuration["AppSettings:Environment"].ToString());
+            bool featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("DivideByZero", 
+                    _configuration["AppSettings:Environment"].ToString());
             if (featureFlagResult == true)
             {
                 int i = 1;
                 int j = 0;
-                int k = i / j;
+                Console.WriteLine(i / j);
             }
 
             return View(indexPageData);

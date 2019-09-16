@@ -8,6 +8,8 @@ jobs:
     displayName: 'Build job'
     pool:
       vmImage: ${{parameters.vmImage}}
+    variables:
+      buildNumber: '1.0.0.0'
     steps:
     # DotNet Framework build items
     - task: NuGetToolInstaller@0
@@ -44,6 +46,33 @@ jobs:
         TargetFolder: '$(build.artifactstagingdirectory)\EnvironmentARMTemplate'
 
     # Dotnet Core build items
+    - task: PowerShell@2
+      displayName: 'Generate build version number'
+      inputs:
+        targetType: 'inline'
+        script: |
+         Write-Host "Generating Build Number"
+         #Get the version from the csproj file
+         $xml = [Xml] (Get-Content SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj)
+         $initialVersion = [Version] $xml.Project.PropertyGroup.Version
+         Write-Host "Initial Version: " $version
+         $spliteVersion = $initialVersion -Split "\."
+         #Get the build number (number of days since January 1, 2000)
+         $baseDate = [datetime]"01/01/2000"
+         $currentDate = $(Get-Date)
+         $interval = (NEW-TIMESPAN -Start $baseDate -End $currentDate)
+         $buildNumber = $interval.Days
+         #Get the revision number (number seconds (divided by two) into the day on which the compilation was performed)
+         $StartDate=[datetime]::Today
+         $EndDate=(GET-DATE)
+         $revisionNumber = [math]::Round((New-TimeSpan -Start $StartDate -End $EndDate).TotalSeconds / 2,0)
+         #Final version number
+         $finalBuildVersion = "$($spliteVersion[0]).$($spliteVersion[1]).$($buildNumber).$($revisionNumber)"
+         Write-Host "Major.Minor,Build,Revision"
+         Write-Host "Final build number: " $finalBuildVersion
+         #Writing final version number back to Azure DevOps variable
+         Write-Host "##vso[task.setvariable variable=buildNumber]$finalBuildVersion"
+
     - task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
       displayName: 'Prepare analysis on SonarCloud'
       inputs:
@@ -97,7 +126,7 @@ jobs:
          SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
          SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
  #SamLearnsAzure/SamLearnsAzure.SetImageSearch.Function/SamLearnsAzure.SetImageSearch.Function.csproj
-        arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory)'
+        arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory) -p:Version=$(buildNumber)'
         zipAfterPublish: true
 
     - task: DotNetCoreCLI@2
