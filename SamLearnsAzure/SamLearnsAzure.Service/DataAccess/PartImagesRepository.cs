@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SamLearnsAzure.Models;
@@ -101,7 +101,7 @@ namespace SamLearnsAzure.Service.DataAccess
             SqlParameter partImageParameter = new SqlParameter("@SourceImage", partImage.SourceImage);
             SqlParameter colorIdParameter = new SqlParameter("@ColorId", partImage.ColorId);
 
-            await _context.Database.ExecuteSqlCommandAsync("dbo.SavePartImage @PartNum={0}, @SourceImage={1}, @ColorId={2}", partNumParameter, partImageParameter, colorIdParameter);
+            await _context.Database.ExecuteSqlRawAsync("dbo.SavePartImage @PartNum={0}, @SourceImage={1}, @ColorId={2}", partNumParameter, partImageParameter, colorIdParameter);
 
             return await GetPartImage(null, false, partImage.PartNum);
         }

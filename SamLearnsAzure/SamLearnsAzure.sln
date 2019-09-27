@@ -9,6 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build YAML", "Build YAML", 
 	ProjectSection(SolutionItems) = preProject
 		..\azure-pipelines-build-template.yml = ..\azure-pipelines-build-template.yml
 		..\azure-pipelines-deployment-template.yml = ..\azure-pipelines-deployment-template.yml
+		..\azure-pipelines-framework-build-template.yml = ..\azure-pipelines-framework-build-template.yml
+		..\azure-pipelines-framework-deployment-template.yml = ..\azure-pipelines-framework-deployment-template.yml
+		..\azure-pipelines-framework.yml = ..\azure-pipelines-framework.yml
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
 		..\ModelsPackagePipeline.yml = ..\ModelsPackagePipeline.yml
 	EndProjectSection

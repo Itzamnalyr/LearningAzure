@@ -1,6 +1,6 @@
-﻿#############################
-#Export database to storage
-#############################
+﻿#######################################################################################
+#Extract important information from arm template variables and store in key vault
+#######################################################################################
 param
 (
 	[string] $KeyVaultName,

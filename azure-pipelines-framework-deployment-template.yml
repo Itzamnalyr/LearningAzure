@@ -1,0 +1,76 @@
+parameters: # defaults for any parameters that aren't specified
+  applicationInsightsApiKey: '$(ApplicationInsights--ApplicationIdDev)'
+  applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
+  applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
+  applicationInsightsLocation: 'East US'
+  appServiceContributerClientSecret: '***secret'
+  cognitiveServicesSubscriptionKey: '***secret'
+  environment: 'Dev'  
+  environmentLowercase: 'dev'
+  databaseLoginName: '***secret'
+  databaseLoginPassword: '***secret'
+  databaseServerName: 'samsapp-dev-eu-sqlserver'
+  keyVaultName: 'samsapp-data-eu-keyvault'
+  keyVaultURL: 'https://samsapp-data-eu-keyvault.vault.azure.net/'
+  keyVaultClientId: '***secret'
+  keyVaultClientSecret: '***secret'
+  letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02145'
+  imagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/partimages'
+  imagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/partimages'
+  partImagesContainerName: 'partimages'
+  setImagesContainerName: 'setimages'
+  redisCacheConnectionString: '***secret'
+  resourceGroupName: 'SamLearnsAzureDev'
+  resourceGroupLocation: 'East US'
+  resourceGroupLocationShort: 'eu'
+  roleAssignmentId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+  samsAppConnectionString: '***secret'
+  serviceName: 'samsapp-dev-eu-service'
+  serviceStagingUrl: 'https://samsapp-dev-eu-service-staging.azurewebsites.net/'
+  serviceUrl: 'https://samsapp-dev-eu-service.azurewebsites.net/'
+  stagingSlotName: 'Staging'
+  storageAccountName: 'samsappdeveustorage'
+  userPrincipalLogin: '***secret'
+  vmImage: 'windows-latest'
+  websiteName: 'samsapp-dev-eu-web'
+  websiteDomainName: 'dev.samlearnsazure.com'
+  websiteStagingUrl: 'https://samsapp-dev-eu-web-staging.azurewebsites.net/'
+  websiteUrl: 'https://samsapp-dev-eu-web.azurewebsites.net/'
+  
+jobs:
+  - job: Deploy
+    displayName: "Deploy ${{parameters.environment}} job"
+    pool:
+      vmImage: ${{parameters.vmImage}}      
+    variables:
+      ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
+      AppSettings.Environment: ${{parameters.environment}}
+      AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
+      AppSettings.ImagesStorageCDNURL: ${{parameters.imagesStorageCDNURL}}
+      AppSettings.ImagesStorageURL: ${{parameters.imagesStorageURL}}
+      AppSettings.PartImagesContainerName": ${{parameters.partImagesContainerName}},
+      AppSettings.SetImagesContainerName": ${{parameters.setImagesContainerName}},
+      AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
+      AppSettings.WebServiceURL: ${{parameters.serviceURL}}
+      AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
+      AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
+      ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}}      
+    steps:
+    - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
+      displayName: 'Show all build variables in build output.'
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download the build artifacts'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(build.artifactstagingdirectory)'
+    - task: SqlAzureDacpacDeployment@1
+      displayName: 'Azure SQL dacpac publish'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        ServerName: '${{parameters.databaseServerName}}.database.windows.net'
+        DatabaseName: samsdb
+        SqlUsername: '${{parameters.databaseLoginName}}'
+        SqlPassword: '${{parameters.databaseLoginPassword}}'
+        DacpacFile: '$(build.artifactstagingdirectory)/drop/Database/SamLearnsAzure.Database.dacpac'

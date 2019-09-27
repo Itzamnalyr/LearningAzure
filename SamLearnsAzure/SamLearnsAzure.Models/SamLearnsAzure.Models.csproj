@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <DebugType>Full</DebugType>
     <!-- SonarQube needs this -->
     <ProjectGuid>{50dd37ad-58dd-4697-84ec-f28fb5935b50}</ProjectGuid>
+    <nullable>disable</nullable>
   </PropertyGroup>
 
 </Project>

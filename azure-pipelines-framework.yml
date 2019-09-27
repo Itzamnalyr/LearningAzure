@@ -14,7 +14,7 @@ stages:
 - stage: Build
   displayName: 'Build & Test stage'
   jobs:
-  - template: azure-pipelines-build-template.yml
+  - template: azure-pipelines-framework-build-template.yml
     parameters:
       buildConfiguration: 'Release'
       buildPlatform: 'Any CPU'
@@ -24,7 +24,7 @@ stages:
 - stage: DeployDev
   displayName: 'Deploy Dev Stage'
   jobs:
-  - template: azure-pipelines-deployment-template.yml
+  - template: azure-pipelines-framework-deployment-template.yml
     parameters:
       applicationInsightsApiKey: '$(ApplicationInsights--APIKeyDev)'
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
@@ -64,7 +64,7 @@ stages:
   displayName: 'Deploy QA Stage'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
-  - template: azure-pipelines-deployment-template.yml
+  - template: azure-pipelines-framework-deployment-template.yml
     parameters:
       applicationInsightsApiKey: '$(ApplicationInsights--APIKeyQA)'
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdQA)'
@@ -104,7 +104,7 @@ stages:
   displayName: 'Deploy Prod Stage'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
-  - template: azure-pipelines-deployment-template.yml
+  - template: azure-pipelines-framework-deployment-template.yml
     parameters:
       applicationInsightsApiKey: '$(ApplicationInsights--APIKeyProd)'
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdProd)'

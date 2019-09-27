@@ -1,7 +1,7 @@
 parameters: # defaults for any parameters that aren't specified
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
-  vmImage: 'vs2017-win2016'
+  vmImage: 'windows-latest'
 
 jobs:
   - job: Build
@@ -11,32 +11,10 @@ jobs:
     variables:
       buildNumber: '1.0.0.0'
     steps:
-    # DotNet Framework build items
-    - task: NuGetToolInstaller@0
-      displayName: 'Use NuGet 4.4.1'
-      inputs:
-        versionSpec: 4.4.1
-
-    - task: NuGetCommand@2
-      displayName: 'NuGet restore'
-      inputs:
-        projects: |
-         SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
-        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
-
-    - task: VSBuild@1
-      displayName: 'Build database project'
-      inputs:
-        platform: '${{parameters.buildPlatform}}'
-        configuration: '${{parameters.buildConfiguration}}'
-        solution: SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
-
-    - task: CopyFiles@2
-      displayName: 'Copy database files to: $(build.artifactstagingdirectory)'
-      inputs:
-        SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Database\bin\Output'
-        Contents: '*' # * = Copy all files in the current directory
-        TargetFolder: '$(build.artifactstagingdirectory)\Database'
+#    - task: UseDotNet@2
+#      displayName: 'Use dotnet sdk 3.x'
+#      inputs:
+#        version: 3.x
 
     - task: CopyFiles@2
       displayName: 'Copy environment ARM template files to: $(build.artifactstagingdirectory)'
@@ -90,6 +68,7 @@ jobs:
          SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
          SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
 #SamLearnsAzure/SamLearnsAzure.SetImageSearch.Function/SamLearnsAzure.SetImageSearch.Function.csproj
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
 
     - task: DotNetCoreCLI@2
       displayName: 'Build dotnet core projects'
@@ -142,7 +121,7 @@ jobs:
     - task: CopyFiles@2
       displayName: 'Copy Selenium Files to: $(build.artifactstagingdirectory)/FunctionalTests/SamLearnsAzure.FunctionalTests'
       inputs:
-        SourceFolder: 'SamLearnsAzure/SamLearnsAzure.FunctionalTests/bin/${{parameters.buildConfiguration}}/netcoreapp2.2'
+        SourceFolder: 'SamLearnsAzure/SamLearnsAzure.FunctionalTests/bin/${{parameters.buildConfiguration}}/netcoreapp3.0'
         Contents: '*chromedriver.exe*'
         TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests/SamLearnsAzure.FunctionalTests'
 
@@ -153,8 +132,8 @@ jobs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
 
     # Run security tasks
-    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
-      displayName: 'Run CredScan'
+ #   - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
+ #     displayName: 'Run CredScan'
     #- task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-postanalysis.PostAnalysis@1
     #  displayName: 'Post Analysis'
     #  inputs:

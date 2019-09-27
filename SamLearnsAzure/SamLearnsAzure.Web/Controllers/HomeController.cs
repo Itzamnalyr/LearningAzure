@@ -39,8 +39,12 @@ namespace SamLearnsAzure.Web.Controllers
             };
 
             //Divide by zero feature flag
-            bool featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("DivideByZero", 
-                    _configuration["AppSettings:Environment"].ToString());
+            bool featureFlagResult = false;
+            if (_featureFlagsServiceApiClient != null)
+            {
+                featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("DivideByZero", _configuration["AppSettings:Environment"].ToString());
+            }
+
             if (featureFlagResult == true)
             {
                 int i = 1;
@@ -168,7 +172,11 @@ namespace SamLearnsAzure.Web.Controllers
             ViewData["Message"] = "Sam Learns Azure.";
 
             //About upgrade feature flag
-            bool featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("SiteAboutPageUpgrade", _configuration["AppSettings:Environment"].ToString());
+            bool featureFlagResult = false;
+            if (_featureFlagsServiceApiClient != null)
+            {
+                featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("SiteAboutPageUpgrade", _configuration["AppSettings:Environment"].ToString());
+            }
 
             return View(featureFlagResult);
         }

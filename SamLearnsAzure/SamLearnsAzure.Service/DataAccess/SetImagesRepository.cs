@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SamLearnsAzure.Models;
@@ -63,7 +63,7 @@ namespace SamLearnsAzure.Service.DataAccess
             SqlParameter setNumParameter = new SqlParameter("@SetNum", setImage.SetNum);
             SqlParameter setImageParameter = new SqlParameter("@SetImage", setImage.SetImage);
 
-            await _context.Database.ExecuteSqlCommandAsync("dbo.SaveSetImage @SetNum={0}, @SetImage={1}", setNumParameter, setImageParameter);
+            await _context.Database.ExecuteSqlRawAsync("dbo.SaveSetImage @SetNum={0}, @SetImage={1}", setNumParameter, setImageParameter);
 
             return await GetSetImage(null, false, setImage.SetNum);
         }

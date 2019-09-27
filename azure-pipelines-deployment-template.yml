@@ -31,7 +31,7 @@ parameters: # defaults for any parameters that aren't specified
   stagingSlotName: 'Staging'
   storageAccountName: 'samsappdeveustorage'
   userPrincipalLogin: '***secret'
-  vmImage: 'vs2017-win2016'
+  vmImage: 'windows-latest'
   websiteName: 'samsapp-dev-eu-web'
   websiteDomainName: 'dev.samlearnsazure.com'
   websiteStagingUrl: 'https://samsapp-dev-eu-web-staging.azurewebsites.net/'
@@ -86,15 +86,6 @@ jobs:
         ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/KeyVault.ps1'
         ScriptArguments: '-KeyVaultName "${{parameters.KeyVaultName}}" -Environment "${{parameters.Environment}}" -ServicePrincipalId "$(servicePrincipalId)" -WebsitePrincipalId "$(websitePrincipalId)" -ApplicationInsightsInstrumentationKey "$(applicationInsightsInstrumentationKeyOutput)" -StorageAccountKey "$(storageAccountKeyOutput)" -DatabaseServerName "${{parameters.DatabaseServerName}}" -DatabaseLoginName "${{parameters.DatabaseLoginName}}" -DatabaseLoginPassword "${{parameters.DatabaseLoginPassword}}" -RedisConnectionString "$(redisConnectionStringOutput)"'
         azurePowerShellVersion: LatestVersion
-    - task: SqlAzureDacpacDeployment@1
-      displayName: 'Azure SQL dacpac publish'
-      inputs:
-        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
-        ServerName: '${{parameters.databaseServerName}}.database.windows.net'
-        DatabaseName: samsdb
-        SqlUsername: '${{parameters.databaseLoginName}}'
-        SqlPassword: '${{parameters.databaseLoginPassword}}'
-        DacpacFile: '$(build.artifactstagingdirectory)/drop/Database/SamLearnsAzure.Database.dacpac'
     - task: AzureRmWebAppDeployment@3
       displayName: 'Azure App Service Deploy: web service'
       inputs:

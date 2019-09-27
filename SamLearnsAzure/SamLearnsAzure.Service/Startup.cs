@@ -19,6 +19,8 @@ using Newtonsoft.Json;
 using System.Reflection;
 using System.IO;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace SamLearnsAzure.Service
 {
@@ -42,17 +44,17 @@ namespace SamLearnsAzure.Service
             services.AddDbContext<SamsAppDBContext>(options =>
                 options.UseSqlServer(Configuration[sqlConnectionStringName]));
 
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            services.AddMvc(options => options.EnableEndpointRouting = false)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 //This JSON setting stops the JSON from being truncated
-                .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "SamLearnsAzure API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SamLearnsAzure API", Version = "v1" });
 
-                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";    
+                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
@@ -62,8 +64,7 @@ namespace SamLearnsAzure.Service
             ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(Configuration[redisConnectionStringName]);
             if (connectionMultiplexer != null)
             {
-
-                IDatabase database = connectionMultiplexer.GetDatabase(); 
+                IDatabase database = connectionMultiplexer.GetDatabase();
                 services.AddSingleton<IDatabase>(_ => database);
             }
 
@@ -81,10 +82,13 @@ namespace SamLearnsAzure.Service
             services.AddScoped<ISetImagesRepository, SetImagesRepository>();
             services.AddScoped<IThemesRepository, ThemesRepository>();
             services.AddScoped<IPartImagesRepository, PartImagesRepository>();
+
+            //Application insights initialization
+            services.AddApplicationInsightsTelemetry();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

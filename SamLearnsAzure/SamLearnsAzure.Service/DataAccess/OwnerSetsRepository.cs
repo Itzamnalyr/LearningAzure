@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SamLearnsAzure.Models;
@@ -68,7 +68,7 @@ namespace SamLearnsAzure.Service.DataAccess
             SqlParameter ownedParameter = new SqlParameter("@Owned", owned);
             SqlParameter wantedParameter = new SqlParameter("@Wanted", wanted);
 
-            await _context.Database.ExecuteSqlCommandAsync("dbo.SaveOwnerSet @SetNum={0}, @OwnerId={1}, @Owned={2}, @Wanted={3}", setNumParameter, ownerIdParameter, ownedParameter, wantedParameter);
+            await _context.Database.ExecuteSqlRawAsync("dbo.SaveOwnerSet @SetNum={0}, @OwnerId={1}, @Owned={2}, @Wanted={3}", setNumParameter, ownerIdParameter, ownedParameter, wantedParameter);
 
             return true;
         }

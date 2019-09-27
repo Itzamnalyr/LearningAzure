@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using SamLearnsAzure.Web.Controllers;
+using Microsoft.Extensions.Hosting;
 
 namespace SamLearnsAzure.Web
 {
@@ -45,7 +46,6 @@ namespace SamLearnsAzure.Web
                 options.UseSqlite(
                     Configuration.GetConnectionString("IdentityConnection")));
             services.AddDefaultIdentity<IdentityUser>()
-                .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddAuthentication()
@@ -70,7 +70,8 @@ namespace SamLearnsAzure.Web
                     facebookOptions.AppSecret = Configuration["IdentityFacebookAppSecret"];
                 });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options => options.EnableEndpointRouting = false)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             //Set a retry for the service API for 3 times
             services.AddHttpClient<ServiceApiClient>()
@@ -81,15 +82,17 @@ namespace SamLearnsAzure.Web
 
             //Add DI for the feature flags service api client 
             services.AddScoped<IFeatureFlagsServiceApiClient, FeatureFlagsServiceApiClient>();
+
+            //Application insights initialization
+            services.AddApplicationInsightsTelemetry();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {

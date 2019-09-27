@@ -35,7 +35,6 @@ namespace SamLearnsAzure.Service
                     config.AddAzureKeyVault(buildConfig["AppSettings:KeyVaultURL"], keyVaultClient, new DefaultKeyVaultSecretManager());
 
                 })
-                .UseApplicationInsights()
                 .UseStartup<Startup>();
         }
     }

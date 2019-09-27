@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SamLearnsAzure.Models;
@@ -40,8 +40,8 @@ namespace SamLearnsAzure.Service.DataAccess
                 SqlParameter setNumParameter = new SqlParameter("SetNum", setNum);
 
                 result = await _context
-                    .Query<SetParts>()
-                    .FromSql("EXECUTE dbo.GetSetParts @SetNum", setNumParameter)
+                    .Set<SetParts>()
+                    .FromSqlRaw("EXECUTE dbo.GetSetParts @SetNum={0}", setNumParameter)
                     .ToListAsync();
 
                 if (result != null && redisService != null)

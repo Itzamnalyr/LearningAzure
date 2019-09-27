@@ -5,12 +5,12 @@ trigger:
 - master
 
 pool:
-  vmImage: 'vs2017-win2016'
+  vmImage: 'windows-latest'
 
 variables:
   BuildConfiguration: 'Release'
   BuildPlatform : 'Any CPU'
-  BuildVersion: 1.0.$(Build.BuildId)
+  BuildVersion: 1.1.$(Build.BuildId)
 
 steps:
 - task: DotNetCoreCLI@2
