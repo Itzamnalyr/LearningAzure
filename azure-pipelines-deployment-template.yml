@@ -48,13 +48,13 @@ jobs:
       AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
       AppSettings.ImagesStorageCDNURL: ${{parameters.imagesStorageCDNURL}}
       AppSettings.ImagesStorageURL: ${{parameters.imagesStorageURL}}
-      AppSettings.PartImagesContainerName": ${{parameters.partImagesContainerName}},
-      AppSettings.SetImagesContainerName": ${{parameters.setImagesContainerName}},
+      AppSettings.PartImagesContainerName": ${{parameters.partImagesContainerName}}
+      AppSettings.SetImagesContainerName": ${{parameters.setImagesContainerName}}
       AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
       AppSettings.WebServiceURL: ${{parameters.serviceURL}}
       AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
       AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
-      ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}}      
+      ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}} 
     steps:
     - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
       displayName: 'Show all build variables in build output.'
@@ -119,12 +119,12 @@ jobs:
         uiTests: true
         runSettingsFile: '$(build.artifactstagingdirectory)/drop/FunctionalTests/SamLearnsAzure.FunctionalTests/test.runsettings'
         overrideTestrunParameters: |
-         -ServiceUrl=${{parameters.serviceStagingUrl}}; 
-         -WebsiteUrl=${{parameters.websiteStagingUrl}};
-         -TestEnvironment=${{parameters.environment}};
-         -KeyVaultURL=${{parameters.keyVaultURL}};
-         -KeyVaultClientId=${{parameters.keyVaultClientId}};
-         -KeyVaultClientSecret=${{parameters.keyVaultClientSecret}};
+         -ServiceUrl "${{parameters.serviceStagingUrl}}" 
+         -WebsiteUrl "${{parameters.websiteStagingUrl}}" 
+         -TestEnvironment "${{parameters.environment}}" 
+         -KeyVaultURL "${{parameters.keyVaultURL}}" 
+         -KeyVaultClientId "${{parameters.keyVaultClientId}}" 
+         -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}" 
     - task: AzureAppServiceManage@0
       displayName: 'Swap Slots: web service'
       inputs:

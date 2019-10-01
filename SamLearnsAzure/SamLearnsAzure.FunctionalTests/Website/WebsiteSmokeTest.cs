@@ -41,9 +41,11 @@ namespace SamLearnsAzure.FunctionalTests.Website
 
             //Act
             string webURL = _webUrl + "home";
+            Console.WriteLine("webURL:" + webURL);
             _driver.Navigate().GoToUrl(webURL);
             webLoaded = (_driver.Url == webURL);
             OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/main/h2");
+            Console.WriteLine("data:" + data.Text);
 
             //Assert
             Assert.IsTrue(webLoaded);
@@ -62,9 +64,11 @@ namespace SamLearnsAzure.FunctionalTests.Website
 
             //Act
             string webURL = _webUrl + "home/set?setnum=" + setNum;
+            Console.WriteLine("webURL:" + webURL);
             _driver.Navigate().GoToUrl(webURL);
             webLoaded = (_driver.Url == webURL);
             OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/main/div[1]/span/strong");
+            Console.WriteLine("data:" + data.Text);
 
             //Assert
             Assert.IsTrue(webLoaded);
@@ -116,7 +120,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
         //    Assert.IsTrue(data.Text != null);
         //    Assert.IsTrue(imageData != null);
         //    Assert.IsTrue(imageData.Text != null);
-        //    System.Diagnostics.Debug.WriteLine(imageData.GetAttribute("src"));
+        //    Console.WriteLine(imageData.GetAttribute("src"));
         //    Assert.IsTrue(imageData.GetAttribute("src") != null); //Make sure the element was assigned an image, and hence the bing search is working
         //}
 

@@ -696,6 +696,18 @@
           "properties": {
 
           }
+        },
+        {
+          "type": "siteextensions",
+          "name": "AspNetCoreRuntime.3.0.x86",
+          "apiVersion": "2015-04-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "version": "3.0.0"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('serviceAPIName'))]"
+          ]
         }
       ]
     },
@@ -886,6 +898,18 @@
           ],
           "properties": {
           }
+        },
+        {
+          "type": "siteextensions",
+          "name": "AspNetCoreRuntime.3.0.x86",
+          "apiVersion": "2015-04-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "version": "3.0.0"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('webSiteName'))]"
+          ]
         },
         {
           "apiVersion": "2016-03-01",

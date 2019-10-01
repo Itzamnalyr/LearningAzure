@@ -82,13 +82,13 @@ jobs:
 #SamLearnsAzure/SamLearnsAzure.SetImageSearch.Function/SamLearnsAzure.SetImageSearch.Function.csproj
         arguments: '--configuration ${{parameters.buildConfiguration}}'
  
-    - task: DotNetCoreCLI@2
-      displayName: 'Test dotnet code projects'
-      inputs:
-        command: test
-        projects: |
-         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-        arguments: '--configuration ${{parameters.buildConfiguration}} --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
+#    - task: DotNetCoreCLI@2
+#      displayName: 'Test dotnet code projects'
+#      inputs:
+#        command: test
+#        projects: |
+#         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+#        arguments: '--configuration ${{parameters.buildConfiguration}} --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
 
     - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
       displayName: 'Run Code Analysis on SonarCloud'

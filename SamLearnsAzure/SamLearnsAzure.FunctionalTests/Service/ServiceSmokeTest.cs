@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Linq;
 using SamLearnsAzure.Models;
+using System;
 
 namespace SamLearnsAzure.FunctionalTests.Service
 {
@@ -28,10 +29,11 @@ namespace SamLearnsAzure.FunctionalTests.Service
 
             //Act
             string serviceURL = _serviceUrl + "api/values";
+            Console.WriteLine(serviceURL);
             _driver.Navigate().GoToUrl(serviceURL);
             serviceLoaded = (_driver.Url == serviceURL);
             OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/pre");
-            //System.Diagnostics.Debug.WriteLine(data.ToString());
+            
 
             //Assert
             Assert.IsTrue(serviceLoaded);
@@ -49,6 +51,7 @@ namespace SamLearnsAzure.FunctionalTests.Service
 
             //Act
             string serviceURL = _serviceUrl + "api/owners/getowners";
+            Console.WriteLine(serviceURL);
             _driver.Navigate().GoToUrl(serviceURL);
             serviceLoaded = (_driver.Url == serviceURL);
             OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/pre");
