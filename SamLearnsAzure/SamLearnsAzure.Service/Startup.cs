@@ -44,8 +44,7 @@ namespace SamLearnsAzure.Service
             services.AddDbContext<SamsAppDBContext>(options =>
                 options.UseSqlServer(Configuration[sqlConnectionStringName]));
 
-            services.AddMvc(options => options.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+            services.AddControllers()
                 //This JSON setting stops the JSON from being truncated
                 .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
@@ -94,10 +93,6 @@ namespace SamLearnsAzure.Service
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -110,7 +105,15 @@ namespace SamLearnsAzure.Service
             });
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

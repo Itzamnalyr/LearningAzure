@@ -70,8 +70,7 @@ namespace SamLearnsAzure.Web
                     facebookOptions.AppSecret = Configuration["IdentityFacebookAppSecret"];
                 });
 
-            services.AddMvc(options => options.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddControllersWithViews();
 
             //Set a retry for the service API for 3 times
             services.AddHttpClient<ServiceApiClient>()
@@ -105,13 +104,15 @@ namespace SamLearnsAzure.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            app.UseRouting();
+
             app.UseAuthentication();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
