@@ -125,6 +125,7 @@ jobs:
          -KeyVaultURL "${{parameters.keyVaultURL}}" 
          -KeyVaultClientId "${{parameters.keyVaultClientId}}" 
          -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}" 
+      enabled: false
     - task: AzureAppServiceManage@0
       displayName: 'Swap Slots: web service'
       inputs:
