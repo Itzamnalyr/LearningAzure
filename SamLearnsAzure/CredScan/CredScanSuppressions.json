@@ -1,0 +1,21 @@
+{
+  "tool": "Credential Scanner",
+  "suppressions": [
+    {
+      "file": "\\SamLearnsAzure\\SamLearnsAzure.Tests\\appsettings.json",
+      "_justification": "Settings to access key vault for integration tests"
+    },
+    {
+      "file": "\\SamLearnsAzure\\SamLearnsAzure.Environment.ARMTemplate\\azuredeploy.json",
+      "_justification": "False positive hit on redis password"
+    },
+    {
+      "file": "\\SamLearnsAzure\\SamLearnsAzure.DataMigration.App\\appsettings.json",
+      "_justification": "Settings to access data migration"
+    },
+    {
+      "file": "\\SamLearnsAzure\\SamLearnsAzure.Tests\\bin\\Release\\netcoreapp3.0\\appsettings.json",
+      "_justification": "Settings to access compiled tests file"
+    }
+  ]
+}

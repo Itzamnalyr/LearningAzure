@@ -125,16 +125,21 @@ jobs:
         Contents: '*chromedriver.exe*'
         TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests/SamLearnsAzure.FunctionalTests'
 
+    # Run security tasks
+    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
+      displayName: 'Run CredScan'
+      inputs:
+        suppressionsFile: SamLearnsAzure/CredScan/CredScanSuppressions.json
+    - task: WhiteSource Bolt@19
+
     # Publish the artifacts
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact'
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
 
-    # Run security tasks
- #   - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
- #     displayName: 'Run CredScan'
-    #- task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-postanalysis.PostAnalysis@1
-    #  displayName: 'Post Analysis'
-    #  inputs:
-    #    CredScan: true
+    #Confirm that security tasks passed successfully before finalizing the build
+    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-postanalysis.PostAnalysis@1
+      displayName: 'Post Analysis'
+      inputs:
+        CredScan: true
