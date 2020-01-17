@@ -23,14 +23,15 @@ namespace SamLearnsAzure.Service.DataAccess
         {
             string cacheKeyName = "Colors-all";
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            List<Colors> result = null;
+            List<Colors> result;
 
             //Check the cache
-            string cachedJSON = null;
+            string? cachedJSON = null;
             if (redisService != null && useCache == true)
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);
             }
+
             if (cachedJSON != null) //This will be null if we aren't using Redis or the item doesn't exist in Redis
             {
                 result = JsonConvert.DeserializeObject<List<Colors>>(cachedJSON);
@@ -38,8 +39,8 @@ namespace SamLearnsAzure.Service.DataAccess
             else
             {
                 result = await _context.Colors
-                .OrderBy(p => p.Name)
-                .ToListAsync();
+                    .OrderBy(p => p.Name)
+                    .ToListAsync();
 
                 if (result != null && redisService != null)
                 {
@@ -52,7 +53,7 @@ namespace SamLearnsAzure.Service.DataAccess
                     }
                 }
             }
-            return result;
+            return result ?? new List<Colors>();
         }
     }
 }

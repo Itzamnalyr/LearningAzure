@@ -6,6 +6,7 @@
     <ProjectGuid>{50dd37ad-58dd-4697-84ec-f28fb5935b53}</ProjectGuid>
     <DebugType>Full</DebugType>
     <IsPackable>false</IsPackable>
+    <nullable>enable</nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,7 +27,7 @@
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
-    <PackageReference Include="SamLearnsAzure.Models" Version="1.1.2296" />
+    <PackageReference Include="SamLearnsAzure.Models" Version="1.2.2326" />
   </ItemGroup>
 
   <ItemGroup>

@@ -16,10 +16,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
         public void GetErrorViewModelTest()
         {
             //Arrange
-            ErrorViewModel model = new ErrorViewModel
-            {
-                RequestId = "abc123"
-            };
+            ErrorViewModel model = new ErrorViewModel("abc123");
             //Mock<IServiceApiClient> mockService = new Mock<IServiceApiClient>();
             //Mock<IConfiguration> mockConfiguration = new Mock<IConfiguration>();
             //HomeController controller = new HomeController(mockService.Object, mockConfiguration.Object);

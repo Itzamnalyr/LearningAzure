@@ -123,11 +123,9 @@ namespace SamLearnsAzure.Web.Controllers
             //Get all custom, downloaded parts
             List<PartImages> partImages = await _ServiceApiClient.GetPartImages();
 
-            PartImagesViewModel partImagesViewModel = new PartImagesViewModel
-            {
-                PartImages = partImages,
-                BasePartsImagesStorageURL = _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:PartImagesContainerName"]
-            };
+            PartImagesViewModel partImagesViewModel = new PartImagesViewModel(
+                partImages,
+                _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:PartImagesContainerName"]);
 
             return View(partImagesViewModel);
         }
@@ -192,7 +190,7 @@ namespace SamLearnsAzure.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel(Activity.Current?.Id ?? HttpContext.TraceIdentifier));
         }
     }
 }

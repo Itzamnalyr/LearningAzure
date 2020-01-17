@@ -55,7 +55,7 @@ namespace SamLearnsAzure.Service.Controllers
                 SourceImage = sourceImage,
                 ColorId = colorId
             };
-            PartImages result = await _repo.SavePartImage(newPartImage);
+            PartImages result = await _repo.SavePartImage(_redisService, newPartImage);
 
             return result;
         }

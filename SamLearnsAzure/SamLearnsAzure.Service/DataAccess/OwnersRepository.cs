@@ -22,10 +22,10 @@ namespace SamLearnsAzure.Service.DataAccess
         {
             string cacheKeyName = "Owners-all";
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            List<Owners> result = null;
+            List<Owners> result;
 
             //Check the cache
-            string cachedJSON = null;
+            string? cachedJSON = null;
             if (redisService != null && useCache == true)
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);
@@ -52,7 +52,7 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
             }
 
-            return result;
+            return result ?? new List<Owners>();
         }
 
         public async Task<Owners> GetOwner(IRedisService redisService, bool useCache, int ownerId)
@@ -90,7 +90,7 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
             }
 
-            return result;
+            return result ?? new Owners(); ;
         }
     }
 }

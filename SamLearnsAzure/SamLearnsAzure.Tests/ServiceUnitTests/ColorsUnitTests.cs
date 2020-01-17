@@ -29,7 +29,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             IEnumerable<Colors> results = await controller.GetColors();
 
             //Assert
-            Assert.IsTrue(results != null);
+            //Assert.IsTrue(results != null);
             Assert.IsTrue(results.Count() == 1);
             TestColors(results.FirstOrDefault());
         }

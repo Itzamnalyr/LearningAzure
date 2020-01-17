@@ -26,7 +26,7 @@ namespace SamLearnsAzure.Service.DataAccess
             List<Themes> result = null;
 
             //Check the cache
-            string cachedJSON = null;
+            string? cachedJSON = null;
             if (redisService != null && useCache == true)
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);

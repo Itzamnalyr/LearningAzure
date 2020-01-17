@@ -115,7 +115,7 @@ namespace SamLearnsAzure.Service.Controllers
                 SetNum = setNum,
                 SetImage = fileName
             };
-            setImage = await _repo.SaveSetImage(setImage);
+            setImage = await _repo.SaveSetImage(_redisService, setImage);
             return setImage;
         }
 
@@ -143,7 +143,7 @@ namespace SamLearnsAzure.Service.Controllers
                 // Create a new container  
                 cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
                 bool containerExists = cloudBlobContainer == null || await cloudBlobContainer.ExistsAsync();
-                if (containerExists == false)
+                if (containerExists == false && cloudBlobContainer != null)
                 {
                     await cloudBlobContainer.CreateAsync();
                     Console.WriteLine("Created container '{0}'", cloudBlobContainer.Name);
@@ -153,10 +153,13 @@ namespace SamLearnsAzure.Service.Controllers
                 {
                     PublicAccess = BlobContainerPublicAccessType.Blob
                 };
-                await cloudBlobContainer.SetPermissionsAsync(permissions);
+                if (cloudBlobContainer != null)
+                {
+                    await cloudBlobContainer.SetPermissionsAsync(permissions);
+                }
 
                 // Get a reference to the blob address, then upload the file to the blob.
-                if (fileBytes.Length > 0)
+                if (fileBytes.Length > 0 && cloudBlobContainer != null)
                 {
                     using (MemoryStream stream = new MemoryStream(fileBytes, writable: false))
                     {
@@ -178,7 +181,7 @@ namespace SamLearnsAzure.Service.Controllers
 
         private async Task<byte[]> DownloadFile(string url)
         {
-            byte[] file = null;
+            byte[] file = new byte[0];
             //retry the download 5 times 
             for (int retries = 0; retries < 5; retries++)
             {

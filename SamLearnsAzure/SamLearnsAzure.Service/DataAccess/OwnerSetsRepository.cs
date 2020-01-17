@@ -58,7 +58,7 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
             }
 
-            return result;
+            return result ?? new List<OwnerSets>(); 
         }
 
         public async Task<bool> SaveOwnerSet(string setNum, int ownerId, bool owned, bool wanted)

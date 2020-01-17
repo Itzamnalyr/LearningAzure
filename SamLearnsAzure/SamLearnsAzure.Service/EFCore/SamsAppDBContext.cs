@@ -16,20 +16,19 @@ namespace SamLearnsAzure.Service.EFCore
         {
         }
 
-        public virtual DbSet<Colors> Colors { get; set; }
-        public virtual DbSet<Inventories> Inventories { get; set; }
-        public virtual DbSet<InventoryParts> InventoryParts { get; set; }
-        public virtual DbSet<InventorySets> InventorySets { get; set; }
-        public virtual DbSet<Owners> Owners { get; set; }
-        public virtual DbSet<OwnerSets> OwnerSets { get; set; }
-        public virtual DbSet<PartCategories> PartCategories { get; set; }
-        public virtual DbSet<PartRelationships> PartRelationships { get; set; }
-        public virtual DbSet<Parts> Parts { get; set; }
-        public virtual DbSet<Sets> Sets { get; set; }
-        public virtual DbSet<SetImages> SetImages { get; set; }
-        public virtual DbSet<Themes> Themes { get; set; }
-        public virtual DbSet<PartImages> PartImages { get; set; }
-        //public virtual DbSet<FeatureFlags> FeatureFlags { get; set; }
+        public virtual DbSet<Colors> Colors { get; set; } = null!;
+        public virtual DbSet<Inventories> Inventories { get; set; } = null!;
+        public virtual DbSet<InventoryParts> InventoryParts { get; set; } = null!;
+        public virtual DbSet<InventorySets> InventorySets { get; set; } = null!;
+        public virtual DbSet<Owners> Owners { get; set; } = null!;
+        public virtual DbSet<OwnerSets> OwnerSets { get; set; } = null!;
+        public virtual DbSet<PartCategories> PartCategories { get; set; } = null!;
+        public virtual DbSet<PartRelationships> PartRelationships { get; set; } = null!;
+        public virtual DbSet<Parts> Parts { get; set; } = null!;
+        public virtual DbSet<Sets> Sets { get; set; } = null!;
+        public virtual DbSet<SetImages> SetImages { get; set; } = null!;
+        public virtual DbSet<Themes> Themes { get; set; } = null!;
+        public virtual DbSet<PartImages> PartImages { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

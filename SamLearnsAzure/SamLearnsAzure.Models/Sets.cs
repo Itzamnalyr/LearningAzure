@@ -13,11 +13,11 @@ namespace SamLearnsAzure.Models
             OwnerSets = new HashSet<OwnerSets>();
         }
 
-        public string? SetNum { get; set; }
+        public string SetNum { get; set; }
         public string? Name { get; set; }
         public int? Year { get; set; }
         public int? ThemeId { get; set; }
-        public int? NumParts { get; set; }
+        public int NumParts { get; set; }
 
         public Themes Theme { get; set; }
         public ICollection<Inventories> Inventories { get; set; }

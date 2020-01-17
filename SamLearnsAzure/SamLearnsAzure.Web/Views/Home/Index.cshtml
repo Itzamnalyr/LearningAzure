@@ -28,7 +28,7 @@
                         @item.Set.Theme.Name
                     </td>
                     <td>
-                        @(((int)item.Set.NumParts).ToString("#,##0"))
+                        @((item.Set.NumParts ?? 0).ToString("#,##0"))
                     </td>
                 </tr>
             }

@@ -68,7 +68,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             Mock<IPartImagesRepository> mock = new Mock<IPartImagesRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();
-            mock.Setup(repo => repo.SavePartImage( It.IsAny<PartImages>())).Returns(Task.FromResult(GetTestRow()));
+            mock.Setup(repo => repo.SavePartImage(It.IsAny<IRedisService>(), It.IsAny<PartImages>())).Returns(Task.FromResult(GetTestRow()));
             PartImagesController controller = new PartImagesController(mock.Object, mockRedis.Object, mockConfig.Object);
 
             //Act
@@ -77,7 +77,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             //Assert
             Assert.IsTrue(partImage != null);
             TestPartImages(partImage);
-        }       
+        }
 
         private void TestPartImages(PartImages PartImages)
         {

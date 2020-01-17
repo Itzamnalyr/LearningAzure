@@ -28,7 +28,7 @@ namespace SamLearnsAzure.Service.DataAccess
             List<PartImages> result = null;
 
             //Check the cache
-            string cachedJSON = null;
+            string? cachedJSON = null;
             if (redisService != null && useCache == true)
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);
@@ -92,10 +92,10 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
             }
 
-            return result;
+            return result ?? new PartImages();
         }
 
-        public async Task<PartImages> SavePartImage(PartImages partImage)
+        public async Task<PartImages> SavePartImage(IRedisService redisService, PartImages partImage)
         {
             SqlParameter partNumParameter = new SqlParameter("@PartNum", partImage.PartNum);
             SqlParameter partImageParameter = new SqlParameter("@SourceImage", partImage.SourceImage);
@@ -103,7 +103,7 @@ namespace SamLearnsAzure.Service.DataAccess
 
             await _context.Database.ExecuteSqlRawAsync("dbo.SavePartImage @PartNum={0}, @SourceImage={1}, @ColorId={2}", partNumParameter, partImageParameter, colorIdParameter);
 
-            return await GetPartImage(null, false, partImage.PartNum);
+            return await GetPartImage(redisService, false, partImage.PartNum);
         }
     }
 }

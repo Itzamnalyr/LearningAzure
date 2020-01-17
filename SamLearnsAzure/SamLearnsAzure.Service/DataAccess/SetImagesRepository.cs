@@ -28,7 +28,7 @@ namespace SamLearnsAzure.Service.DataAccess
             SetImages result = null;
 
             //Check the cache
-            string cachedJSON = null;
+            string? cachedJSON = null;
             if (redisService != null && useCache == true)
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);
@@ -55,17 +55,17 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
             }
 
-            return result;
+            return result ?? new SetImages();
         }
 
-        public async Task<SetImages> SaveSetImage(SetImages setImage)
+        public async Task<SetImages> SaveSetImage(IRedisService redisService, SetImages setImage)
         {
             SqlParameter setNumParameter = new SqlParameter("@SetNum", setImage.SetNum);
             SqlParameter setImageParameter = new SqlParameter("@SetImage", setImage.SetImage);
 
             await _context.Database.ExecuteSqlRawAsync("dbo.SaveSetImage @SetNum={0}, @SetImage={1}", setNumParameter, setImageParameter);
 
-            return await GetSetImage(null, false, setImage.SetNum);
+            return await GetSetImage(redisService, false, setImage.SetNum);
         }
     }
 }

@@ -10,6 +10,6 @@ namespace SamLearnsAzure.Service.DataAccess
     {
         Task<SetImages> GetSetImage(IRedisService redisService, bool useCache, string setNum);
 
-        Task<SetImages> SaveSetImage(SetImages setImage);
+        Task<SetImages> SaveSetImage(IRedisService redisService, SetImages setImage);
     }
 }

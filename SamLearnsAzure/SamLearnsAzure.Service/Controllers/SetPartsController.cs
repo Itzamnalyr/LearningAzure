@@ -101,7 +101,7 @@ namespace SamLearnsAzure.Service.Controllers
                                 SourceImage = newImageParts[0].ImageUrl,
                                 ColorId = item.ColorId
                             };
-                            await _repoPartImages.SavePartImage(newPartImages);
+                            await _repoPartImages.SavePartImage(_redisService, newPartImages);
 
                             //Download the image into storage
                             CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference(storageContainerPartImagesName);

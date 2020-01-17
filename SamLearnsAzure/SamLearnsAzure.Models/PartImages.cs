@@ -11,7 +11,7 @@ namespace SamLearnsAzure.Models
         }
 
         public int PartImageId { get; set; }
-        public string? PartNum { get; set; }
+        public string PartNum { get; set; }
         public string? SourceImage { get; set; }
         public int ColorId { get; set; }
         public DateTime LastUpdated { get; set; }

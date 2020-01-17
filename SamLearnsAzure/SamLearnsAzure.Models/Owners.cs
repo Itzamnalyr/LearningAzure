@@ -11,7 +11,7 @@ namespace SamLearnsAzure.Models
         }
 
         public int Id { get; set; }
-        public string? OwnerName { get; set; }
+        public string OwnerName { get; set; }
 
         public ICollection<OwnerSets> OwnerSets { get; set; }
     }

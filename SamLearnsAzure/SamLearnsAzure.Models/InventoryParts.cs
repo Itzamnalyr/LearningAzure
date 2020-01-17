@@ -13,9 +13,9 @@ namespace SamLearnsAzure.Models
         }
         
         public int InventoryId { get; set; }
-        public string? PartNum { get; set; }
+        public string PartNum { get; set; }
         public int? ColorId { get; set; }
-        public int? Quantity { get; set; }
+        public int Quantity { get; set; }
         public bool? IsSpare { get; set; }
         public int InventoryPartId { get; set; }
 

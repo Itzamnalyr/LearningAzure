@@ -10,7 +10,7 @@ namespace SamLearnsAzure.Models
             InventoryParts = new HashSet<InventoryParts>();
         }
 
-        public string? PartNum { get; set; }
+        public string PartNum { get; set; }
         public string? Name { get; set; }
         public int? PartCatId { get; set; }
         public int? PartMaterialId { get; set; }

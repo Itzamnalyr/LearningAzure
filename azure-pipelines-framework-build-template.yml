@@ -46,8 +46,8 @@ jobs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
 
     # Run security tasks
-    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
-      displayName: 'Run CredScan'
+    #- task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
+    #  displayName: 'Run CredScan'
     #- task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-postanalysis.PostAnalysis@1
     #  displayName: 'Post Analysis'
     #  inputs:

@@ -17,7 +17,7 @@ namespace SamLearnsAzure.Service.DataAccess
 
         public async Task<string> GetAsync(string key)
         {
-            string result = null;
+            string? result = null;
             if (_database.IsConnected(key))
             {
                 result = await _database.StringGetAsync(key);

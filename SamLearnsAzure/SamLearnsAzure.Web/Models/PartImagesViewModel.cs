@@ -8,6 +8,12 @@ namespace SamLearnsAzure.Web.Models
 {
     public class PartImagesViewModel
     {
+        public PartImagesViewModel(List<PartImages> partImages, string basePartsImagesStorageURL)
+        {
+            PartImages = partImages;
+            BasePartsImagesStorageURL = basePartsImagesStorageURL;
+        }
+
         public List<PartImages> PartImages { get; set; }
         public string BasePartsImagesStorageURL { get; set; }
     }

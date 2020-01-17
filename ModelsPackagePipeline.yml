@@ -10,7 +10,7 @@ pool:
 variables:
   BuildConfiguration: 'Release'
   BuildPlatform : 'Any CPU'
-  BuildVersion: 1.2.$(Build.BuildId) #Version 1.2 contains C# 8 nullable types
+  BuildVersion: 1.3.$(Build.BuildId) #Version 1.3 contains C# 8 nullable types
 
 steps:
 - task: DotNetCoreCLI@2
