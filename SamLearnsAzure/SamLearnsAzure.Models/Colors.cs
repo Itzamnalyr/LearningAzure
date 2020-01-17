@@ -8,6 +8,7 @@ namespace SamLearnsAzure.Models
         public Colors()
         {
             InventoryParts = new HashSet<InventoryParts>();
+            PartImages = new HashSet<PartImages>();
         }
 
         //The unique number for the color
@@ -15,11 +16,11 @@ namespace SamLearnsAzure.Models
         /// <summary>
         /// The name of the color
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
         /// <summary>
         /// The RGB/(Red Green Blue) color of the object
         /// </summary>
-        public string Rgb { get; set; }
+        public string? Rgb { get; set; }
         /// <summary>
         /// Is the object transparent?
         /// </summary>

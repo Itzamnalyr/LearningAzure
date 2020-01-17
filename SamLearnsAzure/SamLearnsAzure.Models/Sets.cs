@@ -7,13 +7,14 @@ namespace SamLearnsAzure.Models
     {
         public Sets()
         {
+            Theme = new Themes();
             Inventories = new HashSet<Inventories>();
             InventorySets = new HashSet<InventorySets>();
             OwnerSets = new HashSet<OwnerSets>();
         }
 
-        public string SetNum { get; set; }
-        public string Name { get; set; }
+        public string? SetNum { get; set; }
+        public string? Name { get; set; }
         public int? Year { get; set; }
         public int? ThemeId { get; set; }
         public int? NumParts { get; set; }
