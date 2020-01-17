@@ -8,8 +8,15 @@ namespace SamLearnsAzure.Web.Models
 {
     public class UpdateSetImageViewModel
     {
+        public UpdateSetImageViewModel(Sets set, List<SetImages> potentialSetImages, string baseSetImagesStorageURL)
+        {
+            Set = set;
+            PotentialSetImages = potentialSetImages;
+            BaseSetImagesStorageURL = baseSetImagesStorageURL;
+        }
+        
         public Sets Set { get; set; }
         public List<SetImages> PotentialSetImages { get; set; }
-        public string BaseSetImagesStorageURL{ get; set; }
+        public string BaseSetImagesStorageURL { get; set; }
     }
 }

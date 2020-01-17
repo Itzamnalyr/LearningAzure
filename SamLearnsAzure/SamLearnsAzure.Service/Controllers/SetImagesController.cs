@@ -46,12 +46,15 @@ namespace SamLearnsAzure.Service.Controllers
             List<SetImages> results = new List<SetImages>();
             foreach (BingSearchResult item in images)
             {
-                SetImages newImage = new SetImages
+                if (item != null)
                 {
-                    SetNum = item.SearchTerm,
-                    SetImage = item.ImageUrl
-                };
-                results.Add(newImage);
+                    SetImages newImage = new SetImages
+                    {
+                        SetNum = item.SearchTerm ?? "",
+                        SetImage = item.ImageUrl
+                    };
+                    results.Add(newImage);
+                }
             }
 
             return results;
@@ -77,14 +80,14 @@ namespace SamLearnsAzure.Service.Controllers
                     setNum, resultsToReturn, resultsToSearch, tagFilter);
 
                 //2. Save image into blob storage
-                if (images.Count > 0)
+                if (images != null && images.Count > 0)
                 {
-                    setImage = await SaveSetImageToStorageAndDatabase(setNum, images[0].ImageUrl);
+                    setImage = await SaveSetImageToStorageAndDatabase(setNum, images[0]?.ImageUrl ?? "");
                 }
             }
 
             //3. Service returns Image
-            return setImage;
+            return setImage ?? new SetImages();
         }
 
         [HttpGet("SaveSetImage")]

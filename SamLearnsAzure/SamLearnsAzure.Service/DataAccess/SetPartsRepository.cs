@@ -23,7 +23,7 @@ namespace SamLearnsAzure.Service.DataAccess
         {
             string cacheKeyName = "SetParts-" + setNum;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            IEnumerable<SetParts> result;
+            List<SetParts> result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -33,7 +33,7 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             if (cachedJSON != null) //This will be null if we aren't using Redis or the item doesn't exist in Redis
             {
-                result = JsonConvert.DeserializeObject<IEnumerable<SetParts>>(cachedJSON);
+                result = JsonConvert.DeserializeObject<List<SetParts>>(cachedJSON);
             }
             else
             {
@@ -56,9 +56,8 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
             }
 
-            return result;
+            return result ?? new List<SetParts>();
         }
-
 
 
     }

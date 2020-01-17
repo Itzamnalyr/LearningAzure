@@ -68,7 +68,12 @@ namespace SamLearnsAzure.Service.Controllers
             //Loop through each set part, and check if the blob exists
             foreach (SetParts item in setParts)
             {
-                string newImageName = item.ColorId + "/" + item.PartNum + ".png";
+                SetParts currentItem = item;
+                if (currentItem is null)
+                {
+                    currentItem = new SetParts();
+                }
+                string newImageName = currentItem.ColorId + "/" + currentItem.PartNum + ".png";
                 if (CloudStorageAccount.TryParse(storageConnectionString, out CloudStorageAccount storageAccount))
                 {
                     //Check if the image exists in storage
@@ -85,7 +90,7 @@ namespace SamLearnsAzure.Service.Controllers
                         string cognitiveServicesBingSearchUriBase = _configuration["AppSettings:CognitiveServicesBingSearchUriBase"];
                         string cognitiveServicesImageAnalysisUriBase = _configuration["AppSettings:CognitiveServicesImageAnalysisUriBase"];
                         string tagFilter = "lego";
-                        string searchTerm = item.PartNum + " lego " + item.ColorName;
+                        string searchTerm = currentItem.PartNum + " lego " + currentItem.ColorName;
 
                         //Search Bing for the image
                         List<BingSearchResult> newImageParts = await bingImageSearchAPI.PerformBingImageSearch(cognitiveServicesSubscriptionKey,
@@ -97,9 +102,9 @@ namespace SamLearnsAzure.Service.Controllers
                             //Save the new part into the custom part images database table
                             PartImages newPartImages = new PartImages
                             {
-                                PartNum = item.PartNum,
+                                PartNum = currentItem?.PartNum ?? "",
                                 SourceImage = newImageParts[0].ImageUrl,
-                                ColorId = item.ColorId
+                                ColorId = currentItem?.ColorId ?? 0
                             };
                             await _repoPartImages.SavePartImage(_redisService, newPartImages);
 

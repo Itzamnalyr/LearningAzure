@@ -33,10 +33,10 @@ namespace SamLearnsAzure.Web.Controllers
             List<OwnerSets> ownerSets = await _ServiceApiClient.GetOwnerSets(ownerId);
 
             IndexViewModel indexPageData = new IndexViewModel
-            {
-                Environment = _configuration["AppSettings:Environment"],
-                OwnerSets = ownerSets
-            };
+            (
+                environment: _configuration["AppSettings:Environment"],
+                ownerSets: ownerSets
+            );
 
             //Divide by zero feature flag
             bool featureFlagResult = false;
@@ -63,13 +63,13 @@ namespace SamLearnsAzure.Web.Controllers
             List<SetParts> setParts = await _ServiceApiClient.GetSetParts(setnum);
 
             SetViewModel setViewModel = new SetViewModel
-            {
-                Set = set,
-                SetImage = setImage,
-                SetParts = setParts,
-                BaseSetPartsImagesStorageURL = _configuration["AppSettings:ImagesStorageCDNURL"] + _configuration["AppSettings:PartImagesContainerName"],
-                BaseSetImagesStorageURL = _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:SetImagesContainerName"]
-            };
+            (
+                set: set,
+                setImage: setImage,
+                setParts: setParts,
+                baseSetPartsImagesStorageURL: _configuration["AppSettings:ImagesStorageCDNURL"] + _configuration["AppSettings:PartImagesContainerName"],
+                baseSetImagesStorageURL: _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:SetImagesContainerName"]
+            );
 
             return View(setViewModel);
         }
@@ -82,10 +82,11 @@ namespace SamLearnsAzure.Web.Controllers
             List<SetImages> setImages = await _ServiceApiClient.GetSetImages(setnum, resultsToReturn, resultsToSearch);
 
             UpdateSetImageViewModel updateSetImageModel = new UpdateSetImageViewModel
-            {
-                Set = set,
-                PotentialSetImages = setImages
-            };
+            (
+                set: set,
+                potentialSetImages: setImages,
+                baseSetImagesStorageURL: ""
+            );
 
             return View(updateSetImageModel);
         }
@@ -141,13 +142,12 @@ namespace SamLearnsAzure.Web.Controllers
             List<SetParts> setParts = await _ServiceApiClient.GetSetParts(setNum);
             List<PartImages> partImages = await _ServiceApiClient.SearchForPotentialPartImages(partNum, colorId, colorName, resultsToReturn, resultsToSearch);
 
-            UpdatePartImageViewModel updatePartImageModel = new UpdatePartImageViewModel
-            {
-                Set = set,
-                CurrentSetPart = setParts.SingleOrDefault(t => t.PartNum == partNum),
-                PotentialSetParts = partImages,
-                BasePartsImagesStorageURL = _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:PartImagesContainerName"]
-            };
+            UpdatePartImageViewModel updatePartImageModel = new UpdatePartImageViewModel(
+                set: set,
+                currentSetPart: setParts.SingleOrDefault(t => t.PartNum == partNum),
+                potentialSetParts: partImages,
+                basePartsImagesStorageURL: _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:PartImagesContainerName"]
+            );
 
             return View(updatePartImageModel);
         }
@@ -156,10 +156,10 @@ namespace SamLearnsAzure.Web.Controllers
         public IActionResult CDNTest()
         {
             CdnTestViewModel cdnTestViewModel = new CdnTestViewModel
-            {
-                BaseSetPartsImagesStorageURL = _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:PartImagesContainerName"],
-                BaseSetPartsImagesCDNURL = _configuration["AppSettings:ImagesStorageCDNURL"] + _configuration["AppSettings:PartImagesContainerName"]
-            };
+            (
+                baseSetPartsImagesStorageURL: _configuration["AppSettings:ImagesStorageURL"] + _configuration["AppSettings:PartImagesContainerName"],
+                baseSetPartsImagesCDNURL: _configuration["AppSettings:ImagesStorageCDNURL"] + _configuration["AppSettings:PartImagesContainerName"]
+            );
 
             return View(cdnTestViewModel);
         }

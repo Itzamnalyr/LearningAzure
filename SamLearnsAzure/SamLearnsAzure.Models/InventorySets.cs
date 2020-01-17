@@ -5,10 +5,11 @@ namespace SamLearnsAzure.Models
 {
     public partial class InventorySets
     {
-        public InventorySets()
+        public InventorySets(string setNum)
         {
             Inventory = new Inventories();
-            Set = new Sets();
+            Set = new Sets(setNum);
+            SetNum = setNum;
         }
 
         public int InventoryId { get; set; }

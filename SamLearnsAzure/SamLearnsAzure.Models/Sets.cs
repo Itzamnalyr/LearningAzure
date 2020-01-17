@@ -5,12 +5,13 @@ namespace SamLearnsAzure.Models
 {
     public partial class Sets
     {
-        public Sets()
+        public Sets(string setNum)
         {
             Theme = new Themes();
             Inventories = new HashSet<Inventories>();
             InventorySets = new HashSet<InventorySets>();
             OwnerSets = new HashSet<OwnerSets>();
+            SetNum = setNum;
         }
 
         public string SetNum { get; set; }

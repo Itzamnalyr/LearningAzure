@@ -24,10 +24,10 @@ namespace SamLearnsAzure.Service.DataAccess
             string cacheKeyName = "OwnerSets-" + ownerId;
             TimeSpan cacheExpirationTime = new TimeSpan(0, 5, 0);
 
-            List<OwnerSets> result = null;
+            List<OwnerSets> result;
 
             //Check the cache
-            string cachedJSON = null;
+            string? cachedJSON = null;
             if (redisService != null && useCache == true)
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);
@@ -58,7 +58,7 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
             }
 
-            return result ?? new List<OwnerSets>(); 
+            return result ?? new List<OwnerSets>();
         }
 
         public async Task<bool> SaveOwnerSet(string setNum, int ownerId, bool owned, bool wanted)

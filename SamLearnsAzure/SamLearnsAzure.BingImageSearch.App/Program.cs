@@ -20,15 +20,16 @@ namespace SamLearnsAzure.BingImageSearch.App
 {
     class Program
     {
-        private static string setNum = "75218-1";
         private static IConfiguration _configuration;
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
+            string setNum = "75218-1";
+
             //0. Get configuration values from the appsettings.json file
             _configuration = new ConfigurationBuilder()
-                  .AddJsonFile("appsettings.json", true, true)
-                  .Build();
+                      .AddJsonFile("appsettings.json", true, true)
+                      .Build();
 
             //1. Get images from Bing Image Search API
             List<SetImages> setImages = await GetSetImages(setNum, 10);
@@ -88,10 +89,10 @@ namespace SamLearnsAzure.BingImageSearch.App
                 Console.WriteLine("Web Url for the " + i + " image result: " + webUrl + "\n");
                 Console.WriteLine("Image Url for the " + i + " image result: " + imageUrl + "\n");
                 SetImages newSetImage = new SetImages
-                {
-                    SetNum = setNum,
-                    SetImage = imageUrl
-                };
+                (
+                    setNum: setNum,
+                    setImage: imageUrl
+                );
                 setImages.Add(newSetImage);
             }
 

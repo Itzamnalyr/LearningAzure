@@ -15,7 +15,7 @@ namespace SamLearnsAzure.Service.DataAccess
             _database = database;
         }
 
-        public async Task<string> GetAsync(string key)
+        public async Task<string?> GetAsync(string key)
         {
             string? result = null;
             if (_database.IsConnected(key))

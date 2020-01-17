@@ -5,9 +5,10 @@ namespace SamLearnsAzure.Models
 {
     public partial class PartImages
     {
-        public PartImages()
+        public PartImages(string partNum)
         {
             Color = new Colors();
+            PartNum = partNum;
         }
 
         public int PartImageId { get; set; }

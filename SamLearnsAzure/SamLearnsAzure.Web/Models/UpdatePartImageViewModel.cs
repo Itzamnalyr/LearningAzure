@@ -8,6 +8,14 @@ namespace SamLearnsAzure.Web.Models
 {
     public class UpdatePartImageViewModel
     {
+        public UpdatePartImageViewModel(Sets set, SetParts currentSetPart, List<PartImages> potentialSetParts, string basePartsImagesStorageURL)
+        {
+            Set = set;
+            CurrentSetPart = currentSetPart;
+            PotentialSetParts = potentialSetParts;
+            BasePartsImagesStorageURL = basePartsImagesStorageURL;
+        }
+
         public Sets Set{ get; set; }
         public SetParts CurrentSetPart { get; set; }
         public List<PartImages> PotentialSetParts { get; set; }
@@ -16,6 +24,11 @@ namespace SamLearnsAzure.Web.Models
 
     public class SetPartImages : SetParts
     {
+        public SetPartImages(string partImage)
+        {
+            PartImage = partImage;
+        }
+
         public string PartImage { get; set; }
     }
 }

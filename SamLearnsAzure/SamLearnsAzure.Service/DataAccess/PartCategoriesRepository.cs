@@ -24,7 +24,7 @@ namespace SamLearnsAzure.Service.DataAccess
             string cacheKeyName = "PartCategories-all";
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
 
-            List<PartCategories> result = null;
+            List<PartCategories> result;
 
             //Check the cache
             string? cachedJSON = null;

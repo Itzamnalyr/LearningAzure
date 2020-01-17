@@ -5,10 +5,11 @@ namespace SamLearnsAzure.Models
 {
     public partial class OwnerSets
     {
-        public OwnerSets()
+        public OwnerSets(string setNum)
         {
-            Owner = new Owners();
-            Set = new Sets();
+            Owner = new Owners("");
+            Set = new Sets(setNum);
+            SetNum = setNum;
         }
         
         public string SetNum { get; set; }

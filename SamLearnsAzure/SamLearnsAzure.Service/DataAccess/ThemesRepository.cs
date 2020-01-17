@@ -23,7 +23,7 @@ namespace SamLearnsAzure.Service.DataAccess
         {
             string cacheKeyName = "Themes-all";
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            List<Themes> result = null;
+            List<Themes> result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -53,7 +53,7 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
             }
 
-            return result;
+            return result ?? new List<Themes>();
         }
     }
 }

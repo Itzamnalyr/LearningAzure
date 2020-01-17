@@ -6,7 +6,12 @@ namespace SamLearnsAzure.Models
 {
     public class SetParts
     {
-        public string? PartNum { get; set; }
+        public SetParts(string partNum)
+        {
+            PartNum = partNum;
+        }
+
+        public string PartNum { get; set; }
         public string? PartName { get; set; }
         public int ColorId { get; set; }
         public string? ColorName { get; set; }

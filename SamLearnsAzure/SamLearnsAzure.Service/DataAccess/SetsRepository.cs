@@ -32,7 +32,7 @@ namespace SamLearnsAzure.Service.DataAccess
         {
             string cacheKeyName = "Set-" + setNum;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            Sets result = null;
+            Sets result;
 
             //Check the cache
             string? cachedJSON = null;

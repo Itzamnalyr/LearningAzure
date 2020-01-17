@@ -25,7 +25,7 @@ namespace SamLearnsAzure.Service.DataAccess
         {
             string cacheKeyName = "SetImage-" + setNum;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            SetImages result = null;
+            SetImages result;
 
             //Check the cache
             string? cachedJSON = null;

@@ -8,6 +8,12 @@ namespace SamLearnsAzure.Web.Models
 {
     public class IndexViewModel
     {
+        public IndexViewModel(string environment, List<OwnerSets> ownerSets)
+        {
+            Environment = environment;
+            OwnerSets = ownerSets;
+        }
+
         public string Environment { get; set; }
         public List<OwnerSets> OwnerSets { get; set; }
     }

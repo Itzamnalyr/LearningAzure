@@ -33,11 +33,14 @@ namespace SamLearnsAzure.Service.AI
             };
 
             // Extract Bing HTTP headers
-            foreach (string header in response.Headers)
+            foreach (string? header in response.Headers)
             {
-                if (header.StartsWith("BingAPIs-") || header.StartsWith("X-MSEdge-"))
+                if (header != null)
                 {
-                    searchResult.relevantHeaders[header] = response.Headers[header];
+                    if (header.StartsWith("BingAPIs-") || header.StartsWith("X-MSEdge-"))
+                    {
+                        searchResult.relevantHeaders[header] = response.Headers[header];
+                    }
                 }
             }
 
@@ -89,8 +92,14 @@ namespace SamLearnsAzure.Service.AI
 
         public class BingSearchResult
         {
-            public string SearchTerm { get; set; }            
-            public string ImageUrl { get; set; }
+            public string? SearchTerm
+            {
+                get; set;
+            }
+            public string? ImageUrl
+            {
+                get; set;
+            }
         }
 
 

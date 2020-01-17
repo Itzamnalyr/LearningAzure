@@ -12,10 +12,9 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class BaseIntegrationTest
     {
-        private TestServer _server;
-        public HttpClient Client;
-        public IConfigurationRoot Configuration;
-        // public IDatabase Database;
+        private TestServer? _server;
+        public HttpClient? Client;
+        public IConfigurationRoot? Configuration;
 
         [TestInitialize]
         public void TestStartUp()

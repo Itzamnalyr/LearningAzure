@@ -25,7 +25,7 @@ namespace SamLearnsAzure.Service.DataAccess
         {
             string cacheKeyName = "PartImages";
             TimeSpan cacheExpirationTime = new TimeSpan(0, 30, 0);
-            List<PartImages> result = null;
+            List<PartImages> result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -56,17 +56,17 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
             }
 
-            return result;
+            return result ?? new List<PartImages>();
         }
 
         public async Task<PartImages> GetPartImage(IRedisService redisService, bool useCache, string partNum)
         {
             string cacheKeyName = "PartImage-" + partNum;
             TimeSpan cacheExpirationTime = new TimeSpan(0, 30, 0);
-            PartImages result = null;
+            PartImages result ;
 
             //Check the cache
-            string cachedJSON = null;
+            string? cachedJSON = null;
             if (redisService != null && useCache == true)
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);

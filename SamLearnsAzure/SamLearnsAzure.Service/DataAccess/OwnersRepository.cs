@@ -60,10 +60,10 @@ namespace SamLearnsAzure.Service.DataAccess
             string cacheKeyName = "Owners-" + ownerId;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
 
-            Owners result = null;
+            Owners result;
 
             //Check the cache
-            string cachedJSON = null;
+            string? cachedJSON = null;
             if (redisService != null && useCache == true)
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);
@@ -90,7 +90,7 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
             }
 
-            return result ?? new Owners(); ;
+            return result ?? new Owners();
         }
     }
 }
