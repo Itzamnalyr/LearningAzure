@@ -16,73 +16,85 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         [TestMethod]
         public async Task GetOwnersIntegrationWithCacheTest()
         {
-            //Arrange
+            if (base.Client != null)
+            {
+                //Arrange
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners?useCache=true");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<Owners> items = await response.Content.ReadAsAsync<IEnumerable<Owners>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners?useCache=true");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<Owners> items = await response.Content.ReadAsAsync<IEnumerable<Owners>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Any()); //There is more than one owner
-            Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first owner has an id
-            Assert.IsTrue(items.FirstOrDefault().OwnerName.Length > 0); //The first owner has an name
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Any()); //There is more than one owner
+                Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first owner has an id
+                Assert.IsTrue(items.FirstOrDefault().OwnerName?.Length > 0); //The first owner has an name
+            }
         }
 
         [TestMethod]
         public async Task GetOwnersIntegrationWithoutCacheTest()
         {
-            //Arrange
+            if (base.Client != null)
+            {
+                //Arrange
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners?useCache=false");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<Owners> items = await response.Content.ReadAsAsync<IEnumerable<Owners>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners?useCache=false");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<Owners> items = await response.Content.ReadAsAsync<IEnumerable<Owners>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Any()); //There is more than one owner
-            Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first owner has an id
-            Assert.IsTrue(items.FirstOrDefault().OwnerName.Length > 0); //The first owner has an name
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Any()); //There is more than one owner
+                Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first owner has an id
+                Assert.IsTrue(items.FirstOrDefault().OwnerName?.Length > 0); //The first owner has an name
+            }
         }
 
         [TestMethod]
         public async Task GetOwnerIntegrationWithCacheTest()
         {
-            //Arrange
-            int ownerId = 1;
+            if (base.Client != null)
+            {
+                //Arrange
+                int ownerId = 1;
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=true");
-            response.EnsureSuccessStatusCode();
-            Owners item = await response.Content.ReadAsAsync<Owners>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=true");
+                response.EnsureSuccessStatusCode();
+                Owners item = await response.Content.ReadAsAsync<Owners>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(item != null);
-            Assert.IsTrue(item.Id > 0); //The owner has an id
-            Assert.IsTrue(item.OwnerName.Length > 0); //The owner has an name
+                //Assert
+                Assert.IsTrue(item != null);
+                Assert.IsTrue(item?.Id > 0); //The owner has an id
+                Assert.IsTrue(item?.OwnerName?.Length > 0); //The owner has an name
+            }
         }
 
         [TestMethod]
         public async Task GetOwnerIntegrationWithoutCacheTest()
         {
-            //Arrange
-            int ownerId = 1;
+            if (base.Client != null)
+            {
+                //Arrange
+                int ownerId = 1;
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=false");
-            response.EnsureSuccessStatusCode();
-            Owners item = await response.Content.ReadAsAsync<Owners>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=false");
+                response.EnsureSuccessStatusCode();
+                Owners item = await response.Content.ReadAsAsync<Owners>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(item != null);
-            Assert.IsTrue(item.Id > 0); //The owner has an id
-            Assert.IsTrue(item.OwnerName.Length > 0); //The owner has an name
+                //Assert
+                Assert.IsTrue(item != null);
+                Assert.IsTrue(item?.Id > 0); //The owner has an id
+                Assert.IsTrue(item?.OwnerName?.Length > 0); //The owner has an name
+            }
         }
 
     }

@@ -11,7 +11,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class BaseIntegrationTest
     {
-        public IConfigurationRoot Configuration;
+        public IConfigurationRoot Configuration = null!;
 
         [TestInitialize]
         public void TestStartUp()

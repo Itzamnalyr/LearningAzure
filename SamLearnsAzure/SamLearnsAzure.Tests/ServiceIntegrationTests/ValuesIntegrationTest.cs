@@ -14,19 +14,22 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         [TestMethod]
         public async Task GetValuesTestServerTest()
         {
-            //Arrange
+            if (base.Client != null)
+            {
+                //Arrange
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/values");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<string> items = await response.Content.ReadAsAsync<IEnumerable<string>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/values");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<string> items = await response.Content.ReadAsAsync<IEnumerable<string>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Count() == 2);
-            Assert.IsTrue(items.FirstOrDefault<string>() == "value1");
-            Assert.IsTrue(items.ElementAt<string>(1) == "value2");
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Count() == 2);
+                Assert.IsTrue(items.FirstOrDefault<string>() == "value1");
+                Assert.IsTrue(items.ElementAt<string>(1) == "value2");
+            }
         }
 
     }

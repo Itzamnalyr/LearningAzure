@@ -35,9 +35,9 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             ViewResult viewResult = (ViewResult)result;
             IndexViewModel indexViewModel = (IndexViewModel)viewResult.Model;
             Assert.IsTrue(indexViewModel != null);
-            Assert.IsTrue(indexViewModel.Environment as string == environmentName);
-            Assert.IsTrue(indexViewModel.OwnerSets.Count() == 1);
-            TestOwnerSets(indexViewModel.OwnerSets.FirstOrDefault());
+            Assert.IsTrue(indexViewModel?.Environment as string == environmentName);
+            Assert.IsTrue(indexViewModel?.OwnerSets.Count() == 1);
+            TestOwnerSets(indexViewModel?.OwnerSets.FirstOrDefault() ?? new OwnerSets());
         }
 
         private void TestOwnerSets(OwnerSets OwnerSet)

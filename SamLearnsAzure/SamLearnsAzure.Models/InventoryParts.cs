@@ -5,16 +5,15 @@ namespace SamLearnsAzure.Models
 {
     public partial class InventoryParts
     {
-        public InventoryParts(string partNum)
+        public InventoryParts()
         {
             Color = new Colors();
             Inventory = new Inventories();
-            Part = new Parts(partNum);
-            PartNum = partNum;
+            Part = new Parts();
         }
         
         public int InventoryId { get; set; }
-        public string PartNum { get; set; }
+        public string PartNum { get; set; } = null!;
         public int? ColorId { get; set; }
         public int Quantity { get; set; }
         public bool? IsSpare { get; set; }

@@ -50,7 +50,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
 
             //Assert
             Assert.IsTrue(item != null);
-            TestOwners(item);
+            TestOwners(item ?? new Owners());
         }
 
 

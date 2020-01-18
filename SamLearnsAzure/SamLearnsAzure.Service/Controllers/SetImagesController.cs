@@ -51,7 +51,7 @@ namespace SamLearnsAzure.Service.Controllers
                     SetImages newImage = new SetImages
                     {
                         SetNum = item.SearchTerm ?? "",
-                        SetImage = item.ImageUrl
+                        SetImage = item.ImageUrl ?? ""
                     };
                     results.Add(newImage);
                 }

@@ -5,13 +5,12 @@ namespace SamLearnsAzure.Models
 {
     public partial class Parts
     {
-        public Parts(string partNum)
+        public Parts()
         {
             InventoryParts = new HashSet<InventoryParts>();
-            PartNum = partNum;
         }
 
-        public string PartNum { get; set; }
+        public string PartNum { get; set; } = null!;
         public string? Name { get; set; }
         public int? PartCatId { get; set; }
         public int? PartMaterialId { get; set; }

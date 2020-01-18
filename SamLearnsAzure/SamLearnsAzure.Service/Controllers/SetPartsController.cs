@@ -71,7 +71,10 @@ namespace SamLearnsAzure.Service.Controllers
                 SetParts currentItem = item;
                 if (currentItem is null)
                 {
-                    currentItem = new SetParts();
+                    currentItem = new SetParts
+                    {
+                        PartNum = currentItem?.PartNum ?? ""
+                    };
                 }
                 string newImageName = currentItem.ColorId + "/" + currentItem.PartNum + ".png";
                 if (CloudStorageAccount.TryParse(storageConnectionString, out CloudStorageAccount storageAccount))

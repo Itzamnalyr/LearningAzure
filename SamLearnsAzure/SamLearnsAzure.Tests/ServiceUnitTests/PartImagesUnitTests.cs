@@ -54,7 +54,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
 
             //Assert
             Assert.IsTrue(partImage != null);
-            TestPartImages(partImage);
+            TestPartImages(partImage ?? new PartImages());
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
 
             //Assert
             Assert.IsTrue(partImage != null);
-            TestPartImages(partImage);
+            TestPartImages(partImage ?? new PartImages());
         }
 
         private void TestPartImages(PartImages PartImages)

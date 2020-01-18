@@ -36,10 +36,10 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             ViewResult viewResult = (ViewResult)result;
             PartImagesViewModel updateImageViewModel = (PartImagesViewModel)viewResult.Model;
             Assert.IsTrue(updateImageViewModel != null);
-            Assert.IsTrue(updateImageViewModel.BasePartsImagesStorageURL != null);
-            Assert.IsTrue(updateImageViewModel.PartImages != null);
-            Assert.IsTrue(updateImageViewModel.PartImages.Any());
-            TestPartImage(updateImageViewModel.PartImages[0]);
+            Assert.IsTrue(updateImageViewModel?.BasePartsImagesStorageURL != null);
+            Assert.IsTrue(updateImageViewModel?.PartImages != null);
+            Assert.IsTrue(updateImageViewModel?.PartImages?.Any() ?? false);
+            TestPartImage(updateImageViewModel?.PartImages?[0] ?? new PartImages());
         }
 
         private void TestPartImage(PartImages partImageset)
@@ -49,36 +49,36 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             Assert.IsTrue(partImageset.SourceImage == "def");
             Assert.IsTrue(partImageset.ColorId == 1);
             Assert.IsTrue(partImageset.Color != null);
-            Assert.IsTrue(partImageset.Color.Id == 1);
-            Assert.IsTrue(partImageset.Color.Name == "ghi");
+            Assert.IsTrue(partImageset.Color?.Id == 1);
+            Assert.IsTrue(partImageset.Color?.Name == "ghi");
             Assert.IsTrue(partImageset.LastUpdated > DateTime.MinValue);
         }
 
-        private PartImages GetSetTestData()
-        {
-            Colors color = new Colors
-            {
-                Id = 1,
-                Name = "ghi"
-            };
+        //private PartImages GetSetTestData()
+        //{
+        //    Colors color = new Colors
+        //    {
+        //        Id = 1,
+        //        Name = "ghi"
+        //    };
 
-            return new PartImages()
-            {
-                PartImageId = 1,
-                PartNum = "abc",
-                SourceImage = "def",
-                ColorId = 1,
-                Color = color,
-                LastUpdated = DateTime.Now
-            };
-        }
+        //    return new PartImages()
+        //    {
+        //        PartImageId = 1,
+        //        PartNum = "abc",
+        //        SourceImage = "def",
+        //        ColorId = 1,
+        //        Color = color,
+        //        LastUpdated = DateTime.Now
+        //    };
+        //}
 
-        private void TestSetImages(PartImages partImage)
-        {
-            Assert.IsTrue(partImage.PartImageId == 1);
-            Assert.IsTrue(partImage.PartNum == "abc");
-            Assert.IsTrue(partImage.SourceImage == "def");
-        }
+        //private void TestSetImages(PartImages partImage)
+        //{
+        //    Assert.IsTrue(partImage.PartImageId == 1);
+        //    Assert.IsTrue(partImage.PartNum == "abc");
+        //    Assert.IsTrue(partImage.SourceImage == "def");
+        //}
 
         private List<PartImages> GetPartImagesTestData()
         {

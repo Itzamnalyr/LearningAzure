@@ -38,13 +38,13 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             ViewResult viewResult = (ViewResult)result;
             SetViewModel setViewModel = (SetViewModel)viewResult.Model;
             Assert.IsTrue(setViewModel != null);
-            Assert.IsTrue(setViewModel.Set != null);
-            TestSet(setViewModel.Set);
-            Assert.IsTrue(setViewModel.SetParts.Count() == 1);
-            TestSetParts(setViewModel.SetParts.FirstOrDefault());
-            Assert.IsTrue(setViewModel.BaseSetPartsImagesStorageURL == (configValue + configValue));
-            Assert.IsTrue(setViewModel.BaseSetImagesStorageURL == (configValue + configValue));
-            TestSetImage(setViewModel.SetImage);
+            Assert.IsTrue(setViewModel?.Set != null);
+            TestSet(setViewModel?.Set ?? new Sets());
+            Assert.IsTrue(setViewModel?.SetParts.Count() == 1);
+            TestSetParts(setViewModel?.SetParts.FirstOrDefault() ?? new SetParts());
+            Assert.IsTrue(setViewModel?.BaseSetPartsImagesStorageURL == (configValue + configValue));
+            Assert.IsTrue(setViewModel?.BaseSetImagesStorageURL == (configValue + configValue));
+            TestSetImage(setViewModel?.SetImage ?? new SetImages());
         }
 
         private void TestSetParts(SetParts setPart)

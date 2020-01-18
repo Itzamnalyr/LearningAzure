@@ -5,12 +5,11 @@ namespace SamLearnsAzure.Models
 {
     public partial class PartRelationships
     {
-        public PartRelationships(string relType)
+        public PartRelationships()
         {
-            RelType = relType;
-        }
-        
-        public string RelType { get; set; }
+
+        }        
+        public string RelType { get; set; } = null!;
         public string? ChildPartNum { get; set; }
         public string? ParentPartNum { get; set; }
         public int PartRelationshipId { get; set; }

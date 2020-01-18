@@ -21,20 +21,23 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         [TestMethod]
         public async Task GetInventorySetsIntegrationTest()
         {
-            //Arrange
+            if (base.Client != null)
+            {
+                //Arrange
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/inventorysets/getinventorysets");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<InventorySets> items = await response.Content.ReadAsAsync<IEnumerable<InventorySets>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/inventorysets/getinventorysets");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<InventorySets> items = await response.Content.ReadAsAsync<IEnumerable<InventorySets>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Any()); //There is more than one
-            Assert.IsTrue(items.FirstOrDefault().InventorySetId > 0); //The first item has an id
-            Assert.IsTrue(items.FirstOrDefault().SetNum.Length > 0); //The set num item has an name
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Any()); //There is more than one
+                Assert.IsTrue(items.FirstOrDefault().InventorySetId > 0); //The first item has an id
+                Assert.IsTrue(items.FirstOrDefault().SetNum?.Length > 0); //The set num item has an name
+            }
         }
-                
+
     }
 }

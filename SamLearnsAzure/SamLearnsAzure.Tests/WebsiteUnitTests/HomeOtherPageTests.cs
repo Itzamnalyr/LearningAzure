@@ -28,7 +28,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             IActionResult result = await controller.About();
 
             //Assert
-            ViewResult viewResult = result as ViewResult;
+            ViewResult viewResult = result as ViewResult ?? new ViewResult();
         }
 
         [TestMethod]
@@ -44,10 +44,10 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             IActionResult result = controller.Privacy();
 
             //Assert
-            ViewResult viewResult = result as ViewResult;
+            ViewResult viewResult = result as ViewResult ?? new ViewResult();
             Assert.IsTrue(viewResult.ViewData["Message"] != null);
         }
-        
+
         //[TestMethod]
         //public void GetErrorViewTest()
         //{
@@ -61,7 +61,7 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
         //    IActionResult result = controller.Error();
 
         //    //Assert
-        //    ViewResult viewResult = result as ViewResult;
+        //    ViewResult viewResult = result as ViewResult ?? new ViewResult();
         //    ErrorViewModel errorViewModel = (ErrorViewModel)viewResult.Model;
         //    Assert.IsTrue(errorViewModel != null);
         //    Assert.IsTrue(errorViewModel.RequestId == null);

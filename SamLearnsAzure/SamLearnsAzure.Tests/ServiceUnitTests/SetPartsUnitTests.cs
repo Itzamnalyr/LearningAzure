@@ -62,7 +62,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         {
             return new SetParts()
             {
-
                 PartNum = "abc",
                 PartName = "def",
                 ColorId = 1,

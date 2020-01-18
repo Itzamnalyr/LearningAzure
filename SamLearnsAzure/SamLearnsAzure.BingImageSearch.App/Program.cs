@@ -89,10 +89,10 @@ namespace SamLearnsAzure.BingImageSearch.App
                 Console.WriteLine("Web Url for the " + i + " image result: " + webUrl + "\n");
                 Console.WriteLine("Image Url for the " + i + " image result: " + imageUrl + "\n");
                 SetImages newSetImage = new SetImages
-                (
-                    setNum: setNum,
-                    setImage: imageUrl
-                );
+                {
+                    SetNum = setNum,
+                    SetImage = imageUrl
+                };
                 setImages.Add(newSetImage);
             }
 

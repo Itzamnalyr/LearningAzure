@@ -22,114 +22,132 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         [TestMethod]
         public async Task GetPartImagesIntegrationWithCacheTest()
         {
-            //Arrange
+            if (base.Client != null)
+            {
+                //Arrange
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimages?useCache=true");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<PartImages> items = await response.Content.ReadAsAsync<IEnumerable<PartImages>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimages?useCache=true");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<PartImages> items = await response.Content.ReadAsAsync<IEnumerable<PartImages>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Any()); //There is more than one
-            Assert.IsTrue(items.FirstOrDefault().PartImageId > 0);
-            Assert.IsTrue(items.FirstOrDefault().PartNum.Length > 0);
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Any()); //There is more than one
+                Assert.IsTrue(items.FirstOrDefault().PartImageId > 0);
+                Assert.IsTrue(items.FirstOrDefault().PartNum.Length > 0);
+            }
         }
 
         [TestMethod]
         public async Task GetPartImagesIntegrationWithoutCacheTest()
         {
-            //Arrange
+            if (base.Client != null)
+            {
+                //Arrange
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimages?useCache=false");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<PartImages> items = await response.Content.ReadAsAsync<IEnumerable<PartImages>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimages?useCache=false");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<PartImages> items = await response.Content.ReadAsAsync<IEnumerable<PartImages>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Any()); //There is more than one
-            Assert.IsTrue(items.FirstOrDefault().PartImageId > 0);
-            Assert.IsTrue(items.FirstOrDefault().PartNum.Length > 0);
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Any()); //There is more than one
+                Assert.IsTrue(items.FirstOrDefault().PartImageId > 0);
+                Assert.IsTrue(items.FirstOrDefault().PartNum.Length > 0);
+            }
         }
 
         [TestMethod]
         public async Task GetPartImageIntegrationWithoutCacheTest()
         {
-            //Arrange
-            string partNum = "13195pr0001";
+            if (base.Client != null)
+            {
+                //Arrange
+                string partNum = "13195pr0001";
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimage?useCache=false&partNum=" + partNum);
-            response.EnsureSuccessStatusCode();
-            PartImages item = await response.Content.ReadAsAsync<PartImages>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimage?useCache=false&partNum=" + partNum);
+                response.EnsureSuccessStatusCode();
+                PartImages item = await response.Content.ReadAsAsync<PartImages>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(item != null);
-            Assert.IsTrue(item.PartImageId > 0);
-            Assert.IsTrue(item.PartNum.Length > 0);
+                //Assert
+                Assert.IsTrue(item != null);
+                Assert.IsTrue(item?.PartImageId > 0);
+                Assert.IsTrue(item?.PartNum.Length > 0);
+            }
         }
 
         [TestMethod]
         public async Task GetPartImageIntegrationWithCacheTest()
         {
-            //Arrange
-            string partNum = "13195pr0001";
+            if (base.Client != null)
+            {
+                //Arrange
+                string partNum = "13195pr0001";
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimage?useCache=true&partNum=" + partNum);
-            response.EnsureSuccessStatusCode();
-            PartImages item = await response.Content.ReadAsAsync<PartImages>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimage?useCache=true&partNum=" + partNum);
+                response.EnsureSuccessStatusCode();
+                PartImages item = await response.Content.ReadAsAsync<PartImages>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(item != null);
-            Assert.IsTrue(item.PartImageId > 0);
-            Assert.IsTrue(item.PartNum.Length > 0);
+                //Assert
+                Assert.IsTrue(item != null);
+                Assert.IsTrue(item?.PartImageId > 0);
+                Assert.IsTrue(item?.PartNum.Length > 0);
+            }
         }
 
         [TestMethod]
         public async Task SavePartImageIntegrationTest()
         {
-            //Arrange
-            string partNum = "13195pr0001";
-            string sourceImage = "http://i.ebayimg.com/00/s/NTAwWDU5Mg==/z/EgIAAOSwnDZT8iRD/$_35.JPG";
-            int colorId = 326;
+            if (base.Client != null)
+            {
+                //Arrange
+                string partNum = "13195pr0001";
+                string sourceImage = "http://i.ebayimg.com/00/s/NTAwWDU5Mg==/z/EgIAAOSwnDZT8iRD/$_35.JPG";
+                int colorId = 326;
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/savepartimage?partNum=" + partNum + "&sourceImage=" + sourceImage + "&colorId=" + colorId);
-            response.EnsureSuccessStatusCode();
-            PartImages item = await response.Content.ReadAsAsync<PartImages>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/savepartimage?partNum=" + partNum + "&sourceImage=" + sourceImage + "&colorId=" + colorId);
+                response.EnsureSuccessStatusCode();
+                PartImages item = await response.Content.ReadAsAsync<PartImages>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(item != null);
-            Assert.IsTrue(item.PartImageId > 0);
-            Assert.IsTrue(item.PartNum.Length > 0);
+                //Assert
+                Assert.IsTrue(item != null);
+                Assert.IsTrue(item?.PartImageId > 0);
+                Assert.IsTrue(item?.PartNum.Length > 0);
+            }
         }
 
         [TestMethod]
         public async Task SearchForPotentialPartImagesIntegrationTest()
         {
-            //Arrange
-            string partNum = "13195pr0001";
-            int colorId = 326;
-            string colorName = "Olive Green";
-            int resultsToReturn = 2;
-            int resultsToSearch = 4;
+            if (base.Client != null)
+            {
+                //Arrange
+                string partNum = "13195pr0001";
+                int colorId = 326;
+                string colorName = "Olive Green";
+                int resultsToReturn = 2;
+                int resultsToSearch = 4;
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/SearchForPotentialPartImages?partNum=" + partNum + "&colorId=" + colorId + "&colorName=" + colorName + "&resultsToReturn=" + resultsToReturn + "&resultsToSearch=" + resultsToSearch);
-            response.EnsureSuccessStatusCode();
-            List<PartImages> partImages = await response.Content.ReadAsAsync<List<PartImages>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/SearchForPotentialPartImages?partNum=" + partNum + "&colorId=" + colorId + "&colorName=" + colorName + "&resultsToReturn=" + resultsToReturn + "&resultsToSearch=" + resultsToSearch);
+                response.EnsureSuccessStatusCode();
+                List<PartImages> partImages = await response.Content.ReadAsAsync<List<PartImages>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(partImages != null);
-            Assert.IsTrue(partImages.Any());
+                //Assert
+                Assert.IsTrue(partImages != null);
+                Assert.IsTrue(partImages.Any());
+            }
         }
 
     }

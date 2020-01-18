@@ -21,20 +21,23 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         [TestMethod]
         public async Task GetPartRelationshipsIntegrationTest()
         {
-            //Arrange
+            if (base.Client != null)
+            {
+                //Arrange
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/partrelationships/getpartrelationships");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<PartRelationships> items = await response.Content.ReadAsAsync<IEnumerable<PartRelationships>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/partrelationships/getpartrelationships");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<PartRelationships> items = await response.Content.ReadAsAsync<IEnumerable<PartRelationships>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Any()); //There is more than one
-            Assert.IsTrue(items.FirstOrDefault().PartRelationshipId > 0); //The first item has an id
-            Assert.IsTrue(items.FirstOrDefault().ChildPartNum.Length > 0); //The child item has an name
-            Assert.IsTrue(items.FirstOrDefault().ParentPartNum.Length > 0); //The parent item has an name
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Any()); //There is more than one
+                Assert.IsTrue(items.FirstOrDefault().PartRelationshipId > 0); //The first item has an id
+                Assert.IsTrue(items.FirstOrDefault().ChildPartNum?.Length > 0); //The child item has an name
+                Assert.IsTrue(items.FirstOrDefault().ParentPartNum?.Length > 0); //The parent item has an name
+            }
         }
 
     }

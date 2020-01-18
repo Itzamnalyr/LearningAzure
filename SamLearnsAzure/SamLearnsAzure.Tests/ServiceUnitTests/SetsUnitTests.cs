@@ -50,7 +50,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
 
             //Assert
             Assert.IsTrue(set != null);
-            TestSets(set);
+            TestSets(set ?? new Sets());
         }
 
         private void TestSets(Sets set)

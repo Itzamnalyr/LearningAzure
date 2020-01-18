@@ -5,14 +5,13 @@ namespace SamLearnsAzure.Models
 {
     public partial class Owners
     {
-        public Owners(string ownerName)
+        public Owners()
         {
             OwnerSets = new HashSet<OwnerSets>();
-            OwnerName = ownerName;
         }
 
         public int Id { get; set; }
-        public string OwnerName { get; set; }
+        public string OwnerName { get; set; } = null!;
 
         public ICollection<OwnerSets> OwnerSets { get; set; }
     }

@@ -22,66 +22,75 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         [TestMethod]
         public async Task GetOwnerSetsIntegrationWithCacheTest()
         {
-            //Arrange
-            int ownerId = 1;
+            if (base.Client != null)
+            {
+                //Arrange
+                int ownerId = 1;
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/getownersets?ownerid=" + ownerId + "&useCache=true");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<OwnerSets> items = await response.Content.ReadAsAsync<IEnumerable<OwnerSets>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/getownersets?ownerid=" + ownerId + "&useCache=true");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<OwnerSets> items = await response.Content.ReadAsAsync<IEnumerable<OwnerSets>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Any()); //There is more than one owner
-            OwnerSets item = items.FirstOrDefault();
-            Assert.IsTrue(item.OwnerSetId > 0); //The first item has an id
-            //Assert.IsTrue(item.Owner != null); //Ensure owner has been collected correctly
-            //Assert.IsTrue(item.Owner.OwnerName.Length > 0); //The first item has an name  
-            Assert.IsTrue(item.Set != null); //Ensure set has been collected correctly
-            Assert.IsTrue(item.Set.Theme != null); //Ensure theme has been collected correctly
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Any()); //There is more than one owner
+                OwnerSets item = items.FirstOrDefault();
+                Assert.IsTrue(item.OwnerSetId > 0); //The first item has an id
+                                                    //Assert.IsTrue(item.Owner != null); //Ensure owner has been collected correctly
+                                                    //Assert.IsTrue(item.Owner.OwnerName.Length > 0); //The first item has an name  
+                Assert.IsTrue(item.Set != null); //Ensure set has been collected correctly
+                Assert.IsTrue(item.Set?.Theme != null); //Ensure theme has been collected correctly
+            }
         }
 
         [TestMethod]
         public async Task GetOwnerSetsIntegrationWithoutCacheTest()
         {
-            //Arrange
-            int ownerId = 1;
+            if (base.Client != null)
+            {
+                //Arrange
+                int ownerId = 1;
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/getownersets?ownerid=" + ownerId + "&useCache=false");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<OwnerSets> items = await response.Content.ReadAsAsync<IEnumerable<OwnerSets>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/getownersets?ownerid=" + ownerId + "&useCache=false");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<OwnerSets> items = await response.Content.ReadAsAsync<IEnumerable<OwnerSets>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Any()); //There is more than one owner
-            OwnerSets item = items.FirstOrDefault();
-            Assert.IsTrue(item.OwnerSetId > 0); //The first item has an id
-            //Assert.IsTrue(item.Owner != null); //Ensure owner has been collected correctly
-            //Assert.IsTrue(item.Owner.OwnerName.Length > 0); //The first item has an name  
-            Assert.IsTrue(item.Set != null); //Ensure set has been collected correctly
-            Assert.IsTrue(item.Set.Theme != null); //Ensure theme has been collected correctly
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Any()); //There is more than one owner
+                OwnerSets item = items.FirstOrDefault();
+                Assert.IsTrue(item.OwnerSetId > 0); //The first item has an id
+                                                    //Assert.IsTrue(item.Owner != null); //Ensure owner has been collected correctly
+                                                    //Assert.IsTrue(item.Owner.OwnerName.Length > 0); //The first item has an name  
+                Assert.IsTrue(item.Set != null); //Ensure set has been collected correctly
+                Assert.IsTrue(item.Set?.Theme != null); //Ensure theme has been collected correctly
+            }
         }
 
         [TestMethod]
         public async Task SaveOwnerSetsIntegrationTest()
         {
-            //Arrange
-            string setNum = "75218-1";
-            int ownerId = 1;
-            bool owned = true;
-            bool wanted = true;
+            if (base.Client != null)
+            {
+                //Arrange
+                string setNum = "75218-1";
+                int ownerId = 1;
+                bool owned = true;
+                bool wanted = true;
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/SaveOwnerSet?setnum=" + setNum + "&ownerid=" + ownerId + "&owned=" + owned + "&wanted=" + wanted);
-            response.EnsureSuccessStatusCode();
-            bool result = await response.Content.ReadAsAsync<bool>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/SaveOwnerSet?setnum=" + setNum + "&ownerid=" + ownerId + "&owned=" + owned + "&wanted=" + wanted);
+                response.EnsureSuccessStatusCode();
+                bool result = await response.Content.ReadAsAsync<bool>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(result == true);
+                //Assert
+                Assert.IsTrue(result == true);
+            }
         }
 
     }

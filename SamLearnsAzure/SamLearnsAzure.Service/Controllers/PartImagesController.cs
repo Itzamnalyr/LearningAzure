@@ -49,7 +49,7 @@ namespace SamLearnsAzure.Service.Controllers
         [HttpGet("SavePartImage")]
         public async Task<PartImages> SavePartImage(string partNum, string sourceImage, int colorId)
         {
-            PartImages newPartImage = new PartImages
+            PartImages newPartImage = new PartImages()
             {
                 PartNum = partNum,
                 SourceImage = sourceImage,

@@ -7,7 +7,7 @@ namespace SamLearnsAzure.Models
     {
         public Inventories()
         {
-            Set = new Sets("");
+            Set = new Sets();
             InventoryParts = new HashSet<InventoryParts>();
             InventorySets = new HashSet<InventorySets>();
         }

@@ -21,20 +21,23 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         [TestMethod]
         public async Task GetInventoriesIntegrationTest()
         {
-            //Arrange
+            if (base.Client != null)
+            {
+                //Arrange
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/inventories/getinventories");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<Inventories> items = await response.Content.ReadAsAsync<IEnumerable<Inventories>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/inventories/getinventories");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<Inventories> items = await response.Content.ReadAsAsync<IEnumerable<Inventories>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Any()); //There is more than one
-            Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first item has an id
-            Assert.IsTrue(items.FirstOrDefault().SetNum.Length > 0); //The setnum item has an name
-        }     
-        
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Any()); //There is more than one
+                Assert.IsTrue(items.FirstOrDefault().Id > 0); //The first item has an id
+                Assert.IsTrue(items.FirstOrDefault().SetNum?.Length > 0); //The setnum item has an name
+            }
+        }
+
     }
 }

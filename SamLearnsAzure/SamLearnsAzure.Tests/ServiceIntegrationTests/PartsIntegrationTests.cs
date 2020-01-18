@@ -21,19 +21,22 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         [TestMethod]
         public async Task GetPartsIntegrationTest()
         {
-            //Arrange
+            if (base.Client != null)
+            {
+                //Arrange
 
-            //Act
-            HttpResponseMessage response = await base.Client.GetAsync("/api/parts/getparts");
-            response.EnsureSuccessStatusCode();
-            IEnumerable<Parts> items = await response.Content.ReadAsAsync<IEnumerable<Parts>>();
-            response.Dispose();
+                //Act
+                HttpResponseMessage response = await base.Client.GetAsync("/api/parts/getparts");
+                response.EnsureSuccessStatusCode();
+                IEnumerable<Parts> items = await response.Content.ReadAsAsync<IEnumerable<Parts>>();
+                response.Dispose();
 
-            //Assert
-            Assert.IsTrue(items != null);
-            Assert.IsTrue(items.Any()); //There is more than one
-            Assert.IsTrue(items.FirstOrDefault().PartNum != ""); //The first item has an id
-            Assert.IsTrue(items.FirstOrDefault().Name.Length > 0); //The first item has an name
+                //Assert
+                Assert.IsTrue(items != null);
+                Assert.IsTrue(items.Any()); //There is more than one
+                Assert.IsTrue(items.FirstOrDefault().PartNum != ""); //The first item has an id
+                Assert.IsTrue(items.FirstOrDefault().Name?.Length > 0); //The first item has an name
+            }
         }
 
     }

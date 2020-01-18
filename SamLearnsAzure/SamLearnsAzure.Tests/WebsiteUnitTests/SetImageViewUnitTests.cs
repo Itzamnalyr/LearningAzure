@@ -39,12 +39,12 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             ViewResult viewResult = (ViewResult)result;
             UpdateSetImageViewModel updateImageViewModel = (UpdateSetImageViewModel)viewResult.Model;
             Assert.IsTrue(updateImageViewModel != null);
-            Assert.IsTrue(updateImageViewModel.Set != null);
-            TestSet(updateImageViewModel.Set);
-            Assert.IsTrue(updateImageViewModel.BaseSetImagesStorageURL == "");
-            Assert.IsTrue(updateImageViewModel.PotentialSetImages != null);
-            Assert.IsTrue(updateImageViewModel.PotentialSetImages.Any());
-            TestSetImages(updateImageViewModel.PotentialSetImages[0]);
+            Assert.IsTrue(updateImageViewModel?.Set != null);
+            TestSet(updateImageViewModel?.Set ?? new Sets());
+            Assert.IsTrue(updateImageViewModel?.BaseSetImagesStorageURL == "");
+            Assert.IsTrue(updateImageViewModel?.PotentialSetImages != null);
+            Assert.IsTrue(updateImageViewModel?.PotentialSetImages?.Any() ?? false);
+            TestSetImages(updateImageViewModel?.PotentialSetImages?[0] ?? new SetImages());
         }
 
         private void TestSet(Sets set)

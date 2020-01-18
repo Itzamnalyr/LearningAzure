@@ -34,7 +34,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
 
             //Assert
             Assert.IsTrue(setImage != null);
-            TestSetImages(setImage);
+            TestSetImages(setImage ?? new SetImages());
         }
 
         private void TestSetImages(SetImages setImage)

@@ -24,8 +24,9 @@ namespace SamLearnsAzure.Web.Models
 
     public class SetPartImages : SetParts
     {
-        public SetPartImages(string partImage)
+        public SetPartImages(string partNum, string partImage)
         {
+            base.PartNum = partNum;
             PartImage = partImage;
         }
 
