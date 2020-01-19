@@ -10,7 +10,8 @@
     "environment": {
       "type": "string",
       "allowedValues": [
-        "dev",
+        "dev",       
+        "dev2",
         "qa",
         "qa2",
         "test",

@@ -70,7 +70,7 @@ jobs:
       inputs:
         azureSubscription: 'SamLearnsAzure connection to Azure Portal'
         resourceGroupName: '${{parameters.resourceGroupName}}'
-        location: '${{parameters.resourceGroupLocation}}}}'
+        location: '${{parameters.resourceGroupLocation}}'
         csmFile: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/azuredeploy.json'
         csmParametersFile: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/azuredeploy.parameters.json'
         overrideParameters: '-userPrincipalLogin ${{parameters.userPrincipalLogin}} -databaseLoginName ${{parameters.databaseLoginName}} -databaseLoginPassword ${{parameters.databaseLoginPassword}} -environment ${{parameters.environmentLowercase}} -locationShort ${{parameters.resourceGroupLocationShort}}  -appServiceContributerClientSecret "${{parameters.appServiceContributerClientSecret}}" -websiteDomainName ${{parameters.websiteDomainName}} -roleAssignmentId ${{parameters.roleAssignmentId}} -letsEncryptUniqueRoleAssignmentGuid ${{parameters.letsEncryptUniqueRoleAssignmentGuid}}'
@@ -124,7 +124,7 @@ jobs:
          -TestEnvironment "${{parameters.environment}}" 
          -KeyVaultURL "${{parameters.keyVaultURL}}" 
          -KeyVaultClientId "${{parameters.keyVaultClientId}}" 
-         -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}" 
+         -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}"  
       enabled: false
     - task: AzureAppServiceManage@0
       displayName: 'Swap Slots: web service'

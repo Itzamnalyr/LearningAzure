@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SamLearnsAzure.Models\SamLearnsAzure.Models.csproj" />
+    <PackageReference Include="SamLearnsAzure.Models" Version="1.4.2340" />
   </ItemGroup>
 
 </Project>

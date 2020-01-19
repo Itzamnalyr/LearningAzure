@@ -17,7 +17,7 @@ namespace SamLearnsAzure.FunctionalTests.Service
         private ChromeDriver _driver;
         private TestContext _testContextInstance;
         private string _serviceUrl = null;
-        private string _environment = null;
+        //private string _environment = null;
 
         [TestMethod]
         [TestCategory("SkipWhenLiveUnitTesting")]
@@ -33,7 +33,7 @@ namespace SamLearnsAzure.FunctionalTests.Service
             _driver.Navigate().GoToUrl(serviceURL);
             serviceLoaded = (_driver.Url == serviceURL);
             OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/pre");
-            
+
 
             //Assert
             Assert.IsTrue(serviceLoaded);
@@ -76,12 +76,12 @@ namespace SamLearnsAzure.FunctionalTests.Service
             if (TestContext.Properties == null || TestContext.Properties.Count == 0)
             {
                 _serviceUrl = "https://samsapp-dev-eu-service.azurewebsites.net/";
-                _environment = "dev";
+                //_environment = "dev";
             }
             else
             {
                 _serviceUrl = TestContext.Properties["ServiceUrl"].ToString();
-                _environment = TestContext.Properties["TestEnvironment"].ToString();
+                // _environment = TestContext.Properties["TestEnvironment"].ToString();
             }
         }
 
