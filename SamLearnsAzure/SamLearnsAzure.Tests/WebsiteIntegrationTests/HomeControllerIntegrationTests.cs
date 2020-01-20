@@ -1,168 +1,168 @@
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using System.Threading.Tasks;
-//using System.Collections.Generic;
-//using SamLearnsAzure.Models;
-//using System.Data.SqlClient;
-//using SamLearnsAzure.Service.Controllers;
-//using Moq;
-//using System.Linq;
-//using Microsoft.EntityFrameworkCore;
-//using System;
-//using SamLearnsAzure.Service.DataAccess;
-//using System.Net.Http;
-//using SamLearnsAzure.Web.Controllers;
-//using Microsoft.AspNetCore.Mvc;
-//using SamLearnsAzure.Web.Models;
-//using Newtonsoft.Json;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using SamLearnsAzure.Models;
+using System.Data.SqlClient;
+using SamLearnsAzure.Service.Controllers;
+using Moq;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System;
+using SamLearnsAzure.Service.DataAccess;
+using System.Net.Http;
+using SamLearnsAzure.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using SamLearnsAzure.Web.Models;
+using Newtonsoft.Json;
 
-//namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
-//{
-//    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-//    [TestClass]
-//    [TestCategory("IntegrationTest")]
-//    public class HomeControllerIntegrationTests : BaseIntegrationTest
-//    {
+namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
+{
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    [TestClass]
+    [TestCategory("IntegrationTest")]
+    public class HomeControllerIntegrationTests : BaseIntegrationTest
+    {
 
-//        [TestMethod]
-//        public async Task GetIndexViewIntegrationTest()
-//        {
-//            //Arrange
-//            HttpClient client = new HttpClient
-//            {
-//                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
-//            };
+        [TestMethod]
+        public async Task GetIndexViewIntegrationTest()
+        {
+            //Arrange
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
-//            //Act
-//            HttpResponseMessage response = await client.GetAsync("home/index");
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/index");
 
-//            //Assert
-//            response.EnsureSuccessStatusCode();
-//            Assert.IsTrue(true);
-//        }
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
 
-//        [TestMethod]
-//        public async Task GetSetViewIntegrationTest()
-//        {
-//            //Arrange
-//            string setNum = "75218-1";
-//            HttpClient client = new HttpClient
-//            {
-//                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
-//            };
+        [TestMethod]
+        public async Task GetSetViewIntegrationTest()
+        {
+            //Arrange
+            string setNum = "75218-1";
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
-//            //Act
-//            HttpResponseMessage response = await client.GetAsync("home/set?setnum=" + setNum);
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/set?setnum=" + setNum);
 
-//            //Assert
-//            response.EnsureSuccessStatusCode();
-//            Assert.IsTrue(true);
-//        }
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
 
-//        //[TestMethod]
-//        //public async Task GetSearchForMissingPartsViewIntegrationTest()
-//        //{
-//        //    //Arrange
-//        //    string setNum = "75218-1";
-//        //    HttpClient client = new HttpClient
-//        //    {
-//        //        BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
-//        //    };
+        //[TestMethod]
+        //public async Task GetSearchForMissingPartsViewIntegrationTest()
+        //{
+        //    //Arrange
+        //    string setNum = "75218-1";
+        //    HttpClient client = new HttpClient
+        //    {
+        //        BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+        //    };
 
-//        //    //Act
-//        //    HttpResponseMessage response = await client.GetAsync("home/searchformissingparts?setnum=" + setNum);
+        //    //Act
+        //    HttpResponseMessage response = await client.GetAsync("home/searchformissingparts?setnum=" + setNum);
 
-//        //    //Assert
-//        //    response.EnsureSuccessStatusCode();
-//        //    Assert.IsTrue(true);
-//        //}
+        //    //Assert
+        //    response.EnsureSuccessStatusCode();
+        //    Assert.IsTrue(true);
+        //}
 
-//        [TestMethod]
-//        public async Task GetPartImagesViewIntegrationTest()
-//        {
-//            //Arrange
-//            HttpClient client = new HttpClient
-//            {
-//                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
-//            };
+        [TestMethod]
+        public async Task GetPartImagesViewIntegrationTest()
+        {
+            //Arrange
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
-//            //Act
-//            HttpResponseMessage response = await client.GetAsync("home/PartImages");
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/PartImages");
 
-//            //Assert
-//            response.EnsureSuccessStatusCode();
-//            Assert.IsTrue(true);
-//        }
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
 
-//        [TestMethod]
-//        public async Task GetAboutViewIntegrationTest()
-//        {
-//            //Arrange
-//            HttpClient client = new HttpClient
-//            {
-//                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
-//            };
+        [TestMethod]
+        public async Task GetAboutViewIntegrationTest()
+        {
+            //Arrange
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
-//            //Act
-//            HttpResponseMessage response = await client.GetAsync("home/about");
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/about");
 
-//            //Assert
-//            response.EnsureSuccessStatusCode();
-//            Assert.IsTrue(true);
-//        }
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
 
-//        //[TestMethod]
-//        //public async Task GetCDNTestViewIntegrationTest()
-//        //{
-//        //    //Arrange
-//        //    //string setNum = "75218-1";
-//        //    HttpClient client = new HttpClient
-//        //    {
-//        //        BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
-//        //    };
+        //[TestMethod]
+        //public async Task GetCDNTestViewIntegrationTest()
+        //{
+        //    //Arrange
+        //    //string setNum = "75218-1";
+        //    HttpClient client = new HttpClient
+        //    {
+        //        BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+        //    };
 
-//        //    //Act
-//        //    HttpResponseMessage response = await client.GetAsync("home/cdntest");
+        //    //Act
+        //    HttpResponseMessage response = await client.GetAsync("home/cdntest");
 
-//        //    //Assert
-//        //    response.EnsureSuccessStatusCode();
-//        //    Assert.IsTrue(true);
-//        //}
+        //    //Assert
+        //    response.EnsureSuccessStatusCode();
+        //    Assert.IsTrue(true);
+        //}
 
-//        [TestMethod]
-//        public async Task GetPrivacyViewIntegrationTest()
-//        {
-//            //Arrange
-//            //string setNum = "75218-1";
-//            HttpClient client = new HttpClient
-//            {
-//                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
-//            };
+        [TestMethod]
+        public async Task GetPrivacyViewIntegrationTest()
+        {
+            //Arrange
+            //string setNum = "75218-1";
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
-//            //Act
-//            HttpResponseMessage response = await client.GetAsync("home/privacy");
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/privacy");
 
-//            //Assert
-//            response.EnsureSuccessStatusCode();
-//            Assert.IsTrue(true);
-//        }
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
 
-//        [TestMethod]
-//        public async Task GetErrorViewIntegrationTest()
-//        {
-//            //Arrange
-//            HttpClient client = new HttpClient
-//            {
-//                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
-//            };
+        [TestMethod]
+        public async Task GetErrorViewIntegrationTest()
+        {
+            //Arrange
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
 
-//            //Act
-//            HttpResponseMessage response = await client.GetAsync("home/error");
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/error");
 
-//            //Assert
-//            response.EnsureSuccessStatusCode();
-//            Assert.IsTrue(true);
-//        }
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
 
 
-//    }
-//}
+    }
+}

@@ -95,6 +95,7 @@ jobs:
         ResourceGroupName: '${{parameters.resourceGroupName}}'
         SlotName: '${{parameters.stagingSlotName}}'
         Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure.Service.zip'
+        RemoveAdditionalFilesFlag: true
         TakeAppOfflineFlag: true
         JSONFiles: '**/appsettings.json'
         ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
@@ -107,6 +108,7 @@ jobs:
         ResourceGroupName: '${{parameters.resourceGroupName}}'
         SlotName: '${{parameters.stagingSlotName}}'
         Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure.Web.zip'
+        RemoveAdditionalFilesFlag: true
         TakeAppOfflineFlag: true
         JSONFiles: '**/appsettings.json'
         ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
