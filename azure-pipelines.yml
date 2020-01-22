@@ -30,6 +30,8 @@ stages:
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
       applicationInsightsLocation: 'East US'
       appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      ASPNETCOREEnvironmentSetting: 'Development'
+      captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'Dev'  
       environmentLowercase: 'dev'
@@ -70,6 +72,7 @@ stages:
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyQA)
       applicationInsightsLocation: 'East US'
       appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      captureStartErrors: false
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'QA'  
       environmentLowercase: 'qa'
@@ -110,6 +113,7 @@ stages:
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyProd)
       applicationInsightsLocation: 'East US'
       appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      captureStartErrors: false
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'Prod'  
       environmentLowercase: 'prod'

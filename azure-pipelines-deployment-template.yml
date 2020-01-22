@@ -4,6 +4,7 @@ parameters: # defaults for any parameters that aren't specified
   applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
   applicationInsightsLocation: 'East US'
   appServiceContributerClientSecret: '***secret'
+  ASPNETCOREEnvironmentSetting: 'Release'
   cognitiveServicesSubscriptionKey: '***secret'
   environment: 'Dev'  
   environmentLowercase: 'dev'
@@ -54,6 +55,7 @@ jobs:
       AppSettings.WebServiceURL: ${{parameters.serviceURL}}
       AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
       AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
+      AppSettings.CaptureStartErrors: ${{parameters.captureStartErrors}}
       ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}} 
     steps:
     - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
@@ -98,6 +100,7 @@ jobs:
         RemoveAdditionalFilesFlag: true
         TakeAppOfflineFlag: true
         JSONFiles: '**/appsettings.json'
+        AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
         ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
     - task: AzureRmWebAppDeployment@3
       displayName: 'Azure App Service Deploy: website'
@@ -111,6 +114,7 @@ jobs:
         RemoveAdditionalFilesFlag: true
         TakeAppOfflineFlag: true
         JSONFiles: '**/appsettings.json'
+        AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
         ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
     - task: VSTest@2
       displayName: 'Run functional smoke tests on website and web service'
@@ -127,7 +131,7 @@ jobs:
          -KeyVaultURL "${{parameters.keyVaultURL}}" 
          -KeyVaultClientId "${{parameters.keyVaultClientId}}" 
          -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}"  
-      enabled: false
+      enabled: true
     - task: AzureAppServiceManage@0
       displayName: 'Swap Slots: web service'
       inputs:

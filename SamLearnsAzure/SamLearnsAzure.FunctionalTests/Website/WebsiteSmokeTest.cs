@@ -19,7 +19,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    public class SmokeTest
+    public class WebsiteSmokeTest
     {
         private ChromeDriver _driver;
         private TestContext _testContextInstance;
@@ -33,7 +33,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
 
         [TestMethod]
         [TestCategory("SkipWhenLiveUnitTesting")]
-        [TestCategory("SmokeTest")]
+        [TestCategory("WebsiteSmokeTest")]
         public void GotoSamLearnsAzureWebHomeIndexPageTest()
         {
             //Arrange
@@ -55,7 +55,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
 
         [TestMethod]
         [TestCategory("SkipWhenLiveUnitTesting")]
-        [TestCategory("SmokeTest")]
+        [TestCategory("WebsiteSmokeTest")]
         public void GotoSamLearnsAzureWebHomeSetPageTest()
         {
             //Arrange
@@ -78,7 +78,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
 
         //[TestMethod]
         //[TestCategory("SkipWhenLiveUnitTesting")]
-        //[TestCategory("SmokeTest")]
+        //[TestCategory("WebsiteSmokeTest")]
         //public void GotoSamLearnsAzureWebHomeSetImagesUpdatePageTest()
         //{
         //    bool webLoaded;
