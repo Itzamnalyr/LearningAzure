@@ -23,7 +23,8 @@ jobs:
       inputs:
         projects: |
          SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
-        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
+       #vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
+      enabled: false
 
     - task: VSBuild@1
       displayName: 'Build database project'
