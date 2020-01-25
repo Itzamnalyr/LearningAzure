@@ -74,4 +74,4 @@ jobs:
         SqlUsername: '${{parameters.databaseLoginName}}'
         SqlPassword: '${{parameters.databaseLoginPassword}}'
         DacpacFile: '$(build.artifactstagingdirectory)/drop/Database/SamLearnsAzure.Database.dacpac'
-        additionalArguments: '/p:BlockOnPossibleDataLoss=false'
+        additionalArguments: '/p:BlockOnPossibleDataLoss=true'
