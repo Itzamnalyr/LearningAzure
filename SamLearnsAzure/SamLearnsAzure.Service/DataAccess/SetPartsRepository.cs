@@ -37,22 +37,33 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             else
             {
-                SqlParameter setNumParameter = new SqlParameter("SetNum", setNum);
-
-                result = await _context
-                    .Set<SetParts>()
-                    .FromSqlRaw("EXECUTE dbo.GetSetParts @SetNum={0}", setNumParameter)
-                    .ToListAsync();
-
-                if (result != null && redisService != null)
+                if (string.IsNullOrEmpty(setNum) == false)
                 {
-                    //set the cache with the updated record
-                    string json = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-                    //Only save to REDIS is the length of the json is less than 100KB, a REDIS best practice
-                    if (json.Length < 100000)
+
+                    SqlParameter setNumParameter = new SqlParameter("SetNum", setNum);
+
+                    result = await _context
+                        .Set<SetParts>()
+                        .FromSqlRaw("EXECUTE dbo.GetSetParts @SetNum={0}", setNumParameter)
+                        .ToListAsync();
+
+                    if (result != null && redisService != null)
                     {
-                        await redisService.SetAsync(cacheKeyName, json, cacheExpirationTime);
+                        //set the cache with the updated record
+                        string json = JsonConvert.SerializeObject(result, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                        //Only save to REDIS is the length of the json is less than 100KB, a REDIS best practice
+                        if (json.Length < 100000)
+                        {
+                            await redisService.SetAsync(cacheKeyName, json, cacheExpirationTime);
+                        }
                     }
+                }
+                else
+                {
+                    result = await _context
+                        .Set<SetParts>()
+                        .FromSqlRaw("EXECUTE dbo.GetSetParts @SetNum=0")
+                        .ToListAsync();
                 }
             }
 

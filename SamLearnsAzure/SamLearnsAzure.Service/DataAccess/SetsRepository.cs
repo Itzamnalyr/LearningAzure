@@ -48,7 +48,7 @@ namespace SamLearnsAzure.Service.DataAccess
             {
                 result = await _context.Sets
                     .Include(t => t.Theme)
-                    .SingleAsync(b => b.SetNum == setNum);
+                    .SingleOrDefaultAsync(b => b.SetNum == setNum);
 
                 if (result != null && redisService != null)
                 {

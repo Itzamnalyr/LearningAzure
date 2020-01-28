@@ -58,6 +58,24 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             Assert.IsTrue(true);
         }
 
+        [TestMethod]
+        public async Task GetSetViewNumSetNumIntegrationTest()
+        {
+            //Arrange
+            string setNum = "";
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(Configuration["AppSettings:WebURL"])
+            };
+
+            //Act
+            HttpResponseMessage response = await client.GetAsync("home/set?setnum=" + setNum);
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsTrue(true);
+        }
+
         //[TestMethod]
         //public async Task GetSearchForMissingPartsViewIntegrationTest()
         //{

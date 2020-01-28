@@ -26,49 +26,113 @@ namespace SamLearnsAzure.Web.Controllers
         public async Task<List<Owners>> GetOwners()
         {
             Uri url = new Uri($"api/Owners/GetOwners", UriKind.Relative);
-            return await ReadMessageList<Owners>(url);
+            List<Owners> results = await ReadMessageList<Owners>(url);
+            if (results == null)
+            {
+                return new List<Owners>();
+            }
+            else
+            {
+                return results;
+            }
         }
 
         public async Task<List<OwnerSets>> GetOwnerSets(int ownerId)
         {
             Uri url = new Uri($"api/OwnerSets/GetOwnerSets?ownerid=" + ownerId, UriKind.Relative);
-            return await ReadMessageList<OwnerSets>(url);
+            List<OwnerSets> results = await ReadMessageList<OwnerSets>(url);
+            if (results == null)
+            {
+                return new List<OwnerSets>();
+            }
+            else
+            {
+                return results;
+            }
         }
 
         public async Task<List<Sets>> GetSets()
         {
             Uri url = new Uri($"api/Sets/GetSets", UriKind.Relative);
-            return await ReadMessageList<Sets>(url);
+            List<Sets> results = await ReadMessageList<Sets>(url);
+            if (results == null)
+            {
+                return new List<Sets>();
+            }
+            else
+            {
+                return results;
+            }
         }
 
         public async Task<Sets> GetSet(string setNum)
         {
             Uri url = new Uri($"api/Sets/GetSet?setnum=" + setNum, UriKind.Relative);
-            return await ReadMessageItem<Sets>(url);
+            Sets results = await ReadMessageItem<Sets>(url);
+            if (results == null)
+            {
+                return new Sets();
+            }
+            else
+            {
+                return results;
+            }
         }
 
         public async Task<SetImages> GetSetImage(string setNum)
         {
             Uri url = new Uri($"api/SetImages/GetSetImage?setnum=" + setNum + "&useCache=false", UriKind.Relative);
-            return await ReadMessageItem<SetImages>(url);
+            SetImages results = await ReadMessageItem<SetImages>(url);
+            if (results == null)
+            {
+                return new SetImages();
+            }
+            else
+            {
+                return results;
+            }
         }
 
         public async Task<List<SetImages>> GetSetImages(string setNum, int resultsToReturn, int resultsToSearch)
         {
             Uri url = new Uri($"api/SetImages/GetSetImages?setnum=" + setNum + "&useCache=false&forceBingSearch=true&resultsToReturn=" + resultsToReturn + "&resultsToSearch=" + resultsToSearch, UriKind.Relative);
-            return await ReadMessageList<SetImages>(url);
+            List<SetImages> results = await ReadMessageList<SetImages>(url);
+            if (results == null)
+            {
+                return new List<SetImages>();
+            }
+            else
+            {
+                return results;
+            }
         }
 
         public async Task<SetImages> SaveSetImage(string setNum, string imageUrl)
         {
             Uri url = new Uri($"api/SetImages/SaveSetImage?setnum=" + setNum + "&imageUrl=" + HttpUtility.UrlEncode(imageUrl), UriKind.Relative);
-            return await ReadMessageItem<SetImages>(url);
+            SetImages results = await ReadMessageItem<SetImages>(url);
+            if (results == null)
+            {
+                return new SetImages();
+            }
+            else
+            {
+                return results;
+            }
         }
 
         public async Task<List<SetParts>> GetSetParts(string setNum)
         {
             Uri url = new Uri($"api/SetParts/GetSetParts?setNum=" + setNum, UriKind.Relative);
-            return await ReadMessageList<SetParts>(url);
+            List<SetParts> results = await ReadMessageList<SetParts>(url);
+            if (results == null)
+            {
+                return new List<SetParts>();
+            }
+            else
+            {
+                return results;
+            }
         }
 
         public async Task<bool> SearchForMissingParts(string setNum)
@@ -87,6 +151,7 @@ namespace SamLearnsAzure.Web.Controllers
         {
             Uri url = new Uri($"api/PartImages/GetPartImages?useCache=false", UriKind.Relative);
             return await ReadMessageList<PartImages>(url);
+
         }
 
         public async Task<List<PartImages>> SearchForPotentialPartImages(string partNum, int colorId, string colorName, int resultsToReturn = 1, int resultsToSearch = 1)
@@ -98,13 +163,35 @@ namespace SamLearnsAzure.Web.Controllers
         private async Task<List<T>> ReadMessageList<T>(Uri url)
         {
             HttpResponseMessage response = await _client.GetAsync(url);
-            return await response.Content.ReadAsAsync<List<T>>();
+            if (response.IsSuccessStatusCode == true)
+            {
+                return await response.Content.ReadAsAsync<List<T>>();
+            }
+            else
+            {
+                //Handle when the url is missing, preventing a 400 error.
+#pragma warning disable CS8603 // Possible null reference return.
+                return default;
+#pragma warning restore CS8603 // Possible null reference return.
+            }
         }
 
         private async Task<T> ReadMessageItem<T>(Uri url)
         {
             HttpResponseMessage response = await _client.GetAsync(url);
-            return await response.Content.ReadAsAsync<T>();
+            if (response.IsSuccessStatusCode == true)
+            {
+                return await response.Content.ReadAsAsync<T>();
+            }
+            else
+            {
+                //Handle when the url is missing, preventing a 400 error.
+#pragma warning disable CS8603 // Possible null reference return.
+#pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
+                return default;
+#pragma warning restore CS8653 // A default expression introduces a null value for a type parameter.
+#pragma warning restore CS8603 // Possible null reference return.
+            }
         }
     }
 }
