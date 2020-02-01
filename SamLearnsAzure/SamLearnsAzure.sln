@@ -10,9 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build YAML", "Build YAML", 
 		..\azure-pipelines-build-template.yml = ..\azure-pipelines-build-template.yml
 		..\azure-pipelines-deployment-template.yml = ..\azure-pipelines-deployment-template.yml
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
-		..\database-build-template.yml = ..\database-build-template.yml
-		..\database-deployment-template.yml = ..\database-deployment-template.yml
-		..\database.yml = ..\database.yml
 		..\ModelsPackagePipeline.yml = ..\ModelsPackagePipeline.yml
 	EndProjectSection
 EndProject
@@ -21,6 +18,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sams Application", "Sams Application", "{B307C0F9-E5A1-4486-9700-9F03FC1AF6B7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{FA6F78C9-24DC-4C17-B529-2A94CEF2BA1E}"
+	ProjectSection(SolutionItems) = preProject
+		LoadTests\LoadTest.jmx = LoadTests\LoadTest.jmx
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamLearnsAzure.Tests", "SamLearnsAzure.Tests\SamLearnsAzure.Tests.csproj", "{50DD37AD-58DD-4697-84EC-F28FB5935B53}"
 EndProject
@@ -54,6 +54,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CredScan", "CredScan", "{665A4926-5BFE-4348-9D50-5CFBA7303781}"
 	ProjectSection(SolutionItems) = preProject
 		CredScan\CredScanSuppressions.json = CredScan\CredScanSuppressions.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LoadTests", "LoadTests", "{90991A8C-4013-4F0D-B7AA-E68762691260}"
+	ProjectSection(SolutionItems) = preProject
+		LoadTests\LoadTest.jmx = LoadTests\LoadTest.jmx
 	EndProjectSection
 EndProject
 Global
@@ -124,6 +129,7 @@ Global
 		{58EDD3C4-3B77-4655-B24C-82A1A60BF35E} = {76875B17-4BFB-489B-8023-B0F3352EAC30}
 		{50DD37AD-58DD-4697-84EC-F28FB5935B50} = {B307C0F9-E5A1-4486-9700-9F03FC1AF6B7}
 		{6503FEEA-7525-4997-A0B9-A1E4F1AC8C80} = {C0D844E8-32B8-45DA-A300-52CD4E2555F8}
+		{90991A8C-4013-4F0D-B7AA-E68762691260} = {FA6F78C9-24DC-4C17-B529-2A94CEF2BA1E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE0C1147-8732-43B2-9F0E-E52D337C8BA3}

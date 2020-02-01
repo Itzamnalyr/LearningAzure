@@ -5,16 +5,12 @@ parameters: # defaults for any parameters that aren't specified
 
 jobs:
   - job: Build
-    displayName: 'Build job'
+    displayName: 'Build .NET Core job'
     pool:
       vmImage: ${{parameters.vmImage}}
     variables:
       buildNumber: '1.0.0.0'
     steps:
-#    - task: UseDotNet@2
-#      displayName: 'Use dotnet sdk 3.x'
-#      inputs:
-#        version: 3.x
 
     - task: CopyFiles@2
       displayName: 'Copy environment ARM template files to: $(build.artifactstagingdirectory)'
@@ -143,3 +139,43 @@ jobs:
       displayName: 'Post Analysis'
       inputs:
         CredScan: true
+
+  - job: BuildDotNetFramework
+    displayName: 'Build .NET Framework job'
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    steps:
+
+    # DotNet Framework build items
+    - task: NuGetToolInstaller@0
+      displayName: 'Use NuGet 4.4.1'
+      inputs:
+        versionSpec: 4.4.1
+
+    - task: NuGetCommand@2
+      displayName: 'NuGet restore'
+      inputs:
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
+       #vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
+      enabled: false
+
+    - task: VSBuild@1
+      displayName: 'Build database project'
+      inputs:
+        platform: '${{parameters.buildPlatform}}'
+        configuration: '${{parameters.buildConfiguration}}'
+        solution: SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
+
+    - task: CopyFiles@2
+      displayName: 'Copy database files to: $(build.artifactstagingdirectory)'
+      inputs:
+        SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Database\bin\Output'
+        Contents: '*' # * = Copy all files in the current directory
+        TargetFolder: '$(build.artifactstagingdirectory)\Database'
+
+    # Publish the artifacts
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
