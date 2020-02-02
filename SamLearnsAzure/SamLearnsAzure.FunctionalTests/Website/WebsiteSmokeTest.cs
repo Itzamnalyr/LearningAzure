@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Linq;
-using SamLearnsAzure.Models;
 using OpenQA.Selenium;
 using System.Threading;
 using System.Collections;

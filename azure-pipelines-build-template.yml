@@ -11,49 +11,18 @@ jobs:
     variables:
       buildNumber: '1.0.0.0'
     steps:
-
-    - task: CopyFiles@2
-      displayName: 'Copy environment ARM template files to: $(build.artifactstagingdirectory)'
-      inputs:
-        SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Environment.ARMTemplate'
-        Contents: '**\*' # **\* = Copy all files and all files in sub directories
-        TargetFolder: '$(build.artifactstagingdirectory)\EnvironmentARMTemplate'
-
-    # Dotnet Core build items
     - task: PowerShell@2
       displayName: 'Generate build version number'
       inputs:
-        targetType: 'inline'
-        script: |
-         Write-Host "Generating Build Number"
-         #Get the version from the csproj file
-         $xml = [Xml] (Get-Content SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj)
-         $initialVersion = [Version] $xml.Project.PropertyGroup.Version
-         Write-Host "Initial Version: " $version
-         $spliteVersion = $initialVersion -Split "\."
-         #Get the build number (number of days since January 1, 2000)
-         $baseDate = [datetime]"01/01/2000"
-         $currentDate = $(Get-Date)
-         $interval = (NEW-TIMESPAN -Start $baseDate -End $currentDate)
-         $buildNumber = $interval.Days
-         #Get the revision number (number seconds (divided by two) into the day on which the compilation was performed)
-         $StartDate=[datetime]::Today
-         $EndDate=(GET-DATE)
-         $revisionNumber = [math]::Round((New-TimeSpan -Start $StartDate -End $EndDate).TotalSeconds / 2,0)
-         #Final version number
-         $finalBuildVersion = "$($spliteVersion[0]).$($spliteVersion[1]).$($buildNumber).$($revisionNumber)"
-         Write-Host "Major.Minor,Build,Revision"
-         Write-Host "Final build number: " $finalBuildVersion
-         #Writing final version number back to Azure DevOps variable
-         Write-Host "##vso[task.setvariable variable=buildNumber]$finalBuildVersion"
-
+        targetType: FilePath
+        filePath: SamLearnsAzure/BuildVersion.ps1
+        arguments: -ProjectFile "SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj"
     - task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
       displayName: 'Prepare analysis on SonarCloud'
       inputs:
         SonarCloud: 'SonarQube connection'
         organization: samsmithnz
         projectKey: SamLearnsAzure
-
     - task: DotNetCoreCLI@2
       displayName: 'Restore dotnet core projects'
       inputs:
@@ -61,37 +30,7 @@ jobs:
         projects: |
          SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
          SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
-         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-         SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
-#SamLearnsAzure/SamLearnsAzure.SetImageSearch.Function/SamLearnsAzure.SetImageSearch.Function.csproj
         vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'Build dotnet core projects'
-      inputs:
-        command: build
-        projects: |
-         SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-         SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
-         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-         SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
-#SamLearnsAzure/SamLearnsAzure.SetImageSearch.Function/SamLearnsAzure.SetImageSearch.Function.csproj
-        arguments: '--configuration ${{parameters.buildConfiguration}}'
- 
-    - task: DotNetCoreCLI@2
-      displayName: 'Test dotnet code projects'
-      inputs:
-        command: test
-        projects: |
-         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-        arguments: '--configuration ${{parameters.buildConfiguration}} --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
-
-    - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
-      displayName: 'Run Code Analysis on SonarCloud'
-
-    - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
-      displayName: 'Publish Quality Gate Result on SonarCloud'
-
     - task: DotNetCoreCLI@2
       displayName: 'Publish dotnet core projects'
       inputs:
@@ -100,10 +39,66 @@ jobs:
         projects: |
          SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
          SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
- #SamLearnsAzure/SamLearnsAzure.SetImageSearch.Function/SamLearnsAzure.SetImageSearch.Function.csproj
         arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory) -p:Version=$(buildNumber)'
         zipAfterPublish: true
+    - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
+      displayName: 'Run Code Analysis on SonarCloud'
+    - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
+      displayName: 'Publish Quality Gate Result on SonarCloud'
+    # Run security tasks
+    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
+      displayName: 'Run CredScan'
+      inputs:
+        suppressionsFile: SamLearnsAzure/CredScan/CredScanSuppressions.json
+    - task: WhiteSource Bolt@19
+    #Confirm that security tasks passed successfully before finalizing the build
+    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-postanalysis.PostAnalysis@1
+      displayName: 'Post Analysis'
+      inputs:
+        CredScan: true
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
 
+
+  - job: BuildTest
+    displayName: 'Tests .NET Core projects job'
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    variables:
+      buildNumber: '1.0.0.0'
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore dotnet core projects'
+      inputs:
+        command: restore
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
+    - task: DotNetCoreCLI@2
+      displayName: 'Test dotnet code projects'
+      inputs:
+        command: test
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+        arguments: '--configuration ${{parameters.buildConfiguration}} --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3' 
+
+  - job: BuildFunctional
+    displayName: 'Build and publish functional tests job'
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    variables:
+      buildNumber: '1.0.0.0'
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore dotnet core projects'
+      inputs:
+        command: restore
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
     - task: DotNetCoreCLI@2
       displayName: 'Publish dotnet core functional tests project'
       inputs:
@@ -113,68 +108,50 @@ jobs:
          SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
         arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory)/FunctionalTests'
         zipAfterPublish: false
-
     - task: CopyFiles@2
       displayName: 'Copy Selenium Files to: $(build.artifactstagingdirectory)/FunctionalTests/SamLearnsAzure.FunctionalTests'
       inputs:
         SourceFolder: 'SamLearnsAzure/SamLearnsAzure.FunctionalTests/bin/${{parameters.buildConfiguration}}/netcoreapp3.1'
         Contents: '*chromedriver.exe*'
         TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests/SamLearnsAzure.FunctionalTests'
-
-    # Run security tasks
-    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
-      displayName: 'Run CredScan'
-      inputs:
-        suppressionsFile: SamLearnsAzure/CredScan/CredScanSuppressions.json
-    - task: WhiteSource Bolt@19
-
-    # Publish the artifacts
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact'
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
 
-    #Confirm that security tasks passed successfully before finalizing the build
-    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-postanalysis.PostAnalysis@1
-      displayName: 'Post Analysis'
+  - job: BuildARMTemplates
+    displayName: 'Build Copy ARM templates job'
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    steps:
+    - task: CopyFiles@2
+      displayName: 'Copy environment ARM template files to: $(build.artifactstagingdirectory)'
       inputs:
-        CredScan: true
+        SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Environment.ARMTemplate'
+        Contents: '**\*' # **\* = Copy all files and all files in sub directories
+        TargetFolder: '$(build.artifactstagingdirectory)\EnvironmentARMTemplate'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
 
   - job: BuildDotNetFramework
     displayName: 'Build .NET Framework job'
     pool:
       vmImage: ${{parameters.vmImage}}
     steps:
-
-    # DotNet Framework build items
-    - task: NuGetToolInstaller@0
-      displayName: 'Use NuGet 4.4.1'
-      inputs:
-        versionSpec: 4.4.1
-
-    - task: NuGetCommand@2
-      displayName: 'NuGet restore'
-      inputs:
-        projects: |
-         SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
-       #vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
-      enabled: false
-
     - task: VSBuild@1
       displayName: 'Build database project'
       inputs:
         platform: '${{parameters.buildPlatform}}'
         configuration: '${{parameters.buildConfiguration}}'
         solution: SamLearnsAzure/SamLearnsAzure.Database/SamLearnsAzure.Database.sqlproj
-
     - task: CopyFiles@2
       displayName: 'Copy database files to: $(build.artifactstagingdirectory)'
       inputs:
         SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Database\bin\Output'
         Contents: '*' # * = Copy all files in the current directory
         TargetFolder: '$(build.artifactstagingdirectory)\Database'
-
-    # Publish the artifacts
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact'
       inputs:

@@ -121,8 +121,8 @@ jobs:
               DacpacFile: '$(build.artifactstagingdirectory)/drop/Database/SamLearnsAzure.Database.dacpac'
               additionalArguments: '/p:BlockOnPossibleDataLoss=true'
 
-  - deployment: DeployWebapps
-    displayName: "Deploy web apps to ${{parameters.environment}} job"
+  - deployment: DeployWebServiceApp
+    displayName: "Deploy webservice app to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
     dependsOn: DeployInfrastructure
     pool:
@@ -166,6 +166,38 @@ jobs:
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
+
+  - deployment: DeployWebsiteApp
+    displayName: "Deploy website app to ${{parameters.environment}} job"
+    environment: ${{parameters.environment}}
+    dependsOn: DeployInfrastructure
+    pool:
+      vmImage: ${{parameters.vmImage}}        
+    variables:
+      ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
+      AppSettings.Environment: ${{parameters.environment}}
+      AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
+      AppSettings.ImagesStorageCDNURL: ${{parameters.imagesStorageCDNURL}}
+      AppSettings.ImagesStorageURL: ${{parameters.imagesStorageURL}}
+      AppSettings.PartImagesContainerName": ${{parameters.partImagesContainerName}}
+      AppSettings.SetImagesContainerName": ${{parameters.setImagesContainerName}}
+      AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
+      AppSettings.WebServiceURL: ${{parameters.serviceURL}}
+      AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
+      AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
+      AppSettings.CaptureStartErrors: ${{parameters.captureStartErrors}}
+      ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}} 
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download the build artifacts'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(build.artifactstagingdirectory)'
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: website'
             inputs:
@@ -180,6 +212,44 @@ jobs:
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
+
+  - deployment: DeployAppInsightsAnnotation
+    displayName: "Deploy application insights annotation to ${{parameters.environment}} job"
+    environment: ${{parameters.environment}}
+    dependsOn: DeployInfrastructure
+    pool:
+      vmImage: ${{parameters.vmImage}}        
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: ms-appinsights.appinsightsreleaseannotations.release-task.ms-appinsights.ReleaseAnnotation@1
+            displayName: 'Add release annotation to Azure Application Insights'
+            inputs:
+              applicationId: '${{parameters.applicationInsightsApplicationId}}'
+              apiKey: '${{parameters.applicationInsightsApiKey}}'
+
+  - deployment: DeployFunctionalTests
+    displayName: "Deploy functional tests to ${{parameters.environment}} job"
+    environment: ${{parameters.environment}}
+    dependsOn: 
+    - DeployDatabase
+    - DeployWebServiceapp
+    - DeployWebsiteapp
+    - DeployAppInsightsAnnotation
+    pool:
+      vmImage: ${{parameters.vmImage}}        
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download the build artifacts'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(build.artifactstagingdirectory)'
           - task: VSTest@2
             displayName: 'Run functional smoke tests on website and web service'
             inputs:
@@ -196,6 +266,18 @@ jobs:
                -KeyVaultClientId "${{parameters.keyVaultClientId}}" 
                -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}"  
             enabled: true
+
+  - deployment: DeploySwapServiceAppSlots
+    displayName: "Deploy swap service slots to ${{parameters.environment}} job"
+    environment: ${{parameters.environment}}
+    dependsOn: 
+    - DeployFunctionalTests
+    pool:
+      vmImage: ${{parameters.vmImage}}        
+    strategy:
+      runOnce:
+        deploy:
+          steps:
           - task: AzureAppServiceManage@0
             displayName: 'Swap Slots: web service'
             inputs:
@@ -203,6 +285,18 @@ jobs:
               WebAppName: '${{parameters.serviceName}}'
               ResourceGroupName: '${{parameters.resourceGroupName}}'
               SourceSlot: '${{parameters.stagingSlotName}}'
+
+  - deployment: DeploySwapWebsiteAppSlots
+    displayName: "Deploy swap website slots to ${{parameters.environment}} job"
+    environment: ${{parameters.environment}}
+    dependsOn: 
+    - DeployFunctionalTests
+    pool:
+      vmImage: ${{parameters.vmImage}}        
+    strategy:
+      runOnce:
+        deploy:
+          steps:
           - task: AzureAppServiceManage@0
             displayName: 'Swap Slots: website'
             inputs:
@@ -210,21 +304,3 @@ jobs:
               WebAppName: '${{parameters.websiteName}}'
               ResourceGroupName: '${{parameters.resourceGroupName}}'
               SourceSlot: '${{parameters.stagingSlotName}}'
-
-  - deployment: DeployAppInsightsAnnotation
-    displayName: "Deploy web apps to ${{parameters.environment}} job"
-    environment: ${{parameters.environment}}
-    dependsOn: 
-    - DeployWebapps 
-    - DeployDatabase
-    pool:
-      vmImage: ${{parameters.vmImage}}        
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: ms-appinsights.appinsightsreleaseannotations.release-task.ms-appinsights.ReleaseAnnotation@1
-            displayName: 'Add release annotation to Azure Application Insights'
-            inputs:
-              applicationId: '${{parameters.applicationInsightsApplicationId}}'
-              apiKey: '${{parameters.applicationInsightsApiKey}}'
