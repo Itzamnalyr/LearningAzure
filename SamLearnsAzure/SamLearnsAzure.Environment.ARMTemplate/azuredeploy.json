@@ -8,15 +8,7 @@
       "maxLength": 15
     },
     "environment": {
-      "type": "string",
-      "allowedValues": [
-        "dev",       
-        "dev2",
-        "qa",
-        "qa2",
-        "test",
-        "prod"
-      ]
+      "type": "string"
     },
     "locationShort": {
       "type": "string",
@@ -694,6 +686,9 @@
             "[concat('Microsoft.Web/Sites/', variables('serviceAPIName'))]"
           ],
           "location": "[resourceGroup().location]",
+          "identity": {
+            "type": "SystemAssigned"
+          },
           "properties": {
 
           }
@@ -859,6 +854,9 @@
             "[concat('Microsoft.Web/Sites/', variables('webSiteName'))]"
           ],
           "location": "[resourceGroup().location]",
+          "identity": {
+            "type": "SystemAssigned"
+          },
           "properties": {
 
           }
@@ -1126,9 +1124,17 @@
       "type": "string",
       "value": "[reference(concat(resourceId('Microsoft.Web/sites', variables('serviceAPIName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
     },
+    "serviceStagingSlotPrincipalId": {
+      "type": "string",
+      "value": "[reference(concat(resourceId('Microsoft.Web/sites/slots', variables('serviceAPIName'), 'Staging'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
+    },
     "websitePrincipalId": {
       "type": "string",
       "value": "[reference(concat(resourceId('Microsoft.Web/sites', variables('webSiteName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
+    },
+    "websiteStagingSlotPrincipalId": {
+      "type": "string",
+      "value": "[reference(concat(resourceId('Microsoft.Web/sites/slots', variables('webSiteName'), 'Staging'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
     },
     "applicationInsightsResourceNameOutput": {
       "type": "string",

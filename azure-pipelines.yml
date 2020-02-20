@@ -20,8 +20,57 @@ stages:
       buildPlatform: 'Any CPU'
       vmImage: $(vmImage)
 
+- stage: DeployPR
+  displayName: 'Deploy PR Stage'
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+  variables:
+    prUC: 'PR$(System.PullRequest.PullRequestId)'
+    prLC: 'pr$(System.PullRequest.PullRequestId)'
+  jobs:
+  - template: azure-pipelines-deployment-template.yml
+    parameters:
+      #Note that pull request environments use Dev credentials
+      applicationInsightsApiKey: '$(ApplicationInsights--APIKeyDev)'
+      applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
+      applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
+      applicationInsightsLocation: 'East US'
+      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      ASPNETCOREEnvironmentSetting: 'Development'
+      captureStartErrors: true
+      cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
+      environment: 'PR$(System.PullRequest.PullRequestId)'  
+      environmentLowercase: $(prLC)
+      databaseLoginName: $(databaseLoginNameDev) 
+      databaseLoginPassword: $(databaseLoginPasswordDev)
+      databaseServerName: 'samsapp-$(prLC)-eu-sqlserver'
+      godaddy_key: $(GoDaddyAPIKey)
+      godaddy_secret: $(GoDaddyAPISecret)
+      keyVaultClientId: '$(KeyVaultClientId)'
+      keyVaultClientSecret: '$(KeyVaultClientSecret)'
+      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02$(System.PullRequest.PullRequestId)'
+      imagesStorageCDNURL: 'https://samsapp-$(prLC)-eu-cdnendpoint.azureedge.net/'
+      imagesStorageURL: 'https://samsapp$(prLC)eustorage.blob.core.windows.net/'
+      redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringDev)'
+      resourceGroupName: 'SamLearnsAzure$(prUC)'
+      resourceGroupLocation: 'East US'
+      resourceGroupLocationShort: 'eu'
+      roleAssignmentId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+      samsAppConnectionString: '$(ConnectionStrings--SamsAppConnectionStringDev)'
+      serviceName: 'samsapp-$(prLC)-eu-service'
+      serviceStagingUrl: 'https://samsapp-$(prLC)-eu-service-staging.azurewebsites.net/'
+      serviceUrl: 'https://samsapp-$(prLC)-eu-service.azurewebsites.net/'
+      storageAccountName: 'samsapp$(prLC)eustorage'
+      storageAccountKey: '$(StorageAccountKeyProd)'
+      userPrincipalLogin: $(userPrincipalLogin)
+      vmImage: $(vmImage)
+      websiteName: 'samsapp-$(prLC)-eu-web'
+      websiteDomainName: '$(prLC).samlearnsazure.com'
+      websiteStagingUrl: 'https://samsapp-$(prLC)-eu-web-staging.azurewebsites.net/'
+      websiteUrl: 'https://samsapp-$(prLC)-eu-web.azurewebsites.net/'
+
 - stage: DeployDev
   displayName: 'Deploy Dev Stage'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
   - template: azure-pipelines-deployment-template.yml
     parameters:

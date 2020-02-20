@@ -11,6 +11,8 @@ parameters: # defaults for any parameters that aren't specified
   databaseLoginName: '***secret'
   databaseLoginPassword: '***secret'
   databaseServerName: 'samsapp-dev-eu-sqlserver'
+  godaddy_key: '***secret'
+  godaddy_secret: '***secret'
   keyVaultName: 'samsapp-data-eu-keyvault'
   keyVaultURL: 'https://samsapp-data-eu-keyvault.vault.azure.net/'
   keyVaultClientId: '***secret'
@@ -31,13 +33,14 @@ parameters: # defaults for any parameters that aren't specified
   serviceUrl: 'https://samsapp-dev-eu-service.azurewebsites.net/'
   stagingSlotName: 'Staging'
   storageAccountName: 'samsappdeveustorage'
+  storageAccountKey: '***secret'
   userPrincipalLogin: '***secret'
   vmImage: 'windows-latest'
   websiteName: 'samsapp-dev-eu-web'
   websiteDomainName: 'dev.samlearnsazure.com'
   websiteStagingUrl: 'https://samsapp-dev-eu-web-staging.azurewebsites.net/'
   websiteUrl: 'https://samsapp-dev-eu-web.azurewebsites.net/'
-  
+ 
 jobs:
   - deployment: DeployInfrastructure
     displayName: "Deploy infrastructure to ${{parameters.environment}} job"
@@ -62,8 +65,6 @@ jobs:
       runOnce:
         deploy:
           steps:
-          - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
-            displayName: 'Show all build variables in build output.'
           - task: DownloadBuildArtifacts@0
             displayName: 'Download the build artifacts'
             inputs:
@@ -71,6 +72,14 @@ jobs:
               downloadType: 'single'
               artifactName: 'drop'
               downloadPath: '$(build.artifactstagingdirectory)'
+          - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
+            displayName: 'Show all build variables in build output.'
+          - task: PowerShell@2
+            displayName: 'Set CName DNS entries in GoDaddy'
+            inputs:
+              targetType: FilePath
+              filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
+              arguments: '-godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"'
           - task: AzureResourceGroupDeployment@2
             displayName: 'Azure Deployment: Deploy ARM Template to resource group'
             inputs:
@@ -85,12 +94,12 @@ jobs:
             inputs:
               ConnectedServiceNameARM: 'SamLearnsAzure connection to Azure Portal'
               resourceGroupName: ${{parameters.resourceGroupName}}
-          - task: AzurePowerShell@4 #Note that pipeline variables �servicePrincipalId�, �websitePrincipalId�, �applicationInsightsInstrumentationKeyOutput�, �storageAccountKeyOutput�, �DatabaseLoginPassword�, �redisConnectionStringOutput� are populated from the previous output task
+          - task: AzurePowerShell@4 #Note that pipeline variables servicePrincipalId, websitePrincipalId, applicationInsightsInstrumentationKeyOutput, storageAccountKeyOutput, DatabaseLoginPassword, redisConnectionStringOutput are populated from the previous output task
             displayName: 'Run Azure PowerShell to setup KeyVault with ARM template output variables'
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/KeyVault.ps1'
-              ScriptArguments: '-KeyVaultName "${{parameters.KeyVaultName}}" -Environment "${{parameters.Environment}}" -ServicePrincipalId "$(servicePrincipalId)" -WebsitePrincipalId "$(websitePrincipalId)" -ApplicationInsightsInstrumentationKey "$(applicationInsightsInstrumentationKeyOutput)" -StorageAccountKey "$(storageAccountKeyOutput)" -DatabaseServerName "${{parameters.DatabaseServerName}}" -DatabaseLoginName "${{parameters.DatabaseLoginName}}" -DatabaseLoginPassword "${{parameters.DatabaseLoginPassword}}" -RedisConnectionString "$(redisConnectionStringOutput)"'
+              ScriptArguments: '-KeyVaultName "${{parameters.KeyVaultName}}" -Environment "${{parameters.Environment}}" -ServicePrincipalId "$(servicePrincipalId)" -ServiceStagingSlotPrincipalId "$(serviceStagingSlotPrincipalId)" -WebsitePrincipalId "$(websitePrincipalId)" -WebsiteStagingSlotPrincipalId "$(websiteStagingSlotPrincipalId)" -ApplicationInsightsInstrumentationKey "$(applicationInsightsInstrumentationKeyOutput)" -StorageAccountKey "$(storageAccountKeyOutput)" -DatabaseServerName "${{parameters.DatabaseServerName}}" -DatabaseLoginName "${{parameters.DatabaseLoginName}}" -DatabaseLoginPassword "${{parameters.DatabaseLoginPassword}}" -RedisConnectionString "$(redisConnectionStringOutput)"'
               azurePowerShellVersion: LatestVersion
 
   - deployment: DeployDatabase
@@ -110,6 +119,13 @@ jobs:
               downloadType: 'single'
               artifactName: 'drop'
               downloadPath: '$(build.artifactstagingdirectory)'
+          - task: AzurePowerShell@4
+            displayName: 'Reload the database from the latest backup, if needed'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/ImportBACPAC.ps1'
+              ScriptArguments: '-ResourceGroupName ${{parameters.resourceGroupName}} -DBServerName ${{parameters.databaseServerName}} -ServerAdmin ${{parameters.databaseLoginName}} -ServerPassword ${{parameters.databaseLoginPassword}} -DatabaseName "samsdb" -StorageAccountName "samsappprodeustorage" -StorageUri "https://samsappprodeustorage.blob.core.windows.net/" -StorageAccountKey ${{parameters.storageAccountKey}} -StorageContainerName "bacpacs" -Edition "Basic" -ServiceObjectiveName "Basic" -RunImportAlways $false'
+              azurePowerShellVersion: LatestVersion
           - task: SqlAzureDacpacDeployment@1
             displayName: 'Azure SQL dacpac publish'
             inputs:
