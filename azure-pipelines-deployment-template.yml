@@ -53,8 +53,8 @@ jobs:
       AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
       AppSettings.ImagesStorageCDNURL: ${{parameters.imagesStorageCDNURL}}
       AppSettings.ImagesStorageURL: ${{parameters.imagesStorageURL}}
-      AppSettings.PartImagesContainerName": ${{parameters.partImagesContainerName}}
-      AppSettings.SetImagesContainerName": ${{parameters.setImagesContainerName}}
+      AppSettings.PartImagesContainerName: ${{parameters.partImagesContainerName}}
+      AppSettings.SetImagesContainerName: ${{parameters.setImagesContainerName}}
       AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
       AppSettings.WebServiceURL: ${{parameters.serviceURL}}
       AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
