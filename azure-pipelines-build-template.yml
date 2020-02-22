@@ -14,28 +14,6 @@ jobs:
     - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
       displayName: 'Show all build variables in build output.'
     - task: PowerShell@2
-      displayName: 'Generate pull request variables'
-      inputs:
-        targetType: inline
-        script: |
-          if ($env:SYSTEM_PULLREQUEST -ne '')
-          {
-            $prid = $(System.PullRequest.PullRequestId)
-            $pruc = "PR$(System.PullRequest.PullRequestId)"
-            $prlc = "pr$(System.PullRequest.PullRequestId)"
-            Write-Host "##vso[task.setvariable variable=prId]$prid"
-            Write-Host "##vso[task.setvariable variable=prUC]$pruc"
-            Write-Host "##vso[task.setvariable variable=prLC]$prlc"
-          }
-          else 
-          {
-            Write-Host "##vso[task.setvariable variable=prId]'000'"
-            Write-Host "##vso[task.setvariable variable=prUC]'PR000'"
-            Write-Host "##vso[task.setvariable variable=prLC]'pr000'"
-          }
-    - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
-      displayName: 'Show all build variables in build output.'
-    - task: PowerShell@2
       displayName: 'Generate build version number'
       inputs:
         targetType: FilePath

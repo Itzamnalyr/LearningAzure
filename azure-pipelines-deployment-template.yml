@@ -80,6 +80,7 @@ jobs:
               targetType: FilePath
               filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
               arguments: '-godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"'
+            enabled: false
           - task: AzureResourceGroupDeployment@2
             displayName: 'Azure Deployment: Deploy ARM Template to resource group'
             inputs:

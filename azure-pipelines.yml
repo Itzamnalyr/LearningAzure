@@ -9,12 +9,6 @@ variables:
 - group: 'SamLearnsAzure KeyVault'
 - name: vmImage #Note this weird name/value syntax if you need to reference a variable group in variables
   value: 'windows-latest'
-- name: prId
-  value: 'id'
-- name: prUC
-  value: 'uc'
-- name: prLC
-  value: 'lc'
 
 stages:
 
@@ -29,7 +23,6 @@ stages:
 
 - stage: DeployDev
   displayName: 'Deploy Dev Stage'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
   - template: azure-pipelines-deployment-template.yml
     parameters:
