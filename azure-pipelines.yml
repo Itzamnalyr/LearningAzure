@@ -94,6 +94,8 @@ stages:
       databaseLoginName: $(databaseLoginNameDev) 
       databaseLoginPassword: $(databaseLoginPasswordDev)
       databaseServerName: 'samsapp-dev-eu-sqlserver'
+      godaddy_key: $(GoDaddyAPIKey)
+      godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
       letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02145'
@@ -136,6 +138,8 @@ stages:
       databaseLoginName: $(databaseLoginNameQA) 
       databaseLoginPassword: $(databaseLoginPasswordQA)
       databaseServerName: 'samsapp-qa-eu-sqlserver'
+      godaddy_key: $(GoDaddyAPIKey)
+      godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
       letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02146'
@@ -178,6 +182,8 @@ stages:
       databaseLoginName: $(databaseLoginNameProd) 
       databaseLoginPassword: $(databaseLoginPasswordProd)
       databaseServerName: 'samsapp-prod-eu-sqlserver'
+      godaddy_key: $(GoDaddyAPIKey)
+      godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
       letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02147'
