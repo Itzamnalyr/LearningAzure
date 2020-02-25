@@ -26,7 +26,7 @@ if ($RunImportAlways -eq $false)
 	$connection.ConnectionString = "Server=tcp:$DBServerName.database.windows.net,1433;Database=$DatabaseName;User ID=$ServerAdmin;Password=$ServerPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 	$connection.Open()
 	$command = $connection.CreateCommand()
-	$command.CommandText = "SELECT id FROM Colors"
+	$command.CommandText = "SELECT * FROM sys.tables t JOIN sys.schemas s ON t.schema_id = s.schema_id WHERE s.name = 'dbo' AND t.name = 'Colors'"
 	$result = $command.ExecuteReader()
 	$table = new-object “System.Data.DataTable”
 	$table.Load($result)
