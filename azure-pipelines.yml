@@ -43,7 +43,7 @@ stages:
       ASPNETCOREEnvironmentSetting: 'Development'
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
-      environment: 'PR$(System.PullRequest.PullRequestId)'  
+      environment: $(prUC)
       environmentLowercase: $(prLC)
       databaseLoginName: $(databaseLoginNameDev) 
       databaseLoginPassword: $(databaseLoginPasswordDev)
