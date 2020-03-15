@@ -34,6 +34,16 @@ namespace SamLearnsAzure.Service.Controllers
         }
 
         /// <summary>
+        /// Return a list of all sets by theme id
+        /// </summary>
+        /// <returns>an IEnumerable list of sets objects</returns>
+        [HttpGet("GetSetsByTheme")]
+        public async Task<IEnumerable<Sets>> GetSetsByTheme(int themeId)
+        {
+            return await _repo.GetSetsByTheme(themeId);
+        }
+
+        /// <summary>
         /// Return a single set object
         /// </summary>
         /// <param name="setNum">a string set number, for example "75218-1"</param>

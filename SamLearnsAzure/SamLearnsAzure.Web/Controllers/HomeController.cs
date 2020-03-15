@@ -56,6 +56,34 @@ namespace SamLearnsAzure.Web.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Browse()
+        {
+            List<Themes> themes = await _ServiceApiClient.GetThemes();
+
+            BrowseViewModel browsePageData = new BrowseViewModel
+            (
+                environment: _configuration["AppSettings:Environment"],
+                themes: themes
+            );
+
+            return View(browsePageData);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Theme(int themeId)
+        {
+            List<Sets> sets = await _ServiceApiClient.GetSetsByTheme(themeId);
+
+            ThemeViewModel themePageData = new ThemeViewModel
+            (
+                environment: _configuration["AppSettings:Environment"],
+                sets: sets
+            );
+
+            return View(themePageData);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Set(string setnum)
         {
             Sets set = await _ServiceApiClient.GetSet(setnum);

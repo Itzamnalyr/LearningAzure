@@ -9,8 +9,7 @@ namespace SamLearnsAzure.Service.DataAccess
     public interface ISetsRepository
     {
         Task<IEnumerable<Sets>> GetSets();
-
+        Task<IEnumerable<Sets>> GetSetsByTheme(int themeId);
         Task<Sets> GetSet(IRedisService redisService, bool useCache, string setNum);
-
     }
 }

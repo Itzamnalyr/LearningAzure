@@ -28,6 +28,16 @@ namespace SamLearnsAzure.Service.DataAccess
             return result;
         }
 
+        public async Task<IEnumerable<Sets>> GetSetsByTheme(int themeId)
+        {
+            List<Sets> result = await _context.Sets
+                .Where(b => b.ThemeId == themeId)
+                .OrderBy(p => p.Name)
+                .ToListAsync();
+
+            return result;
+        }
+
         public async Task<Sets> GetSet(IRedisService redisService, bool useCache, string setNum)
         {
             string cacheKeyName = "Set-" + setNum;

@@ -82,6 +82,7 @@
     <Build Include="dbo\Stored Procedures\SavePartImage.sql" />
     <Build Include="dbo\Stored Procedures\SaveOwnerSet.sql" />
     <Build Include="dbo\Tables\feature_flags.sql" />
+    <Build Include="dbo\Stored Procedures\GetThemesWithChildren.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

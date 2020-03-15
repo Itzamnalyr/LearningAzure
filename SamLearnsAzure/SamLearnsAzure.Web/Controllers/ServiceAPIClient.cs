@@ -23,6 +23,26 @@ namespace SamLearnsAzure.Web.Controllers
             };
         }
 
+        public async Task<List<Themes>> GetThemes()
+        {
+            Uri url = new Uri($"api/Themes/GetThemes", UriKind.Relative);
+            return await ReadMessageList<Themes>(url);
+        }
+
+        public async Task<List<Sets>> GetSetsByTheme(int themeId)
+        {
+            Uri url = new Uri($"api/Sets/GetSetsByTheme", UriKind.Relative);
+            List<Sets> results = await ReadMessageList<Sets>(url);
+            if (results == null)
+            {
+                return new List<Sets>();
+            }
+            else
+            {
+                return results;
+            }
+        }
+
         public async Task<List<Owners>> GetOwners()
         {
             Uri url = new Uri($"api/Owners/GetOwners", UriKind.Relative);
@@ -139,12 +159,6 @@ namespace SamLearnsAzure.Web.Controllers
         {
             Uri url = new Uri($"api/SetParts/SearchForMissingParts?setNum=" + setNum, UriKind.Relative);
             return await ReadMessageItem<bool>(url);
-        }
-
-        public async Task<List<Themes>> GetThemes()
-        {
-            Uri url = new Uri($"api/Themes/GetThemes", UriKind.Relative);
-            return await ReadMessageList<Themes>(url);
         }
 
         public async Task<List<PartImages>> GetPartImages()

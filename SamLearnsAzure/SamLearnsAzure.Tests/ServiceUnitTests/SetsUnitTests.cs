@@ -34,6 +34,27 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             TestSets(sets.FirstOrDefault());
         }
 
+
+        [TestMethod]
+        public async Task GetSetsByThemeMockTest()
+        {
+            //Arrange
+            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
+            Mock<ISetsRepository> mock = new Mock<ISetsRepository>();
+            Mock<IRedisService> mockRedis = new Mock<IRedisService>();
+            mock.Setup(repo => repo.GetSetsByTheme(It.IsAny<int>())).Returns(Task.FromResult(GetSetsTestData()));
+            SetsController controller = new SetsController(mock.Object, mockRedis.Object);
+            int themeId = 1;
+
+            //Act
+            IEnumerable<Sets> sets = await controller.GetSetsByTheme(themeId);
+
+            //Assert
+            Assert.IsTrue(sets != null);
+            Assert.IsTrue(sets.Count() == 1);
+            TestSets(sets.FirstOrDefault());
+        }
+
         [TestMethod]
         public async Task GetSetMockTest()
         {

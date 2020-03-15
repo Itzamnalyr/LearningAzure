@@ -1,11 +1,11 @@
 ﻿@using SamLearnsAzure.Models
-@model IndexViewModel
+@model ThemeViewModel
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Browse";
 }
 
 <h2>Environment: @Model.Environment</h2>
-<h3>My sets</h3>
+<h3>Theme</h3>
 <div class="row">
     <div class="col-md-12">
         <table class="table table-striped table-bordered">
@@ -15,20 +15,20 @@
                 <th>Theme</th>
                 <th>Number of parts</th>
             </tr>
-            @foreach (OwnerSets item in Model.OwnerSets)
+            @foreach (Sets item in Model.Sets)
             {
                 <tr>
                     <td>
-                        <a href="~/Home/Set?setNum=@item.SetNum">@item.Set.Name</a>
+                        <a href="~/Home/Set?setnum=@item.SetNum">@item.Name</a> (@item.Year)
                     </td>
                     <td>
-                        @item.Set.Year
+                        @item.Year
                     </td>
                     <td>
-                        @item.Set.Theme.Name
+                        @item.Theme.Name
                     </td>
                     <td>
-                        @(item.Set.NumParts.ToString("#,##0"))
+                        @(item.NumParts.ToString("#,##0"))
                     </td>
                 </tr>
             }
