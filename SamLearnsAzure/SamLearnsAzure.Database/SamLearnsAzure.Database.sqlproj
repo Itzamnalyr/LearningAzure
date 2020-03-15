@@ -61,6 +61,7 @@
     <Folder Include="dbo" />
     <Folder Include="dbo\Tables" />
     <Folder Include="dbo\Stored Procedures" />
+    <Folder Include="dbo\Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\colors.sql" />
@@ -82,7 +83,7 @@
     <Build Include="dbo\Stored Procedures\SavePartImage.sql" />
     <Build Include="dbo\Stored Procedures\SaveOwnerSet.sql" />
     <Build Include="dbo\Tables\feature_flags.sql" />
-    <Build Include="dbo\Stored Procedures\GetThemesWithChildren.sql" />
+    <Build Include="dbo\Views\ThemesWithChildren.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
