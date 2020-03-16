@@ -48,13 +48,13 @@ jobs:
     - task: SonarSource.sonarcloud.38b27399-a642-40af-bb7d-9971f69712e8.SonarCloudPublish@1
       displayName: 'Publish Quality Gate Result on SonarCloud'
     # Run security tasks
-    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-credscan.CredScan@2
+    - task: ms-codeanalysis.vss-microsoft-security-code-analysis-devops.build-task-credscan.CredScan@2
       displayName: 'Run CredScan'
       inputs:
         suppressionsFile: SamLearnsAzure/CredScan/CredScanSuppressions.json
     - task: WhiteSource Bolt@19
     #Confirm that security tasks passed successfully before finalizing the build
-    - task: ms-codeanalysis.vss-microsoft-security-code-analysis.build-task-postanalysis.PostAnalysis@1
+    - task: ms-codeanalysis.vss-microsoft-security-code-analysis-devops.build-task-postanalysis.PostAnalysis@1
       displayName: 'Post Analysis'
       inputs:
         CredScan: true
