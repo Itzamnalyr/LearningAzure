@@ -281,8 +281,7 @@
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
-                "[parameters('databaseName')]",
-                "[resourceId('Microsoft.Sql/servers/advisors', variables('sqlserverName'), 'ForceLastGoodPlan')]"
+                "[parameters('databaseName')]"
               ],
               "tags": {
                 "displayName": "SqlServer database ForceLastGoodPlan Advisor setting"
