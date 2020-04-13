@@ -270,56 +270,7 @@
             "edition": "[parameters('databaseEdition')]",
             "collation": "[parameters('databaseCollation')]",
             "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]"
-          },
-          "resources": [
-            {
-              "type": "Microsoft.Sql/servers/databases/advisors",
-              "name": "[concat(variables('sqlserverName'), '/', parameters('databaseName'), '/', 'ForceLastGoodPlan')]",
-              "apiVersion": "2014-04-01",
-              "properties": {
-                "autoExecuteValue": "Enabled"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
-                "[parameters('databaseName')]"
-              ],
-              "tags": {
-                "displayName": "SqlServer database ForceLastGoodPlan Advisor setting"
-              }
-            },
-            {
-              "type": "Microsoft.Sql/servers/databases/advisors",
-              "name": "[concat(variables('sqlserverName'), '/', parameters('databaseName'), '/', 'CreateIndex')]",
-              "apiVersion": "2014-04-01",
-              "properties": {
-                "autoExecuteValue": "Enabled"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
-                "[parameters('databaseName')]",
-                "ForceLastGoodPlan"
-              ],
-              "tags": {
-                "displayName": "SqlServer database CreateIndex Advisor setting"
-              }
-            },
-            {
-              "type": "Microsoft.Sql/servers/databases/advisors",
-              "name": "[concat(variables('sqlserverName'), '/', parameters('databaseName'), '/', 'DropIndex')]",
-              "apiVersion": "2014-04-01",
-              "properties": {
-                "autoExecuteValue": "Enabled"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
-                "[parameters('databaseName')]",
-                "CreateIndex"
-              ],
-              "tags": {
-                "displayName": "SqlServer database DropIndex Advisor setting"
-              }
-            }
-          ]
+          }
         },
         {
           "type": "firewallrules",
