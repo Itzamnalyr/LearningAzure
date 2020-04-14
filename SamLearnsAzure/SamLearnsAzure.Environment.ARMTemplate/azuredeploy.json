@@ -303,51 +303,6 @@
           ]
         },
         {
-          "type": "Microsoft.Sql/servers/advisors",
-          "name": "[concat(variables('sqlserverName'), '/', 'ForceLastGoodPlan')]",
-          "apiVersion": "2014-04-01",
-          "properties": {
-            "autoExecuteValue": "Enabled"
-          },
-          "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
-            "[parameters('databaseName')]"
-          ],
-          "tags": {
-            "displayName": "SqlServer ForceLastGoodPlan Advisor setting"
-          }
-        },
-        {
-          "type": "Microsoft.Sql/servers/advisors",
-          "name": "[concat(variables('sqlserverName'), '/', 'CreateIndex')]",
-          "apiVersion": "2014-04-01",
-          "properties": {
-            "autoExecuteValue": "Enabled"
-          },
-          "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
-            "ForceLastGoodPlan"
-          ],
-          "tags": {
-            "displayName": "SqlServer CreateIndex Advisor setting"
-          }
-        },
-        {
-          "type": "Microsoft.Sql/servers/advisors",
-          "name": "[concat(variables('sqlserverName'), '/', 'DropIndex')]",
-          "apiVersion": "2014-04-01",
-          "properties": {
-            "autoExecuteValue": "Enabled"
-          },
-          "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
-            "CreateIndex"
-          ],
-          "tags": {
-            "displayName": "SqlServer DropIndex Advisor setting"
-          }
-        },
-        {
           "type": "auditingSettings",
           "name": "AuditingSettings",
           "apiVersion": "2017-03-01-preview",
