@@ -81,6 +81,13 @@ jobs:
               filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
               arguments: '-godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"'
             continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
+          - task: AzurePowerShell@4 
+            displayName: 'Run Azure PowerShell to remove deployments older than 30 days' #This addresses a deployment quota limit: https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-quota-exceeded
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/DeploymentCleanup.ps1'
+              ScriptArguments: '-ResourceGroupName "${{parameters.resourceGroupName}}"'
+              azurePowerShellVersion: LatestVersion
           - task: AzureResourceGroupDeployment@2
             displayName: 'Azure Deployment: Deploy ARM Template to resource group'
             inputs:

@@ -32,6 +32,9 @@
     <None Include="PowerShell\GoDaddyDNSSetup.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="PowerShell\DeploymentCleanup.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="PowerShell\KeyVault.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
