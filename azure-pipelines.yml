@@ -5,6 +5,14 @@ pr:
     include:
     - '*'  # must quote since "*" is a YAML reserved character; we want a string
 
+schedules:
+- cron: "0 1/2 * * *"
+  branches:
+    include: 
+    - master
+    - TwoHourCronSchedule
+  always: true
+
 variables:
 - group: 'SamLearnsAzure KeyVault'
 - name: vmImage #Note this weird name/value syntax if you need to reference a variable group in variables
