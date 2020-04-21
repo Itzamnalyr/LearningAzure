@@ -10,7 +10,6 @@ schedules:
   branches:
     include: 
     - master
-    - TwoHourCronSchedule
   always: true
 
 variables:
