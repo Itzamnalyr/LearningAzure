@@ -28,11 +28,3 @@ $finalBuildVersion = "$($splitVersion[0]).$($splitVersion[1]).$($buildNumber).$(
 Write-Host "Final build number: $finalBuildVersion" 
 #Writing final version number back to Github variable
 Write-Host "##vso[task.setvariable variable=buildNumber]$finalBuildVersion"
-
-
-         Write-Host "Generating Build Number"
-         #Get the version from the csproj file
-         $xml = [Xml] (Get-Content SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj)
-         $initialVersion = [Version] $xml.Project.PropertyGroup.Version
-         Write-Host "Initial Version: " $version
-         $spliteVersion = $initialVersion -Split "\."

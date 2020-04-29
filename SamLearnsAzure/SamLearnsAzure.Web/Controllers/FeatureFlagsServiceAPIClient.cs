@@ -26,13 +26,20 @@ namespace SamLearnsAzure.Web.Controllers
         public async Task<bool> CheckFeatureFlag(string name, string environment)
         {
             Uri url = new Uri($"api/FeatureFlags/CheckFeatureFlag?name=" + name + "&environment=" + environment, UriKind.Relative);
-            return await ReadMessageItem<bool>(url);
+            return await ReadMessageItem(url);
         }
 
-        private async Task<T> ReadMessageItem<T>(Uri url)
+        private async Task<bool> ReadMessageItem(Uri url)
         {
             HttpResponseMessage response = await _client.GetAsync(url);
-            return await response.Content.ReadAsAsync<T>();
+            if (response.IsSuccessStatusCode == false)
+            {
+                return (bool)false;
+            }
+            else
+            {
+                return await response.Content.ReadAsAsync<bool>();
+            }
         }
     }
 }
