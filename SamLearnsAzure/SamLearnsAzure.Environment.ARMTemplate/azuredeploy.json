@@ -542,6 +542,10 @@
         },
         "actions": [
           {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
+          {
             "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
             "webHookProperties": {}
           }
@@ -729,6 +733,10 @@
         },
         "actions": [
           {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
+          {
             "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
             "webHookProperties": {}
           }
@@ -774,6 +782,10 @@
           "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
         },
         "actions": [
+          {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
           {
             "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
             "webHookProperties": {}
@@ -924,6 +936,10 @@
         },
         "actions": [
           {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
+          {
             "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
             "webHookProperties": {}
           }
@@ -969,6 +985,10 @@
           "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
         },
         "actions": [
+          {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
           {
             "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
             "webHookProperties": {}
