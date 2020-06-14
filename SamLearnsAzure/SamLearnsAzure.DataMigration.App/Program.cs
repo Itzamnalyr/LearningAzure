@@ -18,6 +18,7 @@ namespace SamLearnsAzure.DataMigration.App
                 //Get configuration values from the appsettings.json file
                 IConfiguration config = new ConfigurationBuilder()
                       .AddJsonFile("appsettings.json", true, true)
+                      .AddUserSecrets<Program>()
                       .Build();
                 string partFilesToDownloadURL = config["partFilesToDownloadURL"];
                 string csvFilesToDownloadURL = config["csvFilesToDownloadURL"];

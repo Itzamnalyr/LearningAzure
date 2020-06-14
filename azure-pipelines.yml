@@ -26,6 +26,8 @@ stages:
       buildConfiguration: 'Release'
       buildPlatform: 'Any CPU'
       vmImage: $(vmImage)
+      clientSecret: $(AppSettings--ClientSecretDev)
+      redisCacheConnectionString: $(AppSettings--RedisCacheConnectionStringDev)
 
 - stage: DeployPR
   displayName: 'Deploy PR Stage'

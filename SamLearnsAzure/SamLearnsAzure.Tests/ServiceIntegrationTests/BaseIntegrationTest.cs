@@ -21,7 +21,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         {
             IConfigurationBuilder config = new ConfigurationBuilder()
                .SetBasePath(AppContext.BaseDirectory)
-               .AddJsonFile("appsettings.json");
+               .AddJsonFile("appsettings.json")
+               .AddUserSecrets<BaseIntegrationTest>();
             Configuration = config.Build();
 
             string azureKeyVaultURL = Configuration["AppSettings:KeyVaultURL"];
