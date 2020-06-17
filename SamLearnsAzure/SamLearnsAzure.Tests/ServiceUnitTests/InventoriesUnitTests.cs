@@ -1,12 +1,11 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using SamLearnsAzure.Service.Controllers;
-using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SamLearnsAzure.Service.EFCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Controllers;
+using SamLearnsAzure.Service.DataAccess;
 
 namespace SamLearnsAzure.Tests.ServiceUnitTests
 {
@@ -19,7 +18,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         public async Task GetInventoriesMockTest()
         {
             //Arrange
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IInventoriesRepository> mock = new Mock<IInventoriesRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             mock.Setup(repo => repo.GetInventories(It.IsAny<IRedisService>(), It.IsAny<bool>())).Returns(Task.FromResult(GetInventoriesTestData()));

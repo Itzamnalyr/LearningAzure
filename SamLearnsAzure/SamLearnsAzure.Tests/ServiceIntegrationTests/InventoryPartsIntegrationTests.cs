@@ -22,11 +22,12 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         public async Task GetInventoryPartsIntegrationTest()
         {
             if (base.Client != null)
-            { 
+            {
                 //Arrange
+                string partNum = "13195pr0001";
 
                 //Act
-                HttpResponseMessage response = await base.Client.GetAsync("/api/inventoryparts/getinventoryparts");
+                HttpResponseMessage response = await base.Client.GetAsync("/api/inventoryparts/getinventoryparts?partnum=" + partNum);
                 response.EnsureSuccessStatusCode();
                 IEnumerable<InventoryParts> items = await response.Content.ReadAsAsync<IEnumerable<InventoryParts>>();
                 response.Dispose();

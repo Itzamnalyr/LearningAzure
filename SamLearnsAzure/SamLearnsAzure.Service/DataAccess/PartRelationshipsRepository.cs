@@ -1,30 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using SamLearnsAzure.Models;
-using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.EFCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class PartRelationshipsRepository : IPartRelationshipsRepository
+    public class PartRelationshipsRepository : BaseDataAccess<PartRelationships>, IPartRelationshipsRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public PartRelationshipsRepository(SamsAppDBContext context)
+        public PartRelationshipsRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<IEnumerable<PartRelationships>> GetPartRelationships()
         {
-            List<PartRelationships> result = await _context.PartRelationships
-                 .OrderBy(p => p.PartRelationshipId)
-                 .ToListAsync();
-
+            IEnumerable<PartRelationships> result = await base.GetList("GetPartRelationships");
             return result;
         }
     }

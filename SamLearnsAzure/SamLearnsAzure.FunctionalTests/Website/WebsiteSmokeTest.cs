@@ -24,11 +24,11 @@ namespace SamLearnsAzure.FunctionalTests.Website
         private TestContext _testContextInstance;
         private string _webUrl = null;
         private string _environment = null;
-        private string _keyVaultURL = null;
-        private string _keyVaultClientId = null;
-        private string _keyVaultClientSecret = null;
-        private string _email = null;
-        private string _password = null;
+        //private string _keyVaultURL = null;
+        //private string _keyVaultClientId = null;
+        //private string _keyVaultClientSecret = null;
+        //private string _email = null;
+        //private string _password = null;
 
         [TestMethod]
         [TestCategory("SkipWhenLiveUnitTesting")]
@@ -123,69 +123,69 @@ namespace SamLearnsAzure.FunctionalTests.Website
         //    Assert.IsTrue(imageData.GetAttribute("src") != null); //Make sure the element was assigned an image, and hence the bing search is working
         //}
 
-        private string CheckForLogin()
-        {
+        //private string CheckForLogin()
+        //{
 
-            string webLoginURL = _webUrl + "home/index";
-            _driver.Navigate().GoToUrl(webLoginURL);
-            IWebElement loginHeader;
-            IEnumerable<IWebElement> elements = _driver.FindElements(By.XPath(@"/html/body/header/nav/div/div/ul[1]/li[2]/a"));
-            if (elements.Any())
-            {
-                loginHeader = _driver.FindElementByXPath(@"/html/body/header/nav/div/div/ul[1]/li[2]/a");
-            }
-            else
-            {
-                loginHeader = _driver.FindElementByXPath(@"/html/body/header/nav/div/div/ul[1]/li[2]/form/button");
-            }
-            return loginHeader.Text;
-        }
+        //    string webLoginURL = _webUrl + "home/index";
+        //    _driver.Navigate().GoToUrl(webLoginURL);
+        //    IWebElement loginHeader;
+        //    IEnumerable<IWebElement> elements = _driver.FindElements(By.XPath(@"/html/body/header/nav/div/div/ul[1]/li[2]/a"));
+        //    if (elements.Any())
+        //    {
+        //        loginHeader = _driver.FindElementByXPath(@"/html/body/header/nav/div/div/ul[1]/li[2]/a");
+        //    }
+        //    else
+        //    {
+        //        loginHeader = _driver.FindElementByXPath(@"/html/body/header/nav/div/div/ul[1]/li[2]/form/button");
+        //    }
+        //    return loginHeader.Text;
+        //}
 
-        private void Login()
-        {
-            SetupKeyVault();
+        //private void Login()
+        //{
+        //    SetupKeyVault();
 
-            //browse to the login page
-            string webURL = _webUrl + "Identity/Account/Login";
-            _driver.Navigate().GoToUrl(webURL);
+        //    //browse to the login page
+        //    string webURL = _webUrl + "Identity/Account/Login";
+        //    _driver.Navigate().GoToUrl(webURL);
 
-            //Set the login email and password
-            IWebElement emailText = _driver.FindElementByXPath(@"//*[@id=""Input_Email""]");
-            IWebElement passwordText = _driver.FindElementByXPath(@"//*[@id=""Input_Password""]");
-            emailText.SendKeys(_email);
-            passwordText.SendKeys(_password);
+        //    //Set the login email and password
+        //    IWebElement emailText = _driver.FindElementByXPath(@"//*[@id=""Input_Email""]");
+        //    IWebElement passwordText = _driver.FindElementByXPath(@"//*[@id=""Input_Password""]");
+        //    emailText.SendKeys(_email);
+        //    passwordText.SendKeys(_password);
 
-            //Login
-            IWebElement loginButton = _driver.FindElement(By.XPath(@"//*[@id=""account""]/div[5]/button"));
-            loginButton.Click();
+        //    //Login
+        //    IWebElement loginButton = _driver.FindElement(By.XPath(@"//*[@id=""account""]/div[5]/button"));
+        //    loginButton.Click();
 
-            //Wait for the login to finish
-            Thread.Sleep(3000);
+        //    //Wait for the login to finish
+        //    Thread.Sleep(3000);
 
-        }
+        //}
 
-        private async Task<string> GetToken(string authority, string resource, string scope)
-        {
-            AuthenticationContext authContext = new AuthenticationContext(authority);
-            ClientCredential clientCred = new ClientCredential(_keyVaultClientId, _keyVaultClientSecret);
-            AuthenticationResult result = await authContext.AcquireTokenAsync(resource, clientCred);
+        //private async Task<string> GetToken(string authority, string resource, string scope)
+        //{
+        //    AuthenticationContext authContext = new AuthenticationContext(authority);
+        //    ClientCredential clientCred = new ClientCredential(_keyVaultClientId, _keyVaultClientSecret);
+        //    AuthenticationResult result = await authContext.AcquireTokenAsync(resource, clientCred);
 
-            if (result == null)
-            {
-                throw new InvalidOperationException("Failed to obtain the JWT token");
-            }
+        //    if (result == null)
+        //    {
+        //        throw new InvalidOperationException("Failed to obtain the JWT token");
+        //    }
 
-            return result.AccessToken;
-        }
+        //    return result.AccessToken;
+        //}
 
-        private void SetupKeyVault()
-        {
-            using (KeyVaultClient keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(GetToken)))
-            {
-                _email = keyVaultClient.GetSecretAsync(_keyVaultURL, "IdentitySamsAppEmail").Result.Value;
-                _password = keyVaultClient.GetSecretAsync(_keyVaultURL, "IdentitySamsAppPassword").Result.Value;
-            }
-        }
+        //private void SetupKeyVault()
+        //{
+        //    using (KeyVaultClient keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(GetToken)))
+        //    {
+        //        _email = keyVaultClient.GetSecretAsync(_keyVaultURL, "IdentitySamsAppEmail").Result.Value;
+        //        _password = keyVaultClient.GetSecretAsync(_keyVaultURL, "IdentitySamsAppPassword").Result.Value;
+        //    }
+        //}
 
         [TestInitialize]
         public void SetupTests()
@@ -202,9 +202,9 @@ namespace SamLearnsAzure.FunctionalTests.Website
             {
                 _webUrl = TestContext.Properties["WebsiteUrl"].ToString();
                 _environment = TestContext.Properties["TestEnvironment"].ToString();
-                _keyVaultURL = TestContext.Properties["KeyVaultURL"].ToString();
-                _keyVaultClientId = TestContext.Properties["KeyVaultClientId"].ToString();
-                _keyVaultClientSecret = TestContext.Properties["KeyVaultClientSecret"].ToString();
+                //_keyVaultURL = TestContext.Properties["KeyVaultURL"].ToString();
+                //_keyVaultClientId = TestContext.Properties["KeyVaultClientId"].ToString();
+                //_keyVaultClientSecret = TestContext.Properties["KeyVaultClientSecret"].ToString();
             }
         }
 

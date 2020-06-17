@@ -1,16 +1,9 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using Castle.Core.Configuration;
+using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SamLearnsAzure.Models;
-using System.Data.SqlClient;
-using SamLearnsAzure.Service.Controllers;
-using Moq;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using System;
 using SamLearnsAzure.Service.DataAccess;
-using System.Net.Http;
-using SamLearnsAzure.Service.EFCore;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
@@ -23,11 +16,10 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         [TestMethod]
         public async Task GetSetImageNullSetNumTest()
         {
-            if (base.DbOptions != null)
+            if (base.Configuration != null)
             {
                 //Arrange
-                SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
-                SetImagesRepository repo = new SetImagesRepository(context);
+                SetImagesRepository repo = new SetImagesRepository(base.Configuration);
                 RedisService? redisService = null;
                 bool useCache = false;
                 string? setNum = null;

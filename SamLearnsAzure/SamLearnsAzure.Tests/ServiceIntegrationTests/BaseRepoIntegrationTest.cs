@@ -22,7 +22,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         {
             IConfigurationBuilder config = new ConfigurationBuilder()
                .SetBasePath(AppContext.BaseDirectory)
-               .AddJsonFile("appsettings.json");
+               .AddJsonFile("appsettings.json")
+               .AddUserSecrets<BaseIntegrationTest>();
             Configuration = config.Build();
 
             string azureKeyVaultURL = Configuration["AppSettings:KeyVaultURL"];
@@ -37,9 +38,9 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 
             //Setup the database options
             string sqlConnectionStringName = "ConnectionStrings:SamsAppConnectionString" + Configuration["AppSettings:Environment"];
-            DbOptions = new DbContextOptionsBuilder<SamsAppDBContext>()
-                            .UseSqlServer(Configuration[sqlConnectionStringName])
-                            .Options;
+            //DbOptions = new DbContextOptionsBuilder<SamsAppDBContext>()
+            //                .UseSqlServer(Configuration[sqlConnectionStringName])
+            //                .Options;
         }
     }
 }

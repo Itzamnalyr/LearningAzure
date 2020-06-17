@@ -1,30 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
+using System.Data;
 using System.Threading.Tasks;
-using SamLearnsAzure.Models;
-using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.EFCore;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class SetsRepository : ISetsRepository
+    public class SetsRepository : BaseDataAccess<Sets>, ISetsRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public SetsRepository(SamsAppDBContext context)
+        public SetsRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<IEnumerable<Sets>> GetSets()
         {
-            List<Sets> result = await _context.Sets
-                .OrderBy(p => p.Name)
-                .ToListAsync();
-
+            IEnumerable<Sets> result = await base.GetList("GetSets");
             return result;
         }
 
@@ -46,10 +44,9 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             else
             {
-                result = await _context.Sets
-                    .Include(t => t.Theme)
-                    .SingleOrDefaultAsync(b => b.SetNum == setNum);
-
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@SetNum", setNum, DbType.String);
+                result = await base.GetItem("GetSets", parameters);
                 if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
@@ -61,7 +58,6 @@ namespace SamLearnsAzure.Service.DataAccess
                     }
                 }
             }
-
             return result ?? new Sets();
         }
 

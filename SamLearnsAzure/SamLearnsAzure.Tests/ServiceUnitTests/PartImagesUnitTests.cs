@@ -1,14 +1,13 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using SamLearnsAzure.Service.Controllers;
-using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SamLearnsAzure.Service.EFCore;
 using Microsoft.Extensions.Configuration;
-using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Controllers;
+using SamLearnsAzure.Service.DataAccess;
 
 namespace SamLearnsAzure.Tests.ServiceUnitTests
 {
@@ -21,7 +20,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         public async Task GetPartImagesMockTest()
         {
             //Arrange
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IPartImagesRepository> mock = new Mock<IPartImagesRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();
@@ -42,7 +40,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         {
             //Arrange
             string partNum = "abc";
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IPartImagesRepository> mock = new Mock<IPartImagesRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();
@@ -64,7 +61,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             string partNum = "abc";
             string sourceImage = "def";
             int colorId = 1;
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IPartImagesRepository> mock = new Mock<IPartImagesRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();
@@ -87,7 +83,7 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             Assert.IsTrue(PartImages.LastUpdated > DateTime.MinValue);
         }
 
-        private List<PartImages> GetPartImagesTestData()
+        private IEnumerable<PartImages> GetPartImagesTestData()
         {
             List<PartImages> PartImages = new List<PartImages>
             {

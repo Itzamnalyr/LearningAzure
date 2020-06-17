@@ -1,29 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using SamLearnsAzure.Models;
-using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.EFCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class ThemesRepository : IThemesRepository
+    public class ThemesRepository : BaseDataAccess<Themes>, IThemesRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public ThemesRepository(SamsAppDBContext context)
+        public ThemesRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<IEnumerable<Themes>> GetThemes(IRedisService redisService, bool useCache)
         {
             string cacheKeyName = "Themes-all";
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            List<Themes> result;
+            IEnumerable<Themes> result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -33,14 +32,11 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             if (cachedJSON != null) //This will be null if we aren't using Redis or the item doesn't exist in Redis
             {
-                result = JsonConvert.DeserializeObject<List<Themes>>(cachedJSON);
+                result = JsonConvert.DeserializeObject<IEnumerable<Themes>>(cachedJSON);
             }
             else
             {
-                result = await _context.Themes
-                 .OrderBy(p => p.Name)
-                 .ToListAsync();
-
+                result = await base.GetList("GetThemes");
                 if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
@@ -52,8 +48,8 @@ namespace SamLearnsAzure.Service.DataAccess
                     }
                 }
             }
-
             return result ?? new List<Themes>();
         }
+
     }
 }

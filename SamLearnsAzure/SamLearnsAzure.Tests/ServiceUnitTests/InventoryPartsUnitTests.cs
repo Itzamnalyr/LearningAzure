@@ -1,12 +1,11 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using SamLearnsAzure.Service.Controllers;
-using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SamLearnsAzure.Service.EFCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Controllers;
+using SamLearnsAzure.Service.DataAccess;
 
 namespace SamLearnsAzure.Tests.ServiceUnitTests
 {
@@ -19,13 +18,13 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         public async Task GetInventoryPartsMockTest()
         {
             //Arrange
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IInventoryPartsRepository> mock = new Mock<IInventoryPartsRepository>();
-            mock.Setup(repo => repo.GetInventoryParts()).Returns(Task.FromResult(GetInventoryPartsTestData()));
+            mock.Setup(repo => repo.GetInventoryParts(It.IsAny<string>())).Returns(Task.FromResult(GetInventoryPartsTestData()));
             InventoryPartsController controller = new InventoryPartsController(mock.Object);
+            string partNum = "13195pr0001";
 
             //Act
-            IEnumerable<InventoryParts> sets = await controller.GetInventoryParts();
+            IEnumerable<InventoryParts> sets = await controller.GetInventoryParts(partNum);
 
             //Assert
             Assert.IsTrue(sets != null);

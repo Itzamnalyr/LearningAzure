@@ -1,15 +1,9 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using SamLearnsAzure.Models;
-using System.Data.SqlClient;
-using SamLearnsAzure.Service.Controllers;
-using Moq;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using System;
-using SamLearnsAzure.Service.DataAccess;
 using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SamLearnsAzure.Models;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {

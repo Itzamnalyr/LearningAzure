@@ -1,12 +1,11 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using SamLearnsAzure.Service.Controllers;
-using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SamLearnsAzure.Service.EFCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Controllers;
+using SamLearnsAzure.Service.DataAccess;
 
 namespace SamLearnsAzure.Tests.ServiceUnitTests
 {
@@ -19,7 +18,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         public async Task GetPartRelationshipsMockTest()
         {
             //Arrange
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IPartRelationshipsRepository> mock = new Mock<IPartRelationshipsRepository>();
             mock.Setup(repo => repo.GetPartRelationships()).Returns(Task.FromResult(GetPartRelationshipsTestData()));
             PartRelationshipsController controller = new PartRelationshipsController(mock.Object);

@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
+using System.Data;
 using System.Threading.Tasks;
-using SamLearnsAzure.Models;
-using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.EFCore;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Reflection.Metadata.Ecma335;
-using System.Collections;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class SetImagesRepository : ISetImagesRepository
+    public class SetImagesRepository : BaseDataAccess<SetImages>, ISetImagesRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public SetImagesRepository(SamsAppDBContext context)
+        public SetImagesRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<SetImages> GetSetImage(IRedisService redisService, bool useCache, string setNum)
@@ -39,10 +38,9 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             else
             {
-                result = await _context.SetImages
-                    .OrderByDescending(p => p.SetImageId)
-                    .FirstOrDefaultAsync(b => b.SetNum == setNum);
-
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@SetNum", setNum, DbType.String);
+                result = await base.GetItem("GetSetImages", parameters);
                 if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
@@ -54,17 +52,15 @@ namespace SamLearnsAzure.Service.DataAccess
                     }
                 }
             }
-
             return result ?? new SetImages();
         }
 
         public async Task<SetImages> SaveSetImage(IRedisService redisService, SetImages setImage)
         {
-            SqlParameter setNumParameter = new SqlParameter("@SetNum", setImage.SetNum);
-            SqlParameter setImageParameter = new SqlParameter("@SetImage", setImage.SetImage);
-
-            await _context.Database.ExecuteSqlRawAsync("dbo.SaveSetImage @SetNum={0}, @SetImage={1}", setNumParameter, setImageParameter);
-
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@SetNum", setImage.SetNum, DbType.String);
+            parameters.Add("@SetImage", setImage.SetImage, DbType.String);
+            await base.SaveItem("SaveSetImage", parameters);
             return await GetSetImage(redisService, false, setImage.SetNum);
         }
     }

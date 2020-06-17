@@ -1,9 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[GetOwners]
-	@param1 int = 0,
-	@param2 int
+	@OwnerId INT = NULL
 AS
-	SELECT *
-	FROM Owners o
-	JOIN [sets] ss ON o.owner_name = ss.set_num
-	order by o.owner_name
-RETURN 0
+BEGIN
+	SELECT o.id, o.owner_name AS OwnerName
+	FROM owners o
+	WHERE (@OwnerId IS NULL OR o.id = @OwnerId)
+	ORDER BY o.owner_name
+END

@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using System.Net.Http;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StackExchange.Redis;
-using System;
-using System.Net.Http;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {

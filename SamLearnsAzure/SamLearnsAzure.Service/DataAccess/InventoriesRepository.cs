@@ -1,30 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using SamLearnsAzure.Models;
-using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.EFCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class InventoriesRepository : IInventoriesRepository
+    public class InventoriesRepository : BaseDataAccess<Inventories>, IInventoriesRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public InventoriesRepository(SamsAppDBContext context)
+        public InventoriesRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<IEnumerable<Inventories>> GetInventories(IRedisService redisService, bool useCache)
         {
-            List<Inventories> result = await _context.Inventories
-                 .OrderBy(p => p.Id)
-                 .ToListAsync();
-
+            IEnumerable<Inventories> result = await base.GetList("GetInventories");
             return result;
         }
     }

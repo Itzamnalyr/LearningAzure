@@ -1,29 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SamLearnsAzure.Models;
-using SamLearnsAzure.Service.EFCore;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class ColorsRepository : IColorsRepository
+    public class ColorsRepository : BaseDataAccess<Colors>, IColorsRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public ColorsRepository(SamsAppDBContext context)
+        public ColorsRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<IEnumerable<Colors>> GetColors(IRedisService redisService, bool useCache)
         {
             string cacheKeyName = "Colors-all";
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            List<Colors> result;
+            IEnumerable<Colors> result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -31,17 +30,13 @@ namespace SamLearnsAzure.Service.DataAccess
             {
                 cachedJSON = await redisService.GetAsync(cacheKeyName);
             }
-
             if (cachedJSON != null) //This will be null if we aren't using Redis or the item doesn't exist in Redis
             {
                 result = JsonConvert.DeserializeObject<List<Colors>>(cachedJSON);
             }
             else
             {
-                result = await _context.Colors
-                    .OrderBy(p => p.Name)
-                    .ToListAsync();
-
+                result = await base.GetList("GetColors");
                 if (result != null && redisService != null)
                 {
                     //set the cache with the updated record

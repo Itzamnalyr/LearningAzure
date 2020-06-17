@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using SamLearnsAzure.Models;
-using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.EFCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class PartCategoriesRepository : IPartCategoriesRepository
+    public class PartCategoriesRepository : BaseDataAccess<PartCategories>, IPartCategoriesRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public PartCategoriesRepository(SamsAppDBContext context)
+        public PartCategoriesRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<IEnumerable<PartCategories>> GetPartCategories(IRedisService redisService, bool useCache)
@@ -24,7 +23,7 @@ namespace SamLearnsAzure.Service.DataAccess
             string cacheKeyName = "PartCategories-all";
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
 
-            List<PartCategories> result;
+            IEnumerable<PartCategories> result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -38,10 +37,7 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             else
             {
-                result = await _context.PartCategories
-                 .OrderBy(p => p.Name)
-                 .ToListAsync();
-
+                result = await base.GetList("GetPartCategories");
                 if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
@@ -53,7 +49,6 @@ namespace SamLearnsAzure.Service.DataAccess
                     }
                 }
             }
-
             return result ?? new List<PartCategories>();
         }
     }

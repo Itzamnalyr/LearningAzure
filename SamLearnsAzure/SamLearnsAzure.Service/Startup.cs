@@ -1,26 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Models;
-using SamLearnsAzure.Service.EFCore;
-using StackExchange.Redis;
-using Newtonsoft.Json;
-using System.Reflection;
-using System.IO;
-using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using SamLearnsAzure.Service.DataAccess;
+using SamLearnsAzure.Service.EFCore;
+using StackExchange.Redis;
 
 namespace SamLearnsAzure.Service
 {

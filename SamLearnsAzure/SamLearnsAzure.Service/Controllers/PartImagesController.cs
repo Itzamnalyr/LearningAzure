@@ -31,9 +31,9 @@ namespace SamLearnsAzure.Service.Controllers
         }
 
         [HttpGet("GetPartImages")]
-        public async Task<List<PartImages>> GetPartImages(bool useCache = true)
+        public async Task<IEnumerable<PartImages>> GetPartImages(bool useCache = true)
         {
-            List<PartImages> results = await _repo.GetPartImages(_redisService, useCache);
+            IEnumerable<PartImages> results = await _repo.GetPartImages(_redisService, useCache);
 
             return results;
         }

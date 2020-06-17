@@ -1,28 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Models;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 using System.Threading.Tasks;
-using SamLearnsAzure.Service.EFCore;
-using System;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class OwnersRepository : IOwnersRepository
+    public class OwnersRepository : BaseDataAccess<Owners>, IOwnersRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public OwnersRepository(SamsAppDBContext context)
+        public OwnersRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<IEnumerable<Owners>> GetOwners(IRedisService redisService, bool useCache)
         {
             string cacheKeyName = "Owners-all";
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            List<Owners> result;
+            IEnumerable<Owners> result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -36,10 +38,7 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             else
             {
-                result = await _context.Owners
-                  .OrderBy(p => p.OwnerName)
-                  .ToListAsync();
-
+                result = await base.GetList("GetOwners");
                 if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
@@ -51,7 +50,6 @@ namespace SamLearnsAzure.Service.DataAccess
                     }
                 }
             }
-
             return result ?? new List<Owners>();
         }
 
@@ -74,10 +72,9 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             else
             {
-                result = await _context.Owners
-                .Where(p => p.Id == ownerId)
-                .FirstOrDefaultAsync<Owners>();
-
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@OwnerId", ownerId, DbType.Int32);
+                result = await base.GetItem("GetOwners", parameters);
                 if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
@@ -89,7 +86,6 @@ namespace SamLearnsAzure.Service.DataAccess
                     }
                 }
             }
-
             return result ?? new Owners();
         }
     }

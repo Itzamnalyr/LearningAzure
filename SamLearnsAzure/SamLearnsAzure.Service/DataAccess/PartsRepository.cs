@@ -1,29 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using SamLearnsAzure.Models;
-using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.EFCore;
-using Newtonsoft.Json;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class PartsRepository : IPartsRepository
+    public class PartsRepository : BaseDataAccess<Parts>, IPartsRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public PartsRepository(SamsAppDBContext context)
+        public PartsRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<IEnumerable<Parts>> GetParts(IRedisService redisService, bool useCache)
         {
-            List<Parts> result = await _context.Parts
-                .OrderBy(p => p.Name)
-                .ToListAsync();
+            IEnumerable<Parts> result = await base.GetList("GetParts");
 
             return result;
         }

@@ -1,13 +1,10 @@
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using SamLearnsAzure.Models;
 using SamLearnsAzure.Service.Controllers;
 using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SamLearnsAzure.Service.EFCore;
-using Microsoft.Extensions.Configuration;
 
 namespace SamLearnsAzure.Tests.ServiceUnitTests
 {
@@ -21,7 +18,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         public async Task GetSetImageMockTest()
         {
             //Arrange
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<ISetImagesRepository> mock = new Mock<ISetImagesRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();

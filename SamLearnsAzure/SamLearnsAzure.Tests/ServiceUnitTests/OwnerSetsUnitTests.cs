@@ -1,12 +1,11 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using SamLearnsAzure.Service.Controllers;
-using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SamLearnsAzure.Service.EFCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Controllers;
+using SamLearnsAzure.Service.DataAccess;
 
 namespace SamLearnsAzure.Tests.ServiceUnitTests
 {
@@ -19,7 +18,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         public async Task GetOwnerSetsMockTest()
         {
             //Arrange
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IOwnerSetsRepository> mock = new Mock<IOwnerSetsRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             mock.Setup(repo => repo.GetOwnerSets(It.IsAny<IRedisService>(), It.IsAny<bool>(), It.IsAny<int>())).Returns(Task.FromResult(GetOwnerSetsTestData()));
@@ -39,7 +37,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         public async Task SaveOwnerSetsMockTest()
         {
             //Arrange
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<IOwnerSetsRepository> mock = new Mock<IOwnerSetsRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             mock.Setup(repo => repo.SaveOwnerSet(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(Task.FromResult(true));

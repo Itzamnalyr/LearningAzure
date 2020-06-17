@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
+using System.Data;
 using System.Threading.Tasks;
-using SamLearnsAzure.Models;
-using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.EFCore;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Reflection.Metadata.Ecma335;
-using System.Collections;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class PartImagesRepository : IPartImagesRepository
+    public class PartImagesRepository : BaseDataAccess<PartImages>, IPartImagesRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public PartImagesRepository(SamsAppDBContext context)
+        public PartImagesRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
-        public async Task<List<PartImages>> GetPartImages(IRedisService redisService, bool useCache)
+        public async Task<IEnumerable<PartImages>> GetPartImages(IRedisService redisService, bool useCache)
         {
             string cacheKeyName = "PartImages";
             TimeSpan cacheExpirationTime = new TimeSpan(0, 30, 0);
-            List<PartImages> result;
+            IEnumerable<PartImages> result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -39,11 +38,7 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             else
             {
-                result = await _context.PartImages
-                    //.Include(t => t.Color)
-                    .OrderBy(p => p.PartNum)
-                    .ToListAsync();
-
+                result = await base.GetList("GetPartImages");
                 if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
@@ -55,7 +50,6 @@ namespace SamLearnsAzure.Service.DataAccess
                     }
                 }
             }
-
             return result ?? new List<PartImages>();
         }
 
@@ -63,7 +57,7 @@ namespace SamLearnsAzure.Service.DataAccess
         {
             string cacheKeyName = "PartImage-" + partNum;
             TimeSpan cacheExpirationTime = new TimeSpan(0, 30, 0);
-            PartImages result ;
+            PartImages result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -77,9 +71,9 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             else
             {
-                result = await _context.PartImages
-                    .FirstOrDefaultAsync(b => b.PartNum == partNum);
-
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@PartNum", partNum, DbType.String);
+                result = await base.GetItem("GetPartImages", parameters);
                 if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
@@ -91,18 +85,16 @@ namespace SamLearnsAzure.Service.DataAccess
                     }
                 }
             }
-
             return result ?? new PartImages();
         }
 
         public async Task<PartImages> SavePartImage(IRedisService redisService, PartImages partImage)
         {
-            SqlParameter partNumParameter = new SqlParameter("@PartNum", partImage.PartNum);
-            SqlParameter partImageParameter = new SqlParameter("@SourceImage", partImage.SourceImage);
-            SqlParameter colorIdParameter = new SqlParameter("@ColorId", partImage.ColorId);
-
-            await _context.Database.ExecuteSqlRawAsync("dbo.SavePartImage @PartNum={0}, @SourceImage={1}, @ColorId={2}", partNumParameter, partImageParameter, colorIdParameter);
-
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@PartNum", partImage.PartNum, DbType.String);
+            parameters.Add("@SourceImage", partImage.SourceImage, DbType.String);
+            parameters.Add("@ColorId", partImage.ColorId, DbType.Int32);
+            await base.SaveItem("SavePartImage", parameters);
             return await GetPartImage(redisService, false, partImage.PartNum);
         }
     }

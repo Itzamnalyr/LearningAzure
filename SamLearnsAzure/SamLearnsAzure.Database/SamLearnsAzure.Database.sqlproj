@@ -82,12 +82,26 @@
     <Build Include="dbo\Stored Procedures\SavePartImage.sql" />
     <Build Include="dbo\Stored Procedures\SaveOwnerSet.sql" />
     <Build Include="dbo\Tables\feature_flags.sql" />
+    <Build Include="dbo\Stored Procedures\GetThemes.sql" />
+    <Build Include="dbo\Stored Procedures\GetInventories.sql" />
+    <Build Include="dbo\Stored Procedures\GetInventoryParts.sql" />
+    <Build Include="dbo\Stored Procedures\GetInventorySets.sql" />
+    <Build Include="dbo\Stored Procedures\GetOwnerSets.sql" />
+    <Build Include="dbo\Stored Procedures\GetOwners.sql" />
+    <Build Include="dbo\Stored Procedures\GetSets.sql" />
+    <Build Include="dbo\Stored Procedures\GetSetImages.sql" />
+    <Build Include="dbo\Stored Procedures\GetParts.sql" />
+    <Build Include="dbo\Stored Procedures\GetPartCategories.sql" />
+    <Build Include="dbo\Stored Procedures\GetPartImages.sql" />
+    <Build Include="dbo\Stored Procedures\GetPartRelationships.sql" />
+    <Build Include="dbo\Stored Procedures\GetColors.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="StaticCodeAnalysis.SuppressMessages.xml" />
+    <None Include="SqlSchemaCompare1.scmp" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SamLearnsAzure.Database.refactorlog" />

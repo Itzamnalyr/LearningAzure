@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
+using System.Data;
 using System.Threading.Tasks;
-using SamLearnsAzure.Models;
-using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.EFCore;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class OwnerSetsRepository : IOwnerSetsRepository
+    public class OwnerSetsRepository : BaseDataAccess<OwnerSets>, IOwnerSetsRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public OwnerSetsRepository(SamsAppDBContext context)
+        public OwnerSetsRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<IEnumerable<OwnerSets>> GetOwnerSets(IRedisService redisService, bool useCache, int ownerId)
@@ -24,7 +25,7 @@ namespace SamLearnsAzure.Service.DataAccess
             string cacheKeyName = "OwnerSets-" + ownerId;
             TimeSpan cacheExpirationTime = new TimeSpan(0, 5, 0);
 
-            List<OwnerSets> result;
+            IEnumerable<OwnerSets> result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -38,14 +39,9 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             else
             {
-                result = await _context.OwnerSets
-                .Include(l => l.Set)
-                    .ThenInclude(t => t.Theme)
-                .Include(l => l.Owner)
-                .Where(p => p.OwnerId == ownerId)
-                .OrderBy(p => p.Set.Name)
-                .ToListAsync();
-
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@OwnerId", ownerId, DbType.Int32);
+                result = await base.GetList("GetOwnerSets", parameters);
                 if (result != null && redisService != null)
                 {
                     //set the cache with the updated record
@@ -57,20 +53,17 @@ namespace SamLearnsAzure.Service.DataAccess
                     }
                 }
             }
-
             return result ?? new List<OwnerSets>();
         }
 
         public async Task<bool> SaveOwnerSet(string setNum, int ownerId, bool owned, bool wanted)
         {
-            SqlParameter setNumParameter = new SqlParameter("@SetNum", setNum);
-            SqlParameter ownerIdParameter = new SqlParameter("@OwnerId", ownerId);
-            SqlParameter ownedParameter = new SqlParameter("@Owned", owned);
-            SqlParameter wantedParameter = new SqlParameter("@Wanted", wanted);
-
-            await _context.Database.ExecuteSqlRawAsync("dbo.SaveOwnerSet @SetNum={0}, @OwnerId={1}, @Owned={2}, @Wanted={3}", setNumParameter, ownerIdParameter, ownedParameter, wantedParameter);
-
-            return true;
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@SetNum", setNum, DbType.String);
+            parameters.Add("@OwnerId", ownerId, DbType.Int32);
+            parameters.Add("@Owned", owned, DbType.Boolean);
+            parameters.Add("@Wanted", wanted, DbType.Boolean);
+            return await base.SaveItem("SaveOwnerSet", parameters);
         }
     }
 }

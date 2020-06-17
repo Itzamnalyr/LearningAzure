@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
+using System.Data;
 using System.Threading.Tasks;
-using SamLearnsAzure.Models;
-using Microsoft.EntityFrameworkCore;
-using SamLearnsAzure.Service.EFCore;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Dapper;
 
 namespace SamLearnsAzure.Service.DataAccess
 {
-    public class SetPartsRepository : ISetPartsRepository
+    public class SetPartsRepository : BaseDataAccess<SetParts>, ISetPartsRepository
     {
-        private readonly SamsAppDBContext _context;
+        private readonly IConfiguration _configuration;
 
-        public SetPartsRepository(SamsAppDBContext context)
+        public SetPartsRepository(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
+            base.SetupConnectionString(_configuration);
         }
 
         public async Task<IEnumerable<SetParts>> GetSetParts(IRedisService redisService, bool useCache, string setNum)
         {
             string cacheKeyName = "SetParts-" + setNum;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
-            List<SetParts> result;
+            IEnumerable<SetParts> result;
 
             //Check the cache
             string? cachedJSON = null;
@@ -39,14 +40,9 @@ namespace SamLearnsAzure.Service.DataAccess
             {
                 if (string.IsNullOrEmpty(setNum) == false)
                 {
-
-                    SqlParameter setNumParameter = new SqlParameter("SetNum", setNum);
-
-                    result = await _context
-                        .Set<SetParts>()
-                        .FromSqlRaw("EXECUTE dbo.GetSetParts @SetNum={0}", setNumParameter)
-                        .ToListAsync();
-
+                    DynamicParameters parameters = new DynamicParameters();
+                    parameters.Add("@SetNum", setNum, DbType.String);
+                    result = await base.GetList("GetSetParts", parameters);
                     if (result != null && redisService != null)
                     {
                         //set the cache with the updated record
@@ -60,16 +56,13 @@ namespace SamLearnsAzure.Service.DataAccess
                 }
                 else
                 {
-                    result = await _context
-                        .Set<SetParts>()
-                        .FromSqlRaw("EXECUTE dbo.GetSetParts @SetNum=0")
-                        .ToListAsync();
+                    DynamicParameters parameters = new DynamicParameters();
+                    parameters.Add("@SetNum", setNum, DbType.String);
+                    result = await base.GetList("GetSetParts", parameters);
                 }
             }
-
             return result ?? new List<SetParts>();
         }
-
 
     }
 }

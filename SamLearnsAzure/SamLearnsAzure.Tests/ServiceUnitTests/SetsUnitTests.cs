@@ -1,12 +1,11 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using SamLearnsAzure.Service.Controllers;
-using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SamLearnsAzure.Service.EFCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Controllers;
+using SamLearnsAzure.Service.DataAccess;
 
 namespace SamLearnsAzure.Tests.ServiceUnitTests
 {
@@ -19,7 +18,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         public async Task GetSetsMockTest()
         {
             //Arrange
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<ISetsRepository> mock = new Mock<ISetsRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             mock.Setup(repo => repo.GetSets()).Returns(Task.FromResult(GetSetsTestData()));
@@ -38,7 +36,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         public async Task GetSetMockTest()
         {
             //Arrange
-            SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
             Mock<ISetsRepository> mock = new Mock<ISetsRepository>();
             Mock<IRedisService> mockRedis = new Mock<IRedisService>();
             mock.Setup(repo => repo.GetSet(It.IsAny<IRedisService>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(Task.FromResult(GetSetTestData()));

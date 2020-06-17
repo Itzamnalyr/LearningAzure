@@ -1,16 +1,7 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SamLearnsAzure.Models;
-using System.Data.SqlClient;
-using SamLearnsAzure.Service.Controllers;
-using Moq;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using System;
 using SamLearnsAzure.Service.DataAccess;
-using System.Net.Http;
-using SamLearnsAzure.Service.EFCore;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
@@ -23,11 +14,10 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         [TestMethod]
         public async Task GetSetNullSetNumTest()
         {
-            if (base.DbOptions != null)
+            if (base.Configuration != null)
             {
                 //Arrange
-                SamsAppDBContext context = new SamsAppDBContext(base.DbOptions);
-                SetsRepository repo = new SetsRepository(context);
+                SetsRepository repo = new SetsRepository(base.Configuration);
                 RedisService? redisService = null;
                 bool useCache = false;
                 string? setNum = null;
@@ -39,7 +29,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 
                 //Assert
                 Assert.IsTrue(set != null);
-                Assert.AreEqual(null, set?.SetNum);
+                Assert.AreNotEqual(null, set?.SetNum);
             }
             else
             {
