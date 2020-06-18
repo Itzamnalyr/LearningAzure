@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using SamLearnsAzure.Service.DataAccess;
-using SamLearnsAzure.Service.EFCore;
+//using SamLearnsAzure.Service.EFCore;
 using StackExchange.Redis;
 
 namespace SamLearnsAzure.Service
@@ -31,9 +31,9 @@ namespace SamLearnsAzure.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string sqlConnectionStringName = "ConnectionStrings:SamsAppConnectionString" + Configuration["AppSettings:Environment"];
-            services.AddDbContext<SamsAppDBContext>(options =>
-                options.UseSqlServer(Configuration[sqlConnectionStringName]));
+            //string sqlConnectionStringName = "ConnectionStrings:SamsAppConnectionString" + Configuration["AppSettings:Environment"];
+            //services.AddDbContext<SamsAppDBContext>(options =>
+            //    options.UseSqlServer(Configuration[sqlConnectionStringName]));
 
             services.AddControllers()
                 //This JSON setting stops the JSON from being truncated

@@ -7,8 +7,6 @@ namespace SamLearnsAzure.Models
     {
         public OwnerSets()
         {
-            Owner = new Owners();
-            Set = new Sets();
         }
         
         public string SetNum { get; set; } = null!;
@@ -17,7 +15,13 @@ namespace SamLearnsAzure.Models
         public bool Wanted { get; set; }
         public int OwnerSetId { get; set; }
 
-        public Owners Owner { get; set; }
-        public Sets Set { get; set; }
+        //Replaced Owners object with simple objects 
+        public string OwnerName { get; set; } = null!;
+
+        //Replaced Sets object with simple objects
+        public string SetName { get; set; } = null!;
+        public int SetYear { get; set; }
+        public string SetThemeName { get; set; } = null!;
+        public int SetNumParts{ get; set; }
     }
 }

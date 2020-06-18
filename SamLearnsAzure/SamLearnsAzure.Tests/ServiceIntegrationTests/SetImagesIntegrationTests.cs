@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using SamLearnsAzure.Service.DataAccess;
 using System.Net.Http;
-using SamLearnsAzure.Service.EFCore;
+//using SamLearnsAzure.Service.EFCore;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {

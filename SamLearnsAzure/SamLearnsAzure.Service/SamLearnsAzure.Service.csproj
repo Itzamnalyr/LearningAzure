@@ -34,11 +34,14 @@
     <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.1.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.3" />
-    <PackageReference Include="SamLearnsAzure.Models" Version="1.4.2340" />
     <PackageReference Include="StackExchange.Redis" Version="2.1.55" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SamLearnsAzure.Models\SamLearnsAzure.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>

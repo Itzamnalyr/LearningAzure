@@ -47,8 +47,10 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
             Assert.IsTrue(OwnerSet.Owned == false);
             Assert.IsTrue(OwnerSet.Wanted == true);
             Assert.IsTrue(OwnerSet.OwnerSetId == 2);
-            Assert.IsTrue(OwnerSet.Owner != null);
-            Assert.IsTrue(OwnerSet.Set != null);
+            Assert.IsTrue(OwnerSet.SetName == "setabc");
+            Assert.IsTrue(OwnerSet.SetNumParts == 3);
+            Assert.IsTrue(OwnerSet.SetThemeName == "rst");
+            Assert.IsTrue(OwnerSet.SetYear == 2000);
         }
 
         private List<OwnerSets> GetOwnerSetsTestData()
@@ -69,9 +71,11 @@ namespace SamLearnsAzure.Tests.WebsiteUnitTests
                 Owned = false,
                 Wanted = true,
                 OwnerSetId = 2,
-                Owner = new Owners(),
-                Set = new Sets()
-
+                OwnerName = "xyz",
+                SetName = "setabc",
+                SetNumParts = 3,
+                SetThemeName = "rst",
+                SetYear = 2000
             };
         }
 
