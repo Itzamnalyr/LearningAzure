@@ -1,0 +1,117 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[variables('sqlserverName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "SqlServer"
+      },
+      "apiVersion": "2014-04-01-preview",
+      "properties": {
+        "administratorLogin": "[parameters('databaseLoginName')]",
+        "administratorLoginPassword": "[parameters('databaseLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "[parameters('databaseName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "tags": {
+            "displayName": "Database"
+          },
+          "apiVersion": "2017-10-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', variables('sqlserverName'))]"
+          ],
+          "sku": {
+            "name": "[parameters('databaseSKUName')]",
+            "tier": "[parameters('databaseSKUTier')]"
+          },
+          "properties": {
+            "edition": "[parameters('databaseEdition')]",
+            "collation": "[parameters('databaseCollation')]",
+            "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]"
+          }
+        },
+        {
+          "type": "firewallrules",
+          "name": "AllowAllWindowsAzureIps",
+          "apiVersion": "2014-04-01",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', variables('sqlserverName'))]"
+          ],
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "endIpAddress": "0.0.0.0",
+            "startIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "type": "administrators",
+          "name": "activeDirectory",
+          "apiVersion": "2014-04-01",
+          //"tags": {
+          //  "displayName": "SqlService AD Administrator"
+          //},
+          "properties": {
+            "administratorType": "ActiveDirectory",
+            "login": "[parameters('userPrincipalLogin')]",
+            "sid": "[parameters('userPrincipalId')]",
+            "tenantId": "[subscription().tenantid]"
+          },
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', variables('sqlserverName'))]"
+          ]
+        },
+        {
+          "type": "auditingSettings",
+          "name": "AuditingSettings",
+          "apiVersion": "2017-03-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+          ],
+          "properties": {
+            "state": "Enabled",
+            "storageEndpoint": "[concat('https://', variables('storageAccountName'), '.blob.core.windows.net')]",
+            "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+            "retentionDays": "180",
+            "storageAccountSubscriptionId": "[subscription().subscriptionId]",
+            "isStorageSecondaryKeyInUse": false,
+            "auditActionsAndGroups": [
+              "SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP",
+              "FAILED_DATABASE_AUTHENTICATION_GROUP",
+              "BATCH_COMPLETED_GROUP"
+            ],
+            "isAzureMonitorTargetEnabled": false
+          }
+        }
+        //{
+        //  "type": "Microsoft.Sql/servers/auditingPolicies",
+        //  "apiVersion": "2017-03-01-preview",
+        //  "name": "[concat(variables('sqlserverName'), '/Default')]",
+        //  "location": "[resourceGroup().location]",
+        //  "dependsOn": [
+        //    "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]"
+        //  ],
+        //  "properties": {
+        //    "auditingState": "New",
+        //    "eventTypesToAudit": "PlainSQL_Success,PlainSQL_Failure,ParameterizedSQL_Success,ParameterizedSQL_Failure,StoredProcedure_Success,StoredProcedure_Failure,Login_Success,Login_Failure,TransactionManagement_Success,TransactionManagement_Failure",
+        //    "fullAuditLogsTableName": "SQLDBAuditLogsSamsappdeveusqlserver",
+        //    "auditLogsTableName": "Samsappdeveusqlserver",
+        //    "retentionDays": "180"
+        //  }
+        //}
+      ]
+    }
+  ],
+  "outputs": {
+  }
+}

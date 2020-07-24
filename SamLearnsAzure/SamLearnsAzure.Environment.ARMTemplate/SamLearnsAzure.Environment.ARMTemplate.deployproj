@@ -29,6 +29,7 @@
       <Visible>False</Visible>
     </None>
     <Content Include="Deploy-AzureResourceGroup.ps1" />
+    <None Include="DeploymentCommands.ps1" />
     <None Include="PowerShell\GoDaddyDNSSetup.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -44,6 +45,15 @@
     <None Include="PowerShell\ImportBACPAC.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Templates\ApplicationInsights.json" />
+    <None Include="Templates\AzureCDN.json" />
+    <None Include="Templates\AzureFrontDoor.json" />
+    <None Include="Templates\AzureKeyVault.json" />
+    <None Include="Templates\AzureRedis.json" />
+    <None Include="Templates\AzureSQL.json" />
+    <None Include="Templates\AzureStorage.json" />
+    <None Include="Templates\WebApp.json" />
+    <None Include="Templates\WebHosting.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>

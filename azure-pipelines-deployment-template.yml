@@ -88,27 +88,42 @@ jobs:
               ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/DeploymentCleanup.ps1'
               ScriptArguments: '-ResourceGroupName "${{parameters.resourceGroupName}}"'
               azurePowerShellVersion: LatestVersion
-          - task: AzureResourceGroupDeployment@2
-            displayName: 'Azure Deployment: Deploy ARM Template to resource group'
+          - task: AzureCLI@2
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
-              resourceGroupName: '${{parameters.resourceGroupName}}'
-              location: '${{parameters.resourceGroupLocation}}'
-              csmFile: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/azuredeploy.json'
-              csmParametersFile: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/azuredeploy.parameters.json'
-              overrideParameters: '-userPrincipalLogin ${{parameters.userPrincipalLogin}} -databaseLoginName ${{parameters.databaseLoginName}} -databaseLoginPassword ${{parameters.databaseLoginPassword}} -environment ${{parameters.environmentLowercase}} -locationShort ${{parameters.resourceGroupLocationShort}}  -appServiceContributerClientSecret "${{parameters.appServiceContributerClientSecret}}" -websiteDomainName ${{parameters.websiteDomainName}} -roleAssignmentId ${{parameters.roleAssignmentId}} -letsEncryptUniqueRoleAssignmentGuid ${{parameters.letsEncryptUniqueRoleAssignmentGuid}}'
-          - task: keesschollaart.arm-outputs.arm-outputs.ARM Outputs@5
-            displayName: 'Extract ARM template outputs to pipeline variables'
-            inputs:
-              ConnectedServiceNameARM: 'SamLearnsAzure connection to Azure Portal'
-              resourceGroupName: ${{parameters.resourceGroupName}}
-          - task: AzurePowerShell@4 #Note that pipeline variables servicePrincipalId, websitePrincipalId, applicationInsightsInstrumentationKeyOutput, storageAccountKeyOutput, DatabaseLoginPassword, redisConnectionStringOutput are populated from the previous output task
-            displayName: 'Run Azure PowerShell to setup KeyVault with ARM template output variables'
-            inputs:
-              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
-              ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/KeyVault.ps1'
-              ScriptArguments: '-KeyVaultName "${{parameters.KeyVaultName}}" -Environment "${{parameters.Environment}}" -ServicePrincipalId "$(servicePrincipalId)" -ServiceStagingSlotPrincipalId "$(serviceStagingSlotPrincipalId)" -WebsitePrincipalId "$(websitePrincipalId)" -WebsiteStagingSlotPrincipalId "$(websiteStagingSlotPrincipalId)" -ApplicationInsightsInstrumentationKey "$(applicationInsightsInstrumentationKeyOutput)" -StorageAccountKey "$(storageAccountKeyOutput)" -DatabaseServerName "${{parameters.DatabaseServerName}}" -DatabaseLoginName "${{parameters.DatabaseLoginName}}" -DatabaseLoginPassword "${{parameters.DatabaseLoginPassword}}" -RedisConnectionString "$(redisConnectionStringOutput)"'
-              azurePowerShellVersion: LatestVersion
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: | 
+                $appPrefix = "samsapp"
+                $environment = "${{parameters.environmentLowercase}}"
+                $location = "${{parameters.resourceGroupLocation}}" 
+                $locationShort = "${{parameters.resourceGroupLocationShort}}"                
+                $storageAccountName = "$appPrefix$environment$($locationShort)storage"                
+                az group create --name "${{parameters.resourceGroupName}}" --location $location 
+                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name --template-file drop/EnvironmentARMTemplate/Templates/AzureStorage.json --parameters locationShort "${{parameters.resourceGroupLocationShort}}"
+                
+          #- task: AzureResourceGroupDeployment@2
+          #  displayName: 'Azure Deployment: Deploy ARM Template to resource group'
+          #  inputs:
+          #    azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+          #    resourceGroupName: '${{parameters.resourceGroupName}}'
+          #    location: '${{parameters.resourceGroupLocation}}'
+          #    csmFile: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/azuredeploy.json'
+          #    csmParametersFile: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/azuredeploy.parameters.json'
+          #    overrideParameters: '-userPrincipalLogin ${{parameters.userPrincipalLogin}} -databaseLoginName ${{parameters.databaseLoginName}} -databaseLoginPassword ${{parameters.databaseLoginPassword}} -environment ${{parameters.environmentLowercase}} -locationShort ${{parameters.resourceGroupLocationShort}}  -appServiceContributerClientSecret "${{parameters.appServiceContributerClientSecret}}" -websiteDomainName ${{parameters.websiteDomainName}} -roleAssignmentId ${{parameters.roleAssignmentId}} -letsEncryptUniqueRoleAssignmentGuid ${{parameters.letsEncryptUniqueRoleAssignmentGuid}}'
+          #- task: keesschollaart.arm-outputs.arm-outputs.ARM Outputs@5
+          #  displayName: 'Extract ARM template outputs to pipeline variables'
+          #  inputs:
+          #    ConnectedServiceNameARM: 'SamLearnsAzure connection to Azure Portal'
+          #    resourceGroupName: ${{parameters.resourceGroupName}}
+          #- task: AzurePowerShell@4 #Note that pipeline variables servicePrincipalId, websitePrincipalId, applicationInsightsInstrumentationKeyOutput, storageAccountKeyOutput, DatabaseLoginPassword, redisConnectionStringOutput are populated from the previous output task
+          #  displayName: 'Run Azure PowerShell to setup KeyVault with ARM template output variables'
+          #  inputs:
+          #    azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+          #    ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/KeyVault.ps1'
+          #    ScriptArguments: '-KeyVaultName "${{parameters.KeyVaultName}}" -Environment "${{parameters.Environment}}" -ServicePrincipalId "$(servicePrincipalId)" -ServiceStagingSlotPrincipalId "$(serviceStagingSlotPrincipalId)" -WebsitePrincipalId "$(websitePrincipalId)" -WebsiteStagingSlotPrincipalId "$(websiteStagingSlotPrincipalId)" -ApplicationInsightsInstrumentationKey "$(applicationInsightsInstrumentationKeyOutput)" -StorageAccountKey "$(storageAccountKeyOutput)" -DatabaseServerName "${{parameters.DatabaseServerName}}" -DatabaseLoginName "${{parameters.DatabaseLoginName}}" -DatabaseLoginPassword "${{parameters.DatabaseLoginPassword}}" -RedisConnectionString "$(redisConnectionStringOutput)"'
+          #    azurePowerShellVersion: LatestVersion
+
 
   - deployment: DeployDatabase
     displayName: "Deploy database to ${{parameters.environment}} job"

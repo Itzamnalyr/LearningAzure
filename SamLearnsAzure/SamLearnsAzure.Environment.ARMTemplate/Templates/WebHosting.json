@@ -1,0 +1,146 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[variables('hostingPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Hosting Plan"
+      },
+      "sku": {
+        "name": "[parameters('hostingPlanSKUName')]",
+        "capacity": "[parameters('hostingPlanSKUCapacity')]"
+      },
+      "properties": {
+        "name": "[variables('hostingPlanName')]"
+      }
+    },
+
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[concat(variables('hostingPlanName'), '-', resourceGroup().name)]",
+      "type": "Microsoft.Insights/autoscalesettings",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "Resource",
+        "displayName": "Hosting Plan Auto Scale Settings"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
+      ],
+      "properties": {
+        "profiles": [
+          {
+            "name": "Default",
+            "capacity": {
+              "minimum": 1,
+              "maximum": 2,
+              "default": 1
+            },
+            "rules": [
+              {
+                "metricTrigger": {
+                  "metricName": "CpuPercentage",
+                  "metricResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT10M",
+                  "timeAggregation": "Average",
+                  "operator": "GreaterThan",
+                  "threshold": 80.0
+                },
+                "scaleAction": {
+                  "direction": "Increase",
+                  "type": "ChangeCount",
+                  "value": 1,
+                  "cooldown": "PT10M"
+                }
+              },
+              {
+                "metricTrigger": {
+                  "metricName": "CpuPercentage",
+                  "metricResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT1H",
+                  "timeAggregation": "Average",
+                  "operator": "LessThan",
+                  "threshold": 60.0
+                },
+                "scaleAction": {
+                  "direction": "Decrease",
+                  "type": "ChangeCount",
+                  "value": 1,
+                  "cooldown": "PT1H"
+                }
+              }
+            ]
+          }
+        ],
+        "enabled": true,
+        "name": "[concat(variables('hostingPlanName'), '-', resourceGroup().name)]",
+        "targetResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
+      }
+    },
+
+    {
+      "apiVersion": "2018-03-01",
+      "type": "microsoft.insights/metricAlerts",
+      "name": "[concat('CPUHigh ', variables('hostingPlanName'))]",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+        "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "Resource",
+        "displayName": "Hosting Plan CPU High Alert Rule"
+      },
+      "properties": {
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT15M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "CpuPercentage",
+              "metricNamespace": "Microsoft.Web/serverFarms",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 80.0,
+              "timeAggregation": "Average"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+        },
+        "actions": [
+          {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ],
+        "description": "[concat('The average CPU is high across all the instances of ', variables('hostingPlanName'))]"
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

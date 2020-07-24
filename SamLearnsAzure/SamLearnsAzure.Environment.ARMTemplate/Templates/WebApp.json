@@ -1,0 +1,394 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[variables('serviceAPIName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverFarms/', variables('hostingPlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "empty",
+        "displayName": "Web Service Webapp"
+      },
+      "properties": {
+        "name": "[variables('serviceAPIName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "httpsOnly": true
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "connectionstrings",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', variables('serviceAPIName'))]"
+          ],
+          "properties": {
+            "DefaultConnection": {
+              "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('databaseName'), ';User Id=', parameters('databaseLoginName'), '@', variables('sqlserverName'), ';Password=', parameters('databaseLoginPassword'), ';')]",
+              "type": "SQLServer"
+            }
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "type": "slots",
+          "name": "Staging",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', variables('serviceAPIName'))]"
+          ],
+          "location": "[resourceGroup().location]",
+          "identity": {
+            "type": "SystemAssigned"
+          },
+          "properties": {
+
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2018-03-01",
+      "name": "[concat('ServerErrors ', variables('serviceAPIName'))]",
+      "type": "microsoft.insights/metricAlerts",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('serviceAPIName'))]",
+        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('serviceAPIName'))]": "Resource",
+        "displayName": "Web Service Server Errors Alert Rule"
+      },
+      "properties": {
+        "description": "[concat(variables('serviceAPIName'), ' has some server errors, status code 5xx.')]",
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', variables('serviceAPIName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "Http5xx",
+              "metricNamespace": "Microsoft.Web/sites",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 10.0,
+              "timeAggregation": "Total"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+        },
+        "actions": [
+          {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-03-01",
+      "name": "[concat('ForbiddenRequests ', variables('serviceAPIName'))]",
+      "type": "microsoft.insights/metricAlerts",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('serviceAPIName'))]",
+        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('serviceAPIName'))]": "Resource",
+        "displayName": "Web Service Forbidden Requests Alert Rule"
+      },
+      "properties": {
+        "description": "[concat(variables('serviceAPIName'), ' has some requests that are forbidden, status code 403.')]",
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', variables('serviceAPIName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "Http403",
+              "metricNamespace": "Microsoft.Web/sites",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 0.0,
+              "timeAggregation": "Total"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+        },
+        "actions": [
+          {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ]
+      }
+    },
+
+
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[variables('webSiteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverFarms/', variables('hostingPlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "empty",
+        "displayName": "Website Webapp"
+      },
+      "properties": {
+        "name": "[variables('webSiteName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "alwaysOn": true,
+        "httpsOnly": true
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "connectionstrings",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', variables('webSiteName'))]"
+          ],
+          "properties": {
+            "DefaultConnection": {
+              "value": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('databaseName'), ';User Id=', parameters('databaseLoginName'), '@', variables('sqlserverName'), ';Password=', parameters('databaseLoginPassword'), ';')]",
+              "type": "SQLServer"
+            },
+            "AzureWebJobsDashboard": {
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]",
+              "type": "Custom"
+            },
+            "AzureWebJobsStorage": {
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]",
+              "type": "Custom"
+            }
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "type": "slots",
+          "name": "Staging",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', variables('webSiteName'))]"
+          ],
+          "location": "[resourceGroup().location]",
+          "identity": {
+            "type": "SystemAssigned"
+          },
+          "properties": {
+
+          }
+        },
+        {
+          "type": "Microsoft.Web/sites/hostNameBindings",
+          "name": "[concat(variables('webSiteName'),'/',parameters('websiteDomainName'))]",
+          "apiVersion": "2016-08-01",
+          "location": "[resourceGroup().location]",
+          "tags": {
+            "displayName": "Website bindings"
+          },
+          "properties": {
+            "siteName": "[variables('webSiteName')]"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
+          ]
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "letsencrypt",
+          "type": "siteextensions",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('webSiteName'))]"
+          ],
+          "properties": {
+          }
+        },
+        {
+          "apiVersion": "2016-03-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
+          ],
+          "properties": {
+            "letsencrypt:Tenant": "[subscription().tenantId]",
+            "letsencrypt:SubscriptionId": "[subscription().subscriptionId]",
+            "letsencrypt:ResourceGroupName": "[resourceGroup().name]",
+            "letsencrypt:ServicePlanResourceGroupName": "[resourceGroup().name]",
+            "letsencrypt:ClientId": "[parameters('appServiceContributerClientId')]",
+            "letsencrypt:ClientSecret": "[parameters('appServiceContributerClientSecret')]",
+            "letsencrypt:Email": "[parameters('letsEncryptEmailAddress')]"
+          }
+        }
+      ]
+    },
+
+
+
+
+
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2015-07-01",
+      "name": "[parameters('letsEncryptUniqueRoleAssignmentGuid')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/Sites', variables('webSiteName'))]"
+      ],
+      "properties": {
+        "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', parameters('roleAssignmentId'))]",
+        "principalId": "[parameters('appServiceContributorObjectId')]"
+      },
+      "tags": {
+        "displayName": "Website authorization"
+      }
+    },
+
+
+
+
+
+    {
+      "apiVersion": "2018-03-01",
+      "name": "[concat('ServerErrors ', variables('webSiteName'))]",
+      "type": "microsoft.insights/metricAlerts",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]",
+        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webSiteName'))]": "Resource",
+        "displayName": "Website Server Errors Alert Rule"
+      },
+      "properties": {
+        "description": "[concat(variables('webSiteName'), ' has some server errors, status code 5xx.')]",
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "Http5xx",
+              "metricNamespace": "Microsoft.Web/sites",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 10.0,
+              "timeAggregation": "Total"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+        },
+        "actions": [
+          {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-03-01",
+      "name": "[concat('ForbiddenRequests ', variables('webSiteName'),'new')]",
+      "type": "microsoft.insights/metricAlerts",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]",
+        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webSiteName'))]": "Resource",
+        "displayName": "Website Forbidden Requests Alert Rule"
+      },
+      "properties": {
+        "description": "[concat(variables('webSiteName'), ' has some requests that are forbidden, status code 403.')]",
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', variables('webSiteName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "Http403",
+              "metricNamespace": "Microsoft.Web/sites",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 0.0,
+              "timeAggregation": "Total"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+        },
+        "actions": [
+          {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+  }
+}
