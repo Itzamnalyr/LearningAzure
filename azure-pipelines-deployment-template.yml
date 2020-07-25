@@ -46,7 +46,7 @@ jobs:
     displayName: "Deploy infrastructure to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
     pool:
-      vmImage: "ubuntu-latest"    
+      vmImage: "windows-latest"    
     variables:
       ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
       AppSettings.Environment: ${{parameters.environment}}
