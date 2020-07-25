@@ -100,7 +100,7 @@ jobs:
                 $locationShort = "${{parameters.resourceGroupLocationShort}}"                
                 $storageAccountName = "$appPrefix$environment$($locationShort)storage"                
                 az group create --name "${{parameters.resourceGroupName}}" --location $location 
-                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters locationShort $locationShort
+                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName $storageAccountName
                 
           #- task: AzureResourceGroupDeployment@2
           #  displayName: 'Azure Deployment: Deploy ARM Template to resource group'
