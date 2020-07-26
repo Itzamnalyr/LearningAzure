@@ -56,13 +56,13 @@
       "metadata": {
         "description": "Object Id of the AAD user that will have admin access to the SQL server and the Key Vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
       }
+    },
+    "azureDevOpsPrincipalId": {
+      "type": "string",
+      "metadata": {
+        "description": "Object Id of the service principal that will have Azure DevOps access to the vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
+      }
     }
-    //"azureDevOpsPrincipalId": {
-    //  "type": "string",
-    //  "metadata": {
-    //    "description": "Object Id of the service principal that will have Azure DevOps access to the vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
-    //  }
-    //}
     //"integrationTestsPrincipalId": {
     //  "type": "string",
     //  "metadata": {
@@ -112,13 +112,13 @@
           ////    "certificates": []
           ////  }
           ////},
-          //{
-          //  "tenantId": "[subscription().tenantid]",
-          //  "objectId": "[parameters('azureDevOpsPrincipalId')]",
-          //  "permissions": {
-          //    "secrets": "[parameters('vaultAdminSecretsPermissions')]"
-          //  }
-          //}
+          {
+            "tenantId": "[subscription().tenantid]",
+            "objectId": "[parameters('azureDevOpsPrincipalId')]",
+            "permissions": {
+              "secrets": "[parameters('vaultAdminSecretsPermissions')]"
+            }
+          }
           //{
           //  "tenantId": "[subscription().tenantid]",
           //  "objectId": "[parameters('integrationTestsPrincipalId')]",
