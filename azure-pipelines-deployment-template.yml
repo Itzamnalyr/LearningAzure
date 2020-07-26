@@ -114,21 +114,24 @@ jobs:
                 $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
                 $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
                 $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
+                $administratorUserPrincipalId = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
+                $azureDevOpsPrincipalId = "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+                $templatesLocation = "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"
                 
                 #Create resource group
                 az group create --name $resourceGroupName --location $location 
                 
                 #Key vault
-                az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureKeyVault.json" --parameters keyVaultName=$keyVaultName userPrincipalId="076f7430-ef4f-44e0-aaa7-d00c0f75b0b8" azureDevOpsPrincipalId="e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+                az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\AzureKeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserPrincipalId azureDevOpsPrincipalId=$azureDevOpsPrincipalId
                 
                 #Storage
-                $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
+                $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\AzureStorage.json" --parameters storageAccountName=$storageAccountName
                 $json = $storageOutput | ConvertFrom-Json
                 #Upload the secret into the key vault
                 az keyvault secret set --vault-name $keyVaultName --name "storageAccountAccessKey" --value $json[0].properties.outputs[0].storageAccountKey.value
 
                 #SQL Server and database
-                #az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureSQL.json" --parameters sqlServerName=$sqlServerName storageAccountName=$storageAccountName administratorLogin=${{parameters.databaseLoginName}} administratorLoginPassword=${{parameters.databaseLoginPassword}} userPrincipalLogin=${{parameters.userPrincipalLogin}} userPrincipalId="" databaseName=samsdb
+                #az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\AzureSQL.json" --parameters sqlServerName=$sqlServerName storageAccountName=$storageAccountName administratorLogin=${{parameters.databaseLoginName}} administratorLoginPassword=${{parameters.databaseLoginPassword}} userPrincipalLogin=${{parameters.userPrincipalLogin}} userPrincipalId="" databaseName=samsdb
 
           #- task: AzureResourceGroupDeployment@2
           #  displayName: 'Azure Deployment: Deploy ARM Template to resource group'

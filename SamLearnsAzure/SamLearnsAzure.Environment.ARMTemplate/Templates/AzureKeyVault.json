@@ -51,7 +51,7 @@
         "description": "Specifies if the vault is enabled for volume encryption"
       }
     },
-    "userPrincipalId": {
+    "administratorUserPrincipalId": {
       "type": "string",
       "metadata": {
         "description": "Object Id of the AAD user that will have admin access to the SQL server and the Key Vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
@@ -89,7 +89,14 @@
         "accessPolicies": [
           {
             "tenantId": "[subscription().tenantid]",
-            "objectId": "[parameters('userPrincipalId')]",
+            "objectId": "[parameters('administratorUserPrincipalId')]",
+            "permissions": {
+              "secrets": "[parameters('vaultAdminSecretsPermissions')]"
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantid]",
+            "objectId": "[parameters('azureDevOpsPrincipalId')]",
             "permissions": {
               "secrets": "[parameters('vaultAdminSecretsPermissions')]"
             }
@@ -112,13 +119,6 @@
           ////    "certificates": []
           ////  }
           ////},
-          {
-            "tenantId": "[subscription().tenantid]",
-            "objectId": "[parameters('azureDevOpsPrincipalId')]",
-            "permissions": {
-              "secrets": "[parameters('vaultAdminSecretsPermissions')]"
-            }
-          }
           //{
           //  "tenantId": "[subscription().tenantid]",
           //  "objectId": "[parameters('integrationTestsPrincipalId')]",

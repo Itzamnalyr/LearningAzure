@@ -16,18 +16,20 @@ $actionGroupShortName = "$environment-actgrp"
 $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
 $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
 $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
-$cdnName = "$appPrefix-$environment-$locationShort-cdn"
+$cdnName = "$appPrefix-$environment-$locationShort-cdn"                
+$administratorUserPrincipalId = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
+$azureDevOpsPrincipalId = "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
 write-host $serviceAPIName
 write-host $storageAccountName
 write-host $actionGroupName
 write-host $applicationInsightsAvailablityTestName
 
-#storage
-az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file templates/AzureStorage.json --parameters storageAccountName=$storageAccountName
 #key vault
-az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file templates/AzureKeyVault.json --parameters keyVaultName=$keyVaultName 
+az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file templates\AzureKeyVault.json --parameters --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserPrincipalId azureDevOpsPrincipalId=$azureDevOpsPrincipalId
+#storage
+az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file templates\AzureStorage.json --parameters storageAccountName=$storageAccountName
 #sql server and database
-az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file templates/AzureSQL.json --parameters sqlServerName=$sqlServerName storageAccountName=$storageAccountName administratorLogin=${{parameters.databaseLoginName}} administratorLoginPassword=${{parameters.databaseLoginPassword}} userPrincipalLogin=${{parameters.userPrincipalLogin}} userPrincipalId="" databaseName=samsdb
+az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file templates\AzureSQL.json --parameters sqlServerName=$sqlServerName storageAccountName=$storageAccountName administratorLogin=${{parameters.databaseLoginName}} administratorLoginPassword=${{parameters.databaseLoginPassword}} userPrincipalLogin=${{parameters.userPrincipalLogin}} userPrincipalId="" databaseName=samsdb
 
 
 -userPrincipalLogin ${{parameters.userPrincipalLogin}} -environment ${{parameters.environmentLowercase}} -locationShort ${{parameters.resourceGroupLocationShort}}  -appServiceContributerClientSecret "${{parameters.appServiceContributerClientSecret}}" -websiteDomainName ${{parameters.websiteDomainName}} -roleAssignmentId ${{parameters.roleAssignmentId}} -letsEncryptUniqueRoleAssignmentGuid ${{parameters.letsEncryptUniqueRoleAssignmentGuid}}'
