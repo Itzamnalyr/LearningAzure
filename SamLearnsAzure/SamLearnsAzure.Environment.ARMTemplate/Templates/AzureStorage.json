@@ -60,7 +60,7 @@
         }
       }
     }
-  ]
+  ],
   "outputs": {
     "storageAccountKey": {
       "type": "string",

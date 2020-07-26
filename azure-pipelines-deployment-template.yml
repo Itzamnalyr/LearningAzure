@@ -119,14 +119,19 @@ jobs:
                 az group create --name $resourceGroupName --location $location 
                 
                 #Key vault
-                az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file $(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureKeyVault.json --parameters keyVaultName=$keyVaultName 
+                az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureKeyVault.json" --parameters keyVaultName=$keyVaultName userPrincipalId="076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
                 
                 #Storage
-                $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file $(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json --parameters storageAccountName=$storageAccountName
-                Write-Host $storageOutput
+                $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
+                $json = $storageOutput | ConvertFrom-Json
+                    #Get the storage account key from the ARM Template outputs
+                    $storageAccountSecretvalue = ConvertTo-SecureString "$json[0].properties.outputs[0].storageAccountKey" -AsPlainText -Force
+                    $storageAccountExistingSecretValue = (Get-AzKeyVaultSecret -vaultName "$KeyVaultName" -name "$storageAccountName").SecretValueText
+                    Write-Host "Setting value for $storageAccountName to key vault"
+                    Set-AzKeyVaultSecret -VaultName $keyVaultName -Name "storageAccountAccessKey" -SecretValue $storageAccountSecretvalue
 
                 #SQL Server and database
-                az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file $(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureSQL.json --parameters sqlServerName=$sqlServerName storageAccountName=$storageAccountName administratorLogin=${{parameters.databaseLoginName}} administratorLoginPassword=${{parameters.databaseLoginPassword}} userPrincipalLogin=${{parameters.userPrincipalLogin}} userPrincipalId="" databaseName=samsdb
+                #az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureSQL.json" --parameters sqlServerName=$sqlServerName storageAccountName=$storageAccountName administratorLogin=${{parameters.databaseLoginName}} administratorLoginPassword=${{parameters.databaseLoginPassword}} userPrincipalLogin=${{parameters.userPrincipalLogin}} userPrincipalId="" databaseName=samsdb
 
           #- task: AzureResourceGroupDeployment@2
           #  displayName: 'Azure Deployment: Deploy ARM Template to resource group'
