@@ -12,6 +12,9 @@ schedules:
     - master
   always: true
 
+#TODO: Remove condition from top level build
+#TODO: Remove enabled: false flag from unit tests
+
 variables:
 - group: 'SamLearnsAzure KeyVault'
 - name: vmImage #Note this weird name/value syntax if you need to reference a variable group in variables

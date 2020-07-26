@@ -94,6 +94,7 @@ jobs:
          SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
         arguments: '--configuration ${{parameters.buildConfiguration}} --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
         vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3' 
+      enabled: false
 
   - job: BuildFunctional
     displayName: 'Build and publish functional tests job'

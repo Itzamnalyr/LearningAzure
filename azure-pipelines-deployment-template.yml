@@ -81,6 +81,7 @@ jobs:
               filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
               arguments: '-godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"'
             continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
+            enabled: false
           - task: AzurePowerShell@4 
             displayName: 'Run Azure PowerShell to remove deployments older than 30 days' #This addresses a deployment quota limit: https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-quota-exceeded
             inputs:
@@ -88,6 +89,7 @@ jobs:
               ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/DeploymentCleanup.ps1'
               ScriptArguments: '-ResourceGroupName "${{parameters.resourceGroupName}}"'
               azurePowerShellVersion: LatestVersion
+            enabled: false
           - task: AzureCLI@2
             displayName: 'Deploy ARM templates'
             inputs:
@@ -113,8 +115,8 @@ jobs:
                 $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
                 
                 az group create --name "${{parameters.resourceGroupName}}" --location $location 
-                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $storageAccountName --template-file "EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
-                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $keyVaultName --template-file "EnvironmentARMTemplate/Templates/AzureKeyVault.json" --parameters keyVaultName=$keyVaultName 
+                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
+                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $keyVaultName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureKeyVault.json" --parameters keyVaultName=$keyVaultName 
 
           #- task: AzureResourceGroupDeployment@2
           #  displayName: 'Azure Deployment: Deploy ARM Template to resource group'
