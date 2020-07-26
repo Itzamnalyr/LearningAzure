@@ -124,10 +124,8 @@ jobs:
                 #Storage
                 $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
                 $json = $storageOutput | ConvertFrom-Json
-                    #Get the storage account key from the ARM Template outputs
-                    $storageAccountSecretvalue = ConvertTo-SecureString "$json[0].properties.outputs[0].storageAccountKey.value" -AsPlainText -Force
-                    #Upload the secret into the key vault
-                    Set-AzKeyVaultSecret -VaultName $keyVaultName -Name "storageAccountAccessKey" -SecretValue $storageAccountSecretvalue
+                #Upload the secret into the key vault
+                az keyvault secret set --vault-name $keyVaultName --name "storageAccountAccessKey" --value $json[0].properties.outputs[0].storageAccountKey.value
 
                 #SQL Server and database
                 #az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureSQL.json" --parameters sqlServerName=$sqlServerName storageAccountName=$storageAccountName administratorLogin=${{parameters.databaseLoginName}} administratorLoginPassword=${{parameters.databaseLoginPassword}} userPrincipalLogin=${{parameters.userPrincipalLogin}} userPrincipalId="" databaseName=samsdb
