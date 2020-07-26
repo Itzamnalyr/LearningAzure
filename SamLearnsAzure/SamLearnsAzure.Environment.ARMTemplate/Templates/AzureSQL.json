@@ -5,22 +5,19 @@
     "sqlServerName": {
       "type": "string"
     },
-    "storageAccountName": {
+    "sqlAdministratorLogin": {
       "type": "string"
     },
-    "administratorLogin": {
+    "sqlAdministratorLoginPassword": {
       "type": "string"
     },
-    "administratorLoginPassword": {
-      "type": "string"
-    },
-    "userPrincipalLogin": {
+    "administratorUserPrincipalLogin": {
       "type": "string",
       "metadata": {
         "description": "login nameof the AAD user that will have admin access to SQL server and the Key Vault. "
       }
     },
-    "userPrincipalId": {
+    "administratorUserPrincipalId": {
       "type": "string",
       "metadata": {
         "description": "Object Id of the AAD user that will have admin access to the SQL server and the Key Vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets. I suspect this is not being used"
@@ -72,6 +69,12 @@
       "metadata": {
         "description": "Describes the SKU tier"
       }
+    },
+    "storageAccountAccessKey": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -130,8 +133,8 @@
           "apiVersion": "2014-04-01",
           "properties": {
             "administratorType": "ActiveDirectory",
-            "login": "[parameters('userPrincipalLogin')]",
-            "sid": "[parameters('userPrincipalId')]",
+            "login": "[parameters('administratorUserPrincipalLogin')]",
+            "sid": "[parameters('administratorUserPrincipalId')]",
             "tenantId": "[subscription().tenantid]"
           },
           "dependsOn": [
@@ -148,7 +151,7 @@
           "properties": {
             "state": "Enabled",
             "storageEndpoint": "[concat('https://', parameters('storageAccountName'), '.blob.core.windows.net')]",
-            "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+            "storageAccountAccessKey": "[parameters('storageAccountAccessKey')]",
             "retentionDays": "180",
             "storageAccountSubscriptionId": "[subscription().subscriptionId]",
             "isStorageSecondaryKeyInUse": false,
