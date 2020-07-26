@@ -99,7 +99,18 @@ jobs:
                 $environment = "${{parameters.environmentLowercase}}"
                 $location = "${{parameters.resourceGroupLocation}}" 
                 $locationShort = "${{parameters.resourceGroupLocationShort}}"                
-                $storageAccountName = "$appPrefix$environment$($locationShort)storage"   
+                $keyVaultName = "$appPrefix-$environment-$locationShort-keyvault"
+                $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
+                $webSiteName = "$appPrefix-$environment-$locationShort-web"
+                $sqlserverName = "$appPrefix-$environment-$locationShort-sqlserver"
+                $hostingPlanName = "$appPrefix-$environment-$locationShort-hostingplan"
+                $storageAccountName = "$appPrefix$environment$($locationShort)storage"
+                $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
+                $actionGroupShortName = "$environment-actgrp"
+                $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
+                $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
+                $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
+                $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
                 
                 az group create --name "${{parameters.resourceGroupName}}" --location $location 
                 az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
