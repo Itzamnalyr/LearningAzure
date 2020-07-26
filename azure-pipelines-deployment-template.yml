@@ -89,7 +89,7 @@ jobs:
               ScriptArguments: '-ResourceGroupName "${{parameters.resourceGroupName}}"'
               azurePowerShellVersion: LatestVersion
           - task: AzureCLI@2
-            displayName: 'Deploy ATM templates'
+            displayName: 'Deploy ARM templates'
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps

@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build YAML", "Build YAML", 
 		..\azure-pipelines-build-template.yml = ..\azure-pipelines-build-template.yml
 		..\azure-pipelines-deployment-template.yml = ..\azure-pipelines-deployment-template.yml
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
+		..\azure-pipelinesTesting.yml = ..\azure-pipelinesTesting.yml
 		BuildVersion.ps1 = BuildVersion.ps1
 		..\ModelsPackagePipeline.yml = ..\ModelsPackagePipeline.yml
 	EndProjectSection
