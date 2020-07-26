@@ -113,8 +113,8 @@ jobs:
                 $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
                 
                 az group create --name "${{parameters.resourceGroupName}}" --location $location 
-                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
-                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $keyVaultName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureKeyVault.json" --parameters keyVaultName=$keyVaultName 
+                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $storageAccountName --template-file "EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
+                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $keyVaultName --template-file "EnvironmentARMTemplate/Templates/AzureKeyVault.json" --parameters keyVaultName=$keyVaultName 
 
           #- task: AzureResourceGroupDeployment@2
           #  displayName: 'Azure Deployment: Deploy ARM Template to resource group'
