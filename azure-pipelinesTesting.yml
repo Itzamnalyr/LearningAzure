@@ -12,7 +12,7 @@ stages:
   - job: BuildARMTemplates
     displayName: 'Build Copy ARM templates job'
     pool:
-      vmImage: ${{parameters.vmImage}}
+      vmImage: "Windows-Latest"
     steps:
     - task: CopyFiles@2
       displayName: 'Copy environment ARM template files to: $(build.artifactstagingdirectory)'
@@ -22,7 +22,7 @@ stages:
         TargetFolder: '$(build.artifactstagingdirectory)\EnvironmentARMTemplate'
 
     - task: AzureCLI@2
-      displayName: 'Deploy ARM templates'
+      displayName: 'Deploy ARM templates for storage and key vault'
       inputs:
         azureSubscription: 'SamLearnsAzure connection to Azure Portal'
         scriptType: ps
@@ -46,6 +46,6 @@ stages:
           $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
           $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
                 
-          az group create --name "${{parameters.resourceGroupName}}" --location $location 
+          az group create --name $resourceGroupName --location $location 
           az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
           az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureKeyVault.json --parameters keyVaultName=$keyVaultName 
