@@ -5,6 +5,7 @@ $environment = "pre"
 $locationShort = "eu"
 
 
+$keyVaultName = "$appPrefix-$environment-$locationShort-keyvault"
 $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
 $webSiteName = "$appPrefix-$environment-$locationShort-web"
 $sqlserverName = "$appPrefix-$environment-$locationShort-sqlserver"
@@ -21,9 +22,9 @@ write-host $storageAccountName
 write-host $actionGroupName
 write-host $applicationInsightsAvailablityTestName
 
-az deployment group create --resource-group $resourceGroupName --name samsapparmeustorage --template-file templates/AzureStorage.json --parameters storageAccountName="$storageAccountName" resourceGroupLocation="$resourceGroupLocation"
+az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file templates/AzureStorage.json --parameters storageAccountName="$storageAccountName" 
 
-az deployment group create --resource-group $resourceGroupName --name firewall-eastus2 --template-file templates/azuredeploy.json --parameters  networkResourceGroup=network-eastus2-rg vnetName=hub-vnet subnetName=AzureFirewallSubnet
+az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file templates/AzureKeyVault.json --parameters keyVaultName=$keyVaultName 
 
 
 #Order

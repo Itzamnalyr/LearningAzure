@@ -22,10 +22,6 @@
       "allowedValues": [
         "Standard"
       ]
-    },
-    "resourceGroupLocation": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().location]"
     }
   },
   "variables": {
@@ -35,7 +31,7 @@
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2018-07-01",
       "name": "[parameters('storageAccountName')]",
-      "location": "[parameters('resourceGroupLocation')]",
+      "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "Storage Account"
       },
