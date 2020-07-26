@@ -48,4 +48,4 @@ stages:
                 
           az group create --name $resourceGroupName --location $location 
           az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
-          az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureKeyVault.json --parameters keyVaultName=$keyVaultName 
+          az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureKeyVault.json" --parameters keyVaultName=$keyVaultName 
