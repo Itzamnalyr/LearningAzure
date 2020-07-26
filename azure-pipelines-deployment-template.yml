@@ -125,10 +125,8 @@ jobs:
                 $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
                 $json = $storageOutput | ConvertFrom-Json
                     #Get the storage account key from the ARM Template outputs
-                    $storageAccountSecretvalue = ConvertTo-SecureString "$json[0].properties.outputs[0].storageAccountKey" -AsPlainText -Force
-                    $storageAccountExistingSecretValue = (Get-AzKeyVaultSecret -vaultName "$KeyVaultName" -name "storageAccountAccessKey").SecretValueText
-                    Write-Host "Found secret: "$storageAccountExistingSecretValue
-                    Write-Host "Setting value for $storageAccountName to key vault"
+                    $storageAccountSecretvalue = ConvertTo-SecureString "$json[0].properties.outputs[0].storageAccountKey.value" -AsPlainText -Force
+                    #Upload the secret into the key vault
                     Set-AzKeyVaultSecret -VaultName $keyVaultName -Name "storageAccountAccessKey" -SecretValue $storageAccountSecretvalue
 
                 #SQL Server and database
