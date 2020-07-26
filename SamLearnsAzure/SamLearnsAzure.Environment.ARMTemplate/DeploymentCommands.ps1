@@ -8,7 +8,7 @@ $locationShort = "eu"
 $keyVaultName = "$appPrefix-$environment-$locationShort-keyvault"
 $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
 $webSiteName = "$appPrefix-$environment-$locationShort-web"
-$sqlserverName = "$appPrefix-$environment-$locationShort-sqlserver"
+$sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
 $hostingPlanName = "$appPrefix-$environment-$locationShort-hostingplan"
 $storageAccountName = "$appPrefix$environment$($locationShort)storage"
 $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
@@ -22,11 +22,15 @@ write-host $storageAccountName
 write-host $actionGroupName
 write-host $applicationInsightsAvailablityTestName
 
-az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file templates/AzureStorage.json --parameters storageAccountName="$storageAccountName" 
-
+#storage
+az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file templates/AzureStorage.json --parameters storageAccountName=$storageAccountName
+#key vault
 az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file templates/AzureKeyVault.json --parameters keyVaultName=$keyVaultName 
+#sql server and database
+az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file templates/AzureSQL.json --parameters sqlServerName=$sqlServerName storageAccountName=$storageAccountName administratorLogin=${{parameters.databaseLoginName}} administratorLoginPassword=${{parameters.databaseLoginPassword}} userPrincipalLogin=${{parameters.userPrincipalLogin}} userPrincipalId="" databaseName=samsdb
 
 
+-userPrincipalLogin ${{parameters.userPrincipalLogin}} -environment ${{parameters.environmentLowercase}} -locationShort ${{parameters.resourceGroupLocationShort}}  -appServiceContributerClientSecret "${{parameters.appServiceContributerClientSecret}}" -websiteDomainName ${{parameters.websiteDomainName}} -roleAssignmentId ${{parameters.roleAssignmentId}} -letsEncryptUniqueRoleAssignmentGuid ${{parameters.letsEncryptUniqueRoleAssignmentGuid}}'
 #Order
 #1. Storage
 #2. Key Vault

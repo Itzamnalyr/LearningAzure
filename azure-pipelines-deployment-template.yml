@@ -99,12 +99,13 @@ jobs:
               inlineScript: | 
                 $appPrefix = "samsapp"
                 $environment = "${{parameters.environmentLowercase}}"
+                $resourceGroupName = "${{parameters.resourceGroupName}}"
                 $location = "${{parameters.resourceGroupLocation}}" 
                 $locationShort = "${{parameters.resourceGroupLocationShort}}"                
                 $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
                 $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
                 $webSiteName = "$appPrefix-$environment-$locationShort-web"
-                $sqlserverName = "$appPrefix-$environment-$locationShort-sqlserver"
+                $sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
                 $hostingPlanName = "$appPrefix-$environment-$locationShort-hostingplan"
                 $storageAccountName = "$appPrefix$environment$($locationShort)storage"
                 $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
@@ -114,9 +115,17 @@ jobs:
                 $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
                 $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
                 
-                az group create --name "${{parameters.resourceGroupName}}" --location $location 
-                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $storageAccountName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json" --parameters storageAccountName=$storageAccountName
-                az deployment group create --resource-group "${{parameters.resourceGroupName}}" --name $keyVaultName --template-file "$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureKeyVault.json" --parameters keyVaultName=$keyVaultName 
+                #Create resource group
+                az group create --name $resourceGroupName --location $location 
+                
+                #Storage
+                az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file $(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureStorage.json --parameters storageAccountName=$storageAccountName
+                
+                #Key vault
+                az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file $(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureKeyVault.json --parameters keyVaultName=$keyVaultName 
+                
+                #SQL Server and database
+                az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file $(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/Templates/AzureSQL.json --parameters sqlServerName=$sqlServerName storageAccountName=$storageAccountName administratorLogin=${{parameters.databaseLoginName}} administratorLoginPassword=${{parameters.databaseLoginPassword}} userPrincipalLogin=${{parameters.userPrincipalLogin}} userPrincipalId="" databaseName=samsdb
 
           #- task: AzureResourceGroupDeployment@2
           #  displayName: 'Azure Deployment: Deploy ARM Template to resource group'
