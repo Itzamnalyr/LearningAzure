@@ -101,7 +101,7 @@ jobs:
                 $environment = "${{parameters.environmentLowercase}}"
                 $location = "${{parameters.resourceGroupLocation}}" 
                 $locationShort = "${{parameters.resourceGroupLocationShort}}"                
-                $keyVaultName = "$appPrefix-$environment-$locationShort-keyvault"
+                $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
                 $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
                 $webSiteName = "$appPrefix-$environment-$locationShort-web"
                 $sqlserverName = "$appPrefix-$environment-$locationShort-sqlserver"
