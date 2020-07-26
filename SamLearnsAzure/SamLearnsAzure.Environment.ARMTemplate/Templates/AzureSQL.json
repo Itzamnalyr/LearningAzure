@@ -143,8 +143,7 @@
           "name": "AuditingSettings",
           "apiVersion": "2017-03-01-preview",
           "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]",
-            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
           ],
           "properties": {
             "state": "Enabled",
