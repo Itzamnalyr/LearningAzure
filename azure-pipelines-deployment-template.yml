@@ -237,21 +237,21 @@ jobs:
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
 
-  - deployment: DeployAppInsightsAnnotation
-    displayName: "Deploy application insights annotation to ${{parameters.environment}} job"
-    environment: ${{parameters.environment}}
-    dependsOn: DeployInfrastructure
-    pool:
-      vmImage: ${{parameters.vmImage}}        
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: ms-appinsights.appinsightsreleaseannotations.release-task.ms-appinsights.ReleaseAnnotation@1
-            displayName: 'Add release annotation to Azure Application Insights'
-            inputs:
-              applicationId: '${{parameters.applicationInsightsApplicationId}}'
-              apiKey: '${{parameters.applicationInsightsApiKey}}'
+#  - deployment: DeployAppInsightsAnnotation
+#    displayName: "Deploy application insights annotation to ${{parameters.environment}} job"
+#    environment: ${{parameters.environment}}
+#    dependsOn: DeployInfrastructure
+#    pool:
+#      vmImage: ${{parameters.vmImage}}        
+#    strategy:
+#      runOnce:
+#        deploy:
+#          steps:
+#          - task: ms-appinsights.appinsightsreleaseannotations.release-task.ms-appinsights.ReleaseAnnotation@1
+#            displayName: 'Add release annotation to Azure Application Insights'
+#            inputs:
+#              applicationId: '${{parameters.applicationInsightsApplicationId}}'
+#              apiKey: '${{parameters.applicationInsightsApiKey}}'
 
   - deployment: DeployFunctionalTests
     displayName: "Deploy functional tests to ${{parameters.environment}} job"
@@ -260,7 +260,7 @@ jobs:
     - DeployDatabase
     - DeployWebServiceapp
     - DeployWebsiteapp
-    - DeployAppInsightsAnnotation
+    #- DeployAppInsightsAnnotation
     pool:
       vmImage: ${{parameters.vmImage}}        
     strategy:
