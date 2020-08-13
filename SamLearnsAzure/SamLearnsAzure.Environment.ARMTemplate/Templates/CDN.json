@@ -1,10 +1,12 @@
 ﻿{
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "resourceGroupLocation": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().location]"
+    "cdnName": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -13,7 +15,7 @@
     {
       "type": "Microsoft.Cdn/profiles",
       "apiVersion": "2016-04-02",
-      "name": "[variables('cdnName')]",
+      "name": "[parameters('cdnName')]",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "CDN profile"
@@ -29,24 +31,24 @@
     {
       "type": "Microsoft.Cdn/profiles/endpoints",
       "apiVersion": "2016-04-02",
-      "name": "[concat(variables('cdnName'), '/', variables('cdnName'), 'endpoint')]",
+      "name": "[concat(parameters('cdnName'), '/', parameters('cdnName'), 'endpoint')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Cdn/profiles', variables('cdnName'))]"
+        "[resourceId('Microsoft.Cdn/profiles', parameters('cdnName'))]"
       ],
       "tags": {
         "displayName": "CDN profile endpoint"
       },
       "properties": {
-        "originHostHeader": "[concat(variables('storageAccountName'), '.blob.core.windows.net')]",
+        "originHostHeader": "[concat(parameters('storageAccountName'), '.blob.core.windows.net')]",
         "isHttpAllowed": true,
         "isHttpsAllowed": true,
         "queryStringCachingBehavior": "IgnoreQueryString",
         "origins": [
           {
-            "name": "[concat(variables('storageAccountName'), '-blob-core-windows-net')]",
+            "name": "[concat(parameters('storageAccountName'), '-blob-core-windows-net')]",
             "properties": {
-              "hostName": "[concat(variables('storageAccountName'), '.blob.core.windows.net')]",
+              "hostName": "[concat(parameters('storageAccountName'), '.blob.core.windows.net')]",
               "httpPort": 80,
               "httpsPort": 443
             }
@@ -101,13 +103,13 @@
     {
       "type": "Microsoft.Cdn/profiles/endpoints/origins",
       "apiVersion": "2016-04-02",
-      "name": "[concat(variables('cdnName'), '/', variables('cdnName'), 'endpoint/', variables('storageAccountName'), '-blob-core-windows-net')]",
+      "name": "[concat(parameters('cdnName'), '/', parameters('cdnName'), 'endpoint/', parameters('storageAccountName'), '-blob-core-windows-net')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Cdn/profiles/endpoints', variables('cdnName'), concat(variables('cdnName'), 'endpoint'))]",
-        "[resourceId('Microsoft.Cdn/profiles', variables('cdnName'))]"
+        "[resourceId('Microsoft.Cdn/profiles/endpoints', parameters('cdnName'), concat(parameters('cdnName'), 'endpoint'))]",
+        "[resourceId('Microsoft.Cdn/profiles', parameters('cdnName'))]"
       ],
       "properties": {
-        "hostName": "[concat(variables('storageAccountName'), '.blob.core.windows.net')]",
+        "hostName": "[concat(parameters('storageAccountName'), '.blob.core.windows.net')]",
         "httpPort": 80,
         "httpsPort": 443
       }

@@ -46,13 +46,16 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Templates\ApplicationInsights.json" />
-    <None Include="Templates\AzureCDN.json" />
-    <None Include="Templates\AzureFrontDoor.json" />
-    <None Include="Templates\AzureKeyVault.json" />
-    <None Include="Templates\AzureRedis.json" />
-    <None Include="Templates\AzureSQL.json" />
-    <None Include="Templates\AzureStorage.json" />
-    <None Include="Templates\WebApp.json" />
+    <None Include="Templates\ActionGroup.json" />
+    <None Include="Templates\CDN.json" />
+    <None Include="Templates\FrontDoor.json" />
+    <None Include="Templates\KeyVault.json" />
+    <None Include="Templates\Redis.json" />
+    <None Include="Templates\SQL.json" />
+    <None Include="Templates\Storage.json" />
+    <None Include="Templates\WebAppAlerts.json" />
+    <None Include="Templates\Website.json" />
+    <None Include="Templates\WebService.json" />
     <None Include="Templates\WebHosting.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />

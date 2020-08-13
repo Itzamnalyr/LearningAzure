@@ -52,7 +52,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptAppServiceContributerClientSecret: $(letsEncryptAppServiceContributerClientSecret)
       ASPNETCOREEnvironmentSetting: 'Development'
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
@@ -97,7 +97,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptletsEncryptAppServiceContributerClientSecret: $(letsEncryptAppServiceContributerClientSecret)
       ASPNETCOREEnvironmentSetting: 'Development'
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
@@ -141,7 +141,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdQA)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyQA)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptAppServiceContributerClientSecret: $(letsEncryptAppServiceContributerClientSecret)
       captureStartErrors: false
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'QA'  
@@ -184,7 +184,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdProd)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyProd)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptAppServiceContributerClientSecret: $(letsEncryptAppServiceContributerClientSecret)
       captureStartErrors: false
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'Prod'  

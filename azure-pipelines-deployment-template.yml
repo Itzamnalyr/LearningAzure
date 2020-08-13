@@ -3,7 +3,7 @@ parameters: # defaults for any parameters that aren't specified
   applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
   applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
   applicationInsightsLocation: 'East US'
-  appServiceContributerClientSecret: '***secret'
+  letsEncryptAppServiceContributerClientSecret: '***secret'
   ASPNETCOREEnvironmentSetting: 'Release'
   cognitiveServicesSubscriptionKey: '***secret'
   environment: 'Dev'  
@@ -131,9 +131,18 @@ jobs:
                 #Storage
                 $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\AzureStorage.json" --parameters storageAccountName=$storageAccountName
                 $json = $storageOutput | ConvertFrom-Json
-                $storageAccountAccessKey = $json[0].properties.outputs[0].storageAccountKey.value
+                $storageAccountAccessKey = $json.properties.outputs.storageAccountKey.value
                 #Upload the secret into the key vault
                 az keyvault secret set --vault-name $keyVaultName --name "storageAccountAccessKey" --value $storageAccountAccessKey
+
+                #CDN
+                az deployment group create --resource-group $resourceGroupName --name $cdnName --template-file "$templatesLocation\AzureCDN.json" --parameters cdnName=$cdnName storageAccountName=$storageAccountName
+
+                #Redis  
+                $redisOutput = az deployment group create --resource-group $resourceGroupName --name $redisCacheName --template-file "$templatesLocation\AzureCDN.json" --parameters redisCacheName=$redisCacheName storageAccountName=$storageAccountName
+                $json = $storageOutput | ConvertFrom-Json
+                $redisConnectionString = $json.properties.outputs.redisConnectionStringOutput.value
+                
 
                 #SQL Server and database
                 az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\AzureSQL.json" --parameters sqlServerName=$sqlServerName sqlAdministratorLogin=$sqlAdministratorLogin sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserPrincipalLogin=$administratorUserPrincipalLogin administratorUserPrincipalId=$administratorUserPrincipalId databaseName=samsdb storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey

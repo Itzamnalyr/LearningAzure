@@ -1,0 +1,120 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppName": {
+      "type": "string"
+    },
+    "actionGroupName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-03-01",
+      "name": "[concat('ServerErrors ', parameters('webAppName'))]",
+      "type": "microsoft.insights/metricAlerts",
+      "location": "global",
+      "dependsOn": [
+      ],
+      "tags": {
+        "displayName": "Web Service Server Errors Alert Rule"
+      },
+      "properties": {
+        "description": "[concat(parameters('webAppName'), ' has some server errors, status code 5xx.')]",
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "Http5xx",
+              "metricNamespace": "Microsoft.Web/sites",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 10.0,
+              "timeAggregation": "Total"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+        },
+        "actions": [
+          {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', parameters('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-03-01",
+      "name": "[concat('ForbiddenRequests ', parameters('webAppName'))]",
+      "type": "microsoft.insights/metricAlerts",
+      "location": "global",
+      "dependsOn": [
+      ],
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('webAppName'))]": "Resource",
+        "displayName": "Web Service Forbidden Requests Alert Rule"
+      },
+      "properties": {
+        "description": "[concat(parameters('webAppName'), ' has some requests that are forbidden, status code 403.')]",
+        "severity": 3,
+        "enabled": true,
+        "scopes": [
+          "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+        ],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "additionalProperties": null,
+          "allOf": [
+            {
+              "dimensions": [],
+              "metricName": "Http403",
+              "metricNamespace": "Microsoft.Web/sites",
+              "monitorTemplateType": 8,
+              "name": "Metric1",
+              "operator": "GreaterThan",
+              "threshold": 0.0,
+              "timeAggregation": "Total"
+            }
+          ],
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+        },
+        "actions": [
+          {
+            "actionGroupId": "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/devopsmetrics/providers/microsoft.insights/actiongroups/devopsmetricsmonitoringactionname",
+            "webHookProperties": {}
+          },
+          {
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', parameters('actionGroupName'))]",
+            "webHookProperties": {}
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "servicePrincipalId": {
+      "type": "string",
+      "value": "[reference(concat(resourceId('Microsoft.Web/sites', parameters('webAppName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
+    },
+    "serviceStagingSlotPrincipalId": {
+      "type": "string",
+      "value": "[reference(concat(resourceId('Microsoft.Web/sites/slots', parameters('webAppName'), 'Staging'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
+    }
+  }
+}

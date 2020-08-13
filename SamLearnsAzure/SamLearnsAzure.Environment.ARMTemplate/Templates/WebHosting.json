@@ -1,10 +1,36 @@
 ﻿{
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "resourceGroupLocation": {
+    "hostingPlanName": {
+      "type": "string"
+    },
+    "hostingPlanSKUName": {
       "type": "string",
-      "defaultValue": "[resourceGroup().location]"
+      "defaultValue": "S1",
+      "allowedValues": [
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "hostingPlanSKUCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "metadata": {
+        "description": "Describes plan's instance count"
+      }
+    },
+    "actionGroupName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -12,7 +38,7 @@
   "resources": [
     {
       "apiVersion": "2015-08-01",
-      "name": "[variables('hostingPlanName')]",
+      "name": "[parameters('hostingPlanName')]",
       "type": "Microsoft.Web/serverfarms",
       "location": "[resourceGroup().location]",
       "tags": {
@@ -23,21 +49,20 @@
         "capacity": "[parameters('hostingPlanSKUCapacity')]"
       },
       "properties": {
-        "name": "[variables('hostingPlanName')]"
+        "name": "[parameters('hostingPlanName')]"
       }
     },
-
     {
       "apiVersion": "2014-04-01",
-      "name": "[concat(variables('hostingPlanName'), '-', resourceGroup().name)]",
+      "name": "[concat(parameters('hostingPlanName'), '-', resourceGroup().name)]",
       "type": "Microsoft.Insights/autoscalesettings",
       "location": "[resourceGroup().location]",
       "tags": {
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "Resource",
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "Resource",
         "displayName": "Hosting Plan Auto Scale Settings"
       },
       "dependsOn": [
-        "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
+        "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
       ],
       "properties": {
         "profiles": [
@@ -52,7 +77,7 @@
               {
                 "metricTrigger": {
                   "metricName": "CpuPercentage",
-                  "metricResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+                  "metricResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
                   "timeGrain": "PT1M",
                   "statistic": "Average",
                   "timeWindow": "PT10M",
@@ -70,7 +95,7 @@
               {
                 "metricTrigger": {
                   "metricName": "CpuPercentage",
-                  "metricResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+                  "metricResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
                   "timeGrain": "PT1M",
                   "statistic": "Average",
                   "timeWindow": "PT1H",
@@ -89,29 +114,27 @@
           }
         ],
         "enabled": true,
-        "name": "[concat(variables('hostingPlanName'), '-', resourceGroup().name)]",
-        "targetResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
+        "name": "[concat(parameters('hostingPlanName'), '-', resourceGroup().name)]",
+        "targetResourceUri": "[concat(resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
       }
     },
-
     {
       "apiVersion": "2018-03-01",
       "type": "microsoft.insights/metricAlerts",
-      "name": "[concat('CPUHigh ', variables('hostingPlanName'))]",
+      "name": "[concat('CPUHigh ', parameters('hostingPlanName'))]",
       "location": "global",
       "dependsOn": [
-        "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
-        "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
+        "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
       ],
       "tags": {
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "Resource",
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "Resource",
         "displayName": "Hosting Plan CPU High Alert Rule"
       },
       "properties": {
         "severity": 3,
         "enabled": true,
         "scopes": [
-          "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]"
+          "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
         ],
         "evaluationFrequency": "PT5M",
         "windowSize": "PT15M",
@@ -137,11 +160,11 @@
             "webHookProperties": {}
           },
           {
-            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', variables('actionGroupName'))]",
+            "actionGroupId": "[resourceId('microsoft.insights/actionGroups', parameters('actionGroupName'))]",
             "webHookProperties": {}
           }
         ],
-        "description": "[concat('The average CPU is high across all the instances of ', variables('hostingPlanName'))]"
+        "description": "[concat('The average CPU is high across all the instances of ', parameters('hostingPlanName'))]"
       }
     }
   ],
