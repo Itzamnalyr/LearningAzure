@@ -159,14 +159,17 @@ jobs:
                 Write-Host "3. Resource group created: "$stopwatch.Elapsed.TotalSeconds
 
                 #key vault
+                #purge any existing key vault because of soft delete
+                az keyvault purge --name $keyVaultName 
                 $keyVaultResult = az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
-                if (!$keyVaultResult)
-                {
-                    Write-Host "Purging existing keyvault"
-                    az keyvault purge --name $keyVaultName 
-                    Write-Host "Creating keyvault, round 2"
-                    az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
-                }
+                #Write-Host "Key vault result: $keyVaultResult"
+                #if (!$keyVaultResult)
+                #{
+                #    Write-Host "Purging existing keyvault"
+                #    az keyvault purge --name $keyVaultName 
+                #    Write-Host "Creating keyvault, round 2"
+                #    az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
+                #}
                 $timing = -join($timing, "4. Key vault created:: ", $stopwatch.Elapsed.TotalSeconds, "`n");
                 Write-Host "4. Key vault created: "$stopwatch.Elapsed.TotalSeconds
 
