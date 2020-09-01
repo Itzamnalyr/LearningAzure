@@ -197,6 +197,43 @@ jobs:
                 $timing = -join($timing, "10. Application created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
                 Write-Host "10. Application insights created: "$stopwatch.Elapsed.TotalSeconds
 
+                #Web hosting
+                az deployment group create --resource-group $resourceGroupName --name $webhostingName --template-file "$templatesLocation\WebHosting.json" --parameters hostingPlanName=$webhostingName actionGroupName=$actionGroupName 
+                $timing = -join($timing, "11. Web hosting created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "11. Web hosting created: "$stopwatch.Elapsed.TotalSeconds
+
+                #Web service
+                az deployment group create --resource-group $resourceGroupName --name $serviceAPIName --template-file "$templatesLocation\WebService.json" --parameters serviceAPIName=$serviceAPIName hostingPlanName=$webhostingName actionGroupName=$actionGroupName sqlServerName=$sqlServerName sqlServerAddress=$sqlServerAddress sqlDatabaseName=$sqlDatabaseName sqlDatabaseLoginName=$sqlAdministratorLoginUser sqlDatabaseLoginPassword=$sqlAdministratorLoginPassword
+                #web service managed identity and setting keyvault access permissions
+                $serviceAPIProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $serviceAPIName 
+                $serviceAPIStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $serviceAPIName  --slot staging
+                $serviceAPIProdSlotIdentityPrincipalId = ($serviceAPIProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
+                $serviceAPIStagingSlotIdentityPrincipalId =($serviceAPIStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
+                Write-Host "Setting access policies for key vault"
+                Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$serviceAPIProdSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
+                Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$serviceAPIStagingSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
+                #Web service alerts
+                az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$serviceAPIName actionGroupName=$actionGroupName 
+                $timing = -join($timing, "12. Web service created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "12. Web service created: "$stopwatch.Elapsed.TotalSeconds
+
+                #Web site
+                az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName actionGroupName=$actionGroupName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret="$letsEncryptAppServiceContributerClientSecret"
+                #web site managed identity and setting keyvault access permissions
+                $websiteProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName 
+                $websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName  --slot staging
+                $websiteProdSlotIdentityPrincipalId = ($websiteProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
+                $websiteStagingSlotIdentityPrincipalId =($websiteStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
+                Write-Host "prod: " $websiteProdSlotIdentityPrincipalId
+                Write-Host "staging: " $websiteStagingSlotIdentityPrincipalId
+                Write-Host "Setting access policies for key vault"
+                Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$websiteProdSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
+                Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$websiteStagingSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
+                #Website alerts
+                az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$webSiteName actionGroupName=$actionGroupName 
+                $timing = -join($timing, "13. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "13. Website created: "$stopwatch.Elapsed.TotalSeconds
+
                 Write-Host "storageAccountAccessKey: "$storageAccountAccessKey
                 Write-Host "sqlServerIPAddress: "$sqlServerIPAddress
                 Write-Host "servicePrincipalId: "$serviceAPIProdSlotIdentityPrincipalId
