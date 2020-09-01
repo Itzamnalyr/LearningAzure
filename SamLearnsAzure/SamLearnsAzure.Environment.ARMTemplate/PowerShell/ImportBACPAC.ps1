@@ -90,6 +90,10 @@ if ($RunImportAlways -eq $true)
 		while ($DeletingExistingDatabase -ne $null)
 		Write-Host "Delete done! " (Get-Date).ToString("HH:mm:ss.ff")
 	}
+	else
+	{
+		Write-Host "Database not present, deletion not required"
+	}
 
 	# double checking the database restore is successful
 	$DatabaseRestoreSuccessful = "false"
@@ -127,6 +131,7 @@ if ($RunImportAlways -eq $true)
 			{
 				Write-Host "Import went awry. Waited 1000 seconds and it still failed. Sad!" (Get-Date).ToString("HH:mm:ss.ff")
 				$DatabaseRestoreSuccessful = "true"
+				throw [System.Exception] "Import went awry. Waited 1000 seconds and it still failed. Sad!" (Get-Date).ToString("HH:mm:ss.ff")
 			}
 		}
 	}
