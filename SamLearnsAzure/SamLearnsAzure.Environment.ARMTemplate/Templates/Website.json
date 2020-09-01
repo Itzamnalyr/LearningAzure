@@ -74,9 +74,9 @@
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
         "httpsOnly": true
       },
-      "identity": {
-        "type": "SystemAssigned"
-      },
+      //"identity": {
+      //  "type": "SystemAssigned"
+      //},
       "resources": [
         {
           "apiVersion": "2018-11-01",
@@ -86,10 +86,10 @@
           "dependsOn": [
             "[parameters('webSiteName')]"
           ],
-          "properties": {},
-          "identity": {
-            "type": "SystemAssigned"
-          }
+          //"identity": {
+          //  "type": "SystemAssigned"
+          //},
+          "properties": {}
         },
         {
           "type": "siteextensions",
@@ -217,19 +217,19 @@
     //    ]
     //  }
     //}
-  ],
-  "outputs": {
-    "websitePrincipalId": {
-      "type": "string",
-      "value": "[reference(concat(resourceId('Microsoft.Web/sites', parameters('webSiteName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
-    },
-    "websiteStagingSlotPrincipalId": {
-      "type": "string",
-      "value": "[reference(concat(resourceId('Microsoft.Web/sites/slots', parameters('webSiteName'), 'Staging'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
-    }//,
-    //"websiteStagingSlotPrincipalId2": {
-    //  "type": "string",
-    //  "value": "[reference(concat('Microsoft.Web/sites/slots', parameters('webSiteName')), '2018-02-01', 'Full').identity.principalId]"
-    //}
-  }
+  ]//,
+  //"outputs": {
+  //  "websitePrincipalId": {
+  //    "type": "string",
+  //    "value": "[reference(concat(resourceId('Microsoft.Web/sites', parameters('webSiteName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
+  //  },
+  //  "websiteStagingSlotPrincipalId": {
+  //    "type": "string",
+  //    "value": "[reference(concat(resourceId('Microsoft.Web/sites/slots', parameters('webSiteName'), 'Staging'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
+  //  }//,
+  //  //"websiteStagingSlotPrincipalId2": {
+  //  //  "type": "string",
+  //  //  "value": "[reference(concat('Microsoft.Web/sites/slots', parameters('webSiteName')), '2018-02-01', 'Full').identity.principalId]"
+  //  //}
+  //}
 }

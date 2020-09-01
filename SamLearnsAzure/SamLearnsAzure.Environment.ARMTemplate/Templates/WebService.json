@@ -46,9 +46,9 @@
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
         "httpsOnly": true
       },
-      "identity": {
-        "type": "SystemAssigned"
-      },
+      //"identity": {
+      //  "type": "SystemAssigned"
+      //},
       "resources": [
         {
           "type": "config",
@@ -73,9 +73,9 @@
           "dependsOn": [
             "[parameters('serviceAPIName')]"
           ],
-          "identity": {
-            "type": "SystemAssigned"
-          },
+          //"identity": {
+          //  "type": "SystemAssigned"
+          //},
           "properties": {
           }
         }
@@ -178,15 +178,15 @@
     //    ]
     //  }
     //}
-  ],
-  "outputs": {
-    "servicePrincipalId": {
-      "type": "string",
-      "value": "[reference(concat(resourceId('Microsoft.Web/sites', parameters('serviceAPIName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"  
-    },
-    "serviceStagingSlotPrincipalId": {
-      "type": "string",
-      "value": "[reference(concat(resourceId('Microsoft.Web/sites/slots', parameters('serviceAPIName'), 'Staging'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
-    }
-  }
+  ]//,
+  //"outputs": {
+  //  "servicePrincipalId": {
+  //    "type": "string",
+  //    "value": "[reference(concat(resourceId('Microsoft.Web/sites', parameters('serviceAPIName')), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"  
+  //  },
+  //  "serviceStagingSlotPrincipalId": {
+  //    "type": "string",
+  //    "value": "[reference(concat(resourceId('Microsoft.Web/sites/slots', parameters('serviceAPIName'), 'Staging'), '/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
+  //  }
+  //}
 }

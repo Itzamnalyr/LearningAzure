@@ -27,6 +27,7 @@
         "severity": 3,
         "enabled": true,
         "scopes": [
+          "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
         ],
         "evaluationFrequency": "PT5M",
         "windowSize": "PT5M",

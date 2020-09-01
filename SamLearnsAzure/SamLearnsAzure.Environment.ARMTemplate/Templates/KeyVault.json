@@ -85,6 +85,7 @@
         "enabledForDeployment": "[parameters('vaultEnabledForDeployment')]",
         "enabledForTemplateDeployment": "[parameters('vaultEnabledForTemplateDeployment')]",
         "enabledForVolumeEncryption": "[parameters('vaultEnableVaultForVolumeEncryption')]",
+        "enableSoftDelete": true,
         "tenantId": "[subscription().tenantid]",
         "accessPolicies": [
           {
