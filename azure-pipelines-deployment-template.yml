@@ -160,8 +160,15 @@ jobs:
 
                 #key vault
                 #purge any existing key vault because of soft delete
-                az keyvault purge --name $keyVaultName 
-                $keyVaultResult = az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
+                #az keyvault purge --name $keyVaultName 
+                az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
+                if(!$LASTEXITCODE)
+                {
+                    Write-Host "Purging existing keyvault"
+                    az keyvault purge --name $keyVaultName 
+                    Write-Host "Creating keyvault, round 2"
+                    az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
+                }
                 #Write-Host "Key vault result: $keyVaultResult"
                 #if (!$keyVaultResult)
                 #{
@@ -182,16 +189,16 @@ jobs:
                 Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
 
                 #CDN
-                az deployment group create --resource-group $resourceGroupName --name $cdnName --template-file "$templatesLocation\CDN.json" --parameters cdnName=$cdnName storageAccountName=$storageAccountName
-                $timing = -join($timing, "6. CDN  created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-                Write-Host "6. CDN created: "$stopwatch.Elapsed.TotalSeconds
+                #az deployment group create --resource-group $resourceGroupName --name $cdnName --template-file "$templatesLocation\CDN.json" --parameters cdnName=$cdnName storageAccountName=$storageAccountName
+                #$timing = -join($timing, "6. CDN  created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                #Write-Host "6. CDN created: "$stopwatch.Elapsed.TotalSeconds
 
                 #Redis  
-                $redisOutput = az deployment group create --resource-group $resourceGroupName --name $redisCacheName --template-file "$templatesLocation\Redis.json" --parameters redisCacheName=$redisCacheName
-                $redisJSON = $redisOutput | ConvertFrom-Json
-                $redisConnectionString = $redisJSON.properties.outputs.redisConnectionStringOutput.value
-                $timing = -join($timing, "7. Redis created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-                Write-Host "7. Redis created: "$stopwatch.Elapsed.TotalSeconds
+                #$redisOutput = az deployment group create --resource-group $resourceGroupName --name $redisCacheName --template-file "$templatesLocation\Redis.json" --parameters redisCacheName=$redisCacheName
+                #$redisJSON = $redisOutput | ConvertFrom-Json
+                #$redisConnectionString = $redisJSON.properties.outputs.redisConnectionStringOutput.value
+                #$timing = -join($timing, "7. Redis created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                #Write-Host "7. Redis created: "$stopwatch.Elapsed.TotalSeconds
 
                 #SQL
                 $sqlOutput = az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
