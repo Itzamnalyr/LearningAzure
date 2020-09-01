@@ -154,7 +154,7 @@ jobs:
                 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
                 #Resource group
-                az group create --name $resourceGroupName --location $location
+                az group create --location "$location" --name "$resourceGroupName"
                 $timing = -join($timing, "3. Resource group created:: ", $stopwatch.Elapsed.TotalSeconds, "`n");
                 Write-Host "3. Resource group created: "$stopwatch.Elapsed.TotalSeconds
 
