@@ -198,7 +198,7 @@ jobs:
                 Write-Host "10. Application insights created: "$stopwatch.Elapsed.TotalSeconds
 
                 #Web hosting
-                az deployment group create --resource-group $resourceGroupName --name $webhostingName --template-file "$templatesLocation\WebHosting.json" --parameters hostingPlanName=$webhostingName actionGroupName=$actionGroupName 
+                az deployment group create --resource-group $resourceGroupName --name $webhostingName --template-file "$templatesLocation\WebHosting.json" --parameters hostingPlanName="$webhostingName" actionGroupName="$actionGroupName"
                 $timing = -join($timing, "11. Web hosting created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
                 Write-Host "11. Web hosting created: "$stopwatch.Elapsed.TotalSeconds
 

@@ -119,6 +119,7 @@ if ($RunImportAlways -eq $true)
 		}
 		catch 
 		{
+            Write-Host "Error: $_"
 			$Counter = $Counter + 1
 			if ($Counter -lt 100)
 			{
@@ -130,8 +131,8 @@ if ($RunImportAlways -eq $true)
 			{
 				Write-Host "Import went awry. Waited 1000 seconds and it still failed. Sad!" (Get-Date).ToString("HH:mm:ss.ff")
 				$DatabaseRestoreSuccessful = "true"
-				throw [System.Exception] "Import went awry. Waited 1000 seconds and it still failed. Sad!" (Get-Date).ToString("HH:mm:ss.ff")
-			}
+                $dateString = $(Get-Date).ToString("HH:mm:ss.ff")
+				throw [System.Exception] "Import went awry. Waited 1000 seconds and it still failed. Sad! $dateString" 			}
 		}
 	}
 	while ($DatabaseRestoreSuccessful -eq "false")
