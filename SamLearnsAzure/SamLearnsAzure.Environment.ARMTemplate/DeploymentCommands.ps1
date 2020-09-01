@@ -12,7 +12,7 @@ $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeco
 Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
 
 $resourceGroupName = "SamLearnsAzurePR456"
-$resourceGroupLocation = "East US"
+$resourceGroupLocation = "eastus"
 $appPrefix = "samsapp"
 $environment = "pr456"
 $locationShort = "eu"
@@ -64,7 +64,7 @@ $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSecon
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
 #Resource group
-az group create --name SamLearnsAzurePR456 --location eastus
+az group create --name $resourceGroupName --location $resourceGroupLocation
 $timing = -join($timing, "3. Resource group created:: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "3. Resource group created: "$stopwatch.Elapsed.TotalSeconds
 

@@ -121,7 +121,7 @@ jobs:
                 $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
                 $sqlDatabaseName = "samsdb" 
                 $sqlAdministratorLoginUser = "${{parameters.databaseLoginName}}"
-                $sqlAdministratorLoginPassword = "${{parameters.databaseLoginPassword}}" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. The default Azure password complexity rules: minimum length of 8 characters, minimum of 1 uppercase character, minimum of 1 lowercase character, minimum of 1 number.
+                $sqlAdministratorLoginPassword = "${{parameters.databaseLoginPassword}}" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
                 $administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
                 $administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
                 $websiteDomainName = "$environment.samlearnsazure.com"
