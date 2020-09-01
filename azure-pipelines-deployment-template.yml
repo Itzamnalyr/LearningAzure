@@ -97,6 +97,11 @@ jobs:
               scriptType: ps
               scriptLocation: inlineScript
               inlineScript: | 
+                $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+                $timing = ""
+                $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeconds, "`n")
+                Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
+
                 $appPrefix = "samsapp"
                 $environment = "${{parameters.environmentLowercase}}"
                 $resourceGroupName = "${{parameters.resourceGroupName}}"
