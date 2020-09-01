@@ -3,7 +3,6 @@
 ##################################
 param
 (
-	[string] $SubscriptionId,
 	[string] $ResourceGroupName,
 	[string] $DBServerName,
 	[string] $ServerAdmin,
