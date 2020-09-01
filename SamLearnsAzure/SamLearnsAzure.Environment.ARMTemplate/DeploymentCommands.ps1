@@ -70,6 +70,7 @@ Write-Host "3. Resource group created: "$stopwatch.Elapsed.TotalSeconds
 
 #key vault
 $keyVaultResult = az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
+Write-Host "Key vault result: $keyVaultResult"
 if (!$keyVaultResult)
 {
     Write-Host "Purging existing keyvault"
