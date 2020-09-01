@@ -106,7 +106,7 @@ jobs:
                 $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
                 $webSiteName = "$appPrefix-$environment-$locationShort-web"
                 $sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
-                $hostingPlanName = "$appPrefix-$environment-$locationShort-hostingplan"
+                $webhostingName = "$appPrefix-$environment-$locationShort-hostingplan"
                 $storageAccountName = "$appPrefix$environment$($locationShort)storage"
                 $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
                 $actionGroupShortName = "$environment-actgrp"
