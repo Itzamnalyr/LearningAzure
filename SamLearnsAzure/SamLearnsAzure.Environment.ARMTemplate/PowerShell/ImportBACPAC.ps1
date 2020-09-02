@@ -69,30 +69,30 @@ if ($RunImportAlways -eq $true)
 	{
 		Write-Error "BACPAC does not exist in container $StorageContainerName. Import aborted"
 	}
-	Write-Host "Found file to import" + $BacpacFilename.Name
+	Write-Host "Found file to import" $BacpacFilename.Name
 	$BacpacUri = $StorageUri + $StorageContainerName + "/" + $BacpacFilename.Name
 
 	# Remove the current database, if it exists
-	Write-Host "Checking if database already exists..."
-	$ExistingDatabases = Get-AzSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName 
-	$ExistingDatabase = $ExistingDatabases | Where-Object {$_.DatabaseName -eq $DatabaseName}
-	if ($ExistingDatabase)
-	{
-		Write-Host "Removing existing database..."
-		Remove-AzSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -Force
-		do
-		{
-			Write-Host "Deleting in progress..." (Get-Date).ToString("HH:mm:ss.ff")
-			Start-Sleep -s 1
-			$DeletingExistingDatabase = Get-AzSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName | Where-Object {$_.DatabaseName -eq $DatabaseName} 
-		}
-		while ($DeletingExistingDatabase -ne $null)
-		Write-Host "Delete done! " (Get-Date).ToString("HH:mm:ss.ff")
-	}
-	else
-	{
-		Write-Host "Database not present, deletion not required"
-	}
+	#Write-Host "Checking if database already exists..."
+	#$ExistingDatabases = Get-AzSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName 
+	#$ExistingDatabase = $ExistingDatabases | Where-Object {$_.DatabaseName -eq $DatabaseName}
+	#if ($ExistingDatabase)
+	#{
+	#	Write-Host "Removing existing database..."
+	#	Remove-AzSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -Force
+	#	do
+	#	{
+	#		Write-Host "Deleting in progress..." (Get-Date).ToString("HH:mm:ss.ff")
+	#		Start-Sleep -s 1
+	#		$DeletingExistingDatabase = Get-AzSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DBServerName | Where-Object {$_.DatabaseName -eq $DatabaseName} 
+	#	}
+	#	while ($DeletingExistingDatabase -ne $null)
+	#	Write-Host "Delete done! " (Get-Date).ToString("HH:mm:ss.ff")
+	#}
+	#else
+	#{
+	#	Write-Host "Database not present, deletion not required"
+	#}
 
 	# double checking the database restore is successful
 	$DatabaseRestoreSuccessful = "false"
