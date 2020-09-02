@@ -131,9 +131,6 @@ jobs:
                 $administratorUserPrincipalLogin = "${{parameters.userPrincipalLogin}}"
                 $contactEmailAddress="samsmithnz@gmail.com"
                 $templatesLocation = "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"
-
-                $sqlAdministratorLogin = "${{parameters.databaseLoginName}}"
-                $sqlAdministratorLoginPassword = "{{parameters.databaseLoginPassword}}"
                
                 if ($keyVaultName.Length -gt 24)
                 {
