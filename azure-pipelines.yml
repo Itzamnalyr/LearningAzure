@@ -4,6 +4,8 @@ pr:
   branches:
     include:
     - '*'  # must quote since "*" is a YAML reserved character; we want a string
+    exclude: 
+    - ARMTemplateSimplication
 
 schedules:
 - cron: "0 1/2 * * *"

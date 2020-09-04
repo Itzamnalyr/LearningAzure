@@ -94,6 +94,9 @@ if ($RunImportAlways -eq $true)
 		Write-Host "Database not present, deletion not required"
 	}
 
+	# Create the new database
+    az sql db create --resource-group $ResourceGroupName --server $DBServerName --name "$DatabaseName" --edition $Edition --service-objective $ServiceObjectiveName
+
 	# double checking the database restore is successful
 	$DatabaseRestoreSuccessful = "false"
 	$Counter = 0;
@@ -103,7 +106,9 @@ if ($RunImportAlways -eq $true)
 		{
 			# Restore the database from storage to target environment
 			Write-Host "Starting database import"
-			$importRequest = New-AzSqlDatabaseImport -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -StorageKeytype "StorageAccessKey" -StorageKey $StorageAccountKey -StorageUri $BacpacUri -AdministratorLogin $Creds.UserName -AdministratorLoginPassword $Creds.Password -Edition $Edition -ServiceObjectiveName $ServiceObjectiveName -DatabaseMaxSizeBytes 50000 -ErrorAction SilentlyContinue
+            $importRequest = az sql db import --resource-group $ResourceGroupName --server $DBServerName --name $DatabaseName --admin-user $Creds.UserName --admin-password $Creds.Password --storage-key $StorageAccountKey --storage-key-type StorageAccessKey --storage-uri $BacpacUri  
+			#az sql db show --name MyAzureSQLDatabase --resource-group MyResourceGroup --server myserver
+            #$importRequest = New-AzSqlDatabaseImport -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -StorageKeytype "StorageAccessKey" -StorageKey $StorageAccountKey -StorageUri $BacpacUri -AdministratorLogin $Creds.UserName -AdministratorLoginPassword $Creds.Password -Edition $Edition -ServiceObjectiveName $ServiceObjectiveName -DatabaseMaxSizeBytes 5000000 -ErrorAction SilentlyContinue
 			$importRequest
 
 			# Monitor import status, showing progress every 1 second

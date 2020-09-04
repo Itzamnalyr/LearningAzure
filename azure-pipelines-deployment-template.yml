@@ -11,6 +11,7 @@ parameters: # defaults for any parameters that aren't specified
   databaseLoginName: '***secret'
   databaseLoginPassword: '***secret'
   databaseServerName: 'samsapp-dev-eu-sqlserver'
+  databaseName: samsdb
   godaddy_key: '***secret'
   godaddy_secret: '***secret'
   keyVaultName: 'samsapp-data-eu-keyvault'
@@ -119,7 +120,7 @@ jobs:
                 $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
                 $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
                 $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
-                $sqlDatabaseName = "samsdb" 
+                $sqlDatabaseName = "${{parameters.databaseName}}" 
                 $sqlAdministratorLoginUser = "${{parameters.databaseLoginName}}"
                 $sqlAdministratorLoginPassword = "${{parameters.databaseLoginPassword}}" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
                 $administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
@@ -306,14 +307,14 @@ jobs:
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/ImportBACPAC.ps1'
-              ScriptArguments: '-ResourceGroupName ${{parameters.resourceGroupName}} -DBServerName ${{parameters.databaseServerName}} -ServerAdmin ${{parameters.databaseLoginName}} -ServerPassword ${{parameters.databaseLoginPassword}} -DatabaseName "samsdb" -StorageAccountName "samsappprodeustorage" -StorageUri "https://samsappprodeustorage.blob.core.windows.net/" -StorageAccountKey ${{parameters.storageAccountKey}} -StorageContainerName "bacpacs" -Edition "Basic" -ServiceObjectiveName "Basic" -RunImportAlways $false'
+              ScriptArguments: '-ResourceGroupName ${{parameters.resourceGroupName}} -DBServerName ${{parameters.databaseServerName}} -ServerAdmin ${{parameters.databaseLoginName}} -ServerPassword ${{parameters.databaseLoginPassword}} -DatabaseName "${{parameters.databaseName}}" -StorageAccountName "samsappprodeustorage" -StorageUri "https://samsappprodeustorage.blob.core.windows.net/" -StorageAccountKey ${{parameters.storageAccountKey}} -StorageContainerName "bacpacs" -Edition "Basic" -ServiceObjectiveName "Basic" -RunImportAlways $false'
               azurePowerShellVersion: LatestVersion
           - task: SqlAzureDacpacDeployment@1
             displayName: 'Azure SQL dacpac publish'
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               ServerName: '${{parameters.databaseServerName}}.database.windows.net'
-              DatabaseName: samsdb
+              DatabaseName: '${{parameters.databaseName}}'
               SqlUsername: '${{parameters.databaseLoginName}}'
               SqlPassword: '${{parameters.databaseLoginPassword}}'
               DacpacFile: '$(build.artifactstagingdirectory)/drop/Database/SamLearnsAzure.Database.dacpac'
