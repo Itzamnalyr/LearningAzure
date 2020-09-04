@@ -1,6 +1,7 @@
-trigger:
-- ArmTemplateSimplication
-
+pr:
+  branches:
+    include:
+    - ARMTemplateSimplication
 
 stages:
 - stage: Build
