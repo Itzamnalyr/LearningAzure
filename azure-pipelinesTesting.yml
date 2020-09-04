@@ -53,6 +53,7 @@ stages:
           $sqlAdministratorLoginPassword = "Sam1sL3arn1ngS0S0muchaboutAzur3!!!" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
           $administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
           $administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
+          $templatesLocation = "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"
 
           az group create --name $resourceGroupName --location $location 
                 
