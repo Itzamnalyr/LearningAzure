@@ -1,6 +1,7 @@
-trigger:
-- ArmTemplateSimplication
-
+pr:
+  branches:
+    include:
+    - ARMTemplateSimplication
 
 stages:
 - stage: Build
@@ -32,7 +33,7 @@ stages:
 
           $resourceGroupName = "SamLearnsAzurePR456"
           $appPrefix = "samsapp"
-          $environment = "PR456"
+          $environment = "pr456"
           $location = "East US" 
           $locationShort = "eu"                
           $keyVaultName = "$appPrefix-$environment-$locationShort-keyvault"
@@ -57,7 +58,14 @@ stages:
         
 
           az group create --name $resourceGroupName --location $location 
-                
+
+          #storage
+          $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\Storage.json" --parameters storageAccountName=$storageAccountName
+          $storageJSON = $storageOutput | ConvertFrom-Json
+          $storageAccountAccessKey = $storageJSON.properties.outputs.storageAccountKey.value
+          $timing = -join($timing, "5. Storage created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+          Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
+
           #SQL
           $sqlOutput = az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=$sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
           $sqlJSON = $sqlOutput | ConvertFrom-Json
