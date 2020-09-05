@@ -33,7 +33,7 @@ stages:
 
           $resourceGroupName = "SamLearnsAzurePR456"
           $appPrefix = "samsapp"
-          $environment = "PR456"
+          $environment = "pr456"
           $location = "East US" 
           $locationShort = "eu"                
           $keyVaultName = "$appPrefix-$environment-$locationShort-keyvault"
@@ -61,6 +61,8 @@ stages:
 
           #storage
           $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\Storage.json" --parameters storageAccountName=$storageAccountName
+          $storageJSON = $storageOutput | ConvertFrom-Json
+          $storageAccountAccessKey = $storageJSON.properties.outputs.storageAccountKey.value
           $timing = -join($timing, "5. Storage created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
           Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
 
