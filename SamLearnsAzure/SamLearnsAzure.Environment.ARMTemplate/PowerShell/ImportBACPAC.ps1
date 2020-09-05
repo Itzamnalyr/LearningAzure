@@ -105,21 +105,24 @@ if ($RunImportAlways -eq $true)
 		try
 		{
 			# Restore the database from storage to target environment
-			Write-Host "Starting database import"
-            $importRequest = az sql db import --resource-group $ResourceGroupName --server $DBServerName --name $DatabaseName --admin-user $Creds.UserName --admin-password $Creds.Password --storage-key $StorageAccountKey --storage-key-type StorageAccessKey --storage-uri $BacpacUri  
-			#az sql db show --name MyAzureSQLDatabase --resource-group MyResourceGroup --server myserver
+			Write-Host "Starting database import..." + (Get-Date).ToString("HH:mm:ss.ff")
+            Write-Host "$importRequest = az sql db import --resource-group $ResourceGroupName --server $DBServerName --name $DatabaseName --admin-user $ServerAdmin --admin-password $ServerPassword --storage-key $StorageAccountKey --storage-key-type StorageAccessKey --storage-uri $BacpacUri"  
+			
+            az sql db import --resource-group $ResourceGroupName --server $DBServerName --name $DatabaseName --admin-user $ServerAdmin --admin-password $ServerPassword --storage-key "$StorageAccountKey" --storage-key-type StorageAccessKey --storage-uri "$BacpacUri"  
+			
+            Write-Host "Finishing database import..." + (Get-Date).ToString("HH:mm:ss.ff")
             #$importRequest = New-AzSqlDatabaseImport -ResourceGroupName $ResourceGroupName -ServerName $DBServerName -DatabaseName $DatabaseName -StorageKeytype "StorageAccessKey" -StorageKey $StorageAccountKey -StorageUri $BacpacUri -AdministratorLogin $Creds.UserName -AdministratorLoginPassword $Creds.Password -Edition $Edition -ServiceObjectiveName $ServiceObjectiveName -DatabaseMaxSizeBytes 5000000 -ErrorAction SilentlyContinue
-			$importRequest
+			#$importRequest
 
 			# Monitor import status, showing progress every 1 second
-			$importStatus = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $importRequest.OperationStatusLink 
-			while ($importStatus.Status -eq "InProgress")
-			{
-				Write-Host "Import in progress..." + (Get-Date).ToString("HH:mm:ss.ff")
-				Start-Sleep -s 1
-				$importStatus = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $importRequest.OperationStatusLink
-			}
-			$importStatus
+			#$importStatus = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $importRequest.OperationStatusLink 
+			#while ($importStatus.Status -eq "InProgress")
+			#{
+			#	Write-Host "Import in progress..." + (Get-Date).ToString("HH:mm:ss.ff")
+			#	Start-Sleep -s 1
+			#	$importStatus = Get-AzSqlDatabaseImportExportStatus -OperationStatusLink $importRequest.OperationStatusLink
+			#}
+			#$importStatus
 			$DatabaseRestoreSuccessful = "true"
 		}
 		catch 
