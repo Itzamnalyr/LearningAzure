@@ -6,6 +6,7 @@ stages:
   displayName: 'Build & Test stage'
   jobs:
   - job: BuildARMTemplates
+    condition: false
     displayName: 'Build Copy ARM templates job'
     pool:
       vmImage: "Windows-Latest"
