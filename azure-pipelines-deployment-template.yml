@@ -176,16 +176,16 @@ jobs:
                 Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
 
                 #CDN
-                #az deployment group create --resource-group $resourceGroupName --name $cdnName --template-file "$templatesLocation\CDN.json" --parameters cdnName=$cdnName storageAccountName=$storageAccountName
-                #$timing = -join($timing, "6. CDN  created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-                #Write-Host "6. CDN created: "$stopwatch.Elapsed.TotalSeconds
+                az deployment group create --resource-group $resourceGroupName --name $cdnName --template-file "$templatesLocation\CDN.json" --parameters cdnName=$cdnName storageAccountName=$storageAccountName
+                $timing = -join($timing, "6. CDN  created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "6. CDN created: "$stopwatch.Elapsed.TotalSeconds
 
                 #Redis  
-                #$redisOutput = az deployment group create --resource-group $resourceGroupName --name $redisCacheName --template-file "$templatesLocation\Redis.json" --parameters redisCacheName=$redisCacheName
-                #$redisJSON = $redisOutput | ConvertFrom-Json
-                #$redisConnectionString = $redisJSON.properties.outputs.redisConnectionStringOutput.value
-                #$timing = -join($timing, "7. Redis created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-                #Write-Host "7. Redis created: "$stopwatch.Elapsed.TotalSeconds
+                $redisOutput = az deployment group create --resource-group $resourceGroupName --name $redisCacheName --template-file "$templatesLocation\Redis.json" --parameters redisCacheName=$redisCacheName
+                $redisJSON = $redisOutput | ConvertFrom-Json
+                $redisConnectionString = $redisJSON.properties.outputs.redisConnectionStringOutput.value
+                $timing = -join($timing, "7. Redis created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "7. Redis created: "$stopwatch.Elapsed.TotalSeconds
 
                 #SQL
                 $sqlOutput = az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=$sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
@@ -221,8 +221,6 @@ jobs:
                 Write-Host "Setting access policies for key vault"
                 az keyvault set-policy --name $keyVaultName --object-id $serviceAPIProdSlotIdentityPrincipalId --secret-permissions list get
                 az keyvault set-policy --name $keyVaultName --object-id $serviceAPIStagingSlotIdentityPrincipalId --secret-permissions list get
-                #Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$serviceAPIProdSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
-                #Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$serviceAPIStagingSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
                 #Web service alerts
                 az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$serviceAPIName actionGroupName=$actionGroupName 
                 $timing = -join($timing, "12. Web service created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
@@ -240,8 +238,6 @@ jobs:
                 Write-Host "Setting access policies for key vault"
                 az keyvault set-policy --name $keyVaultName --object-id $websiteProdSlotIdentityPrincipalId --secret-permissions list get
                 az keyvault set-policy --name $keyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
-                #Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$websiteProdSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
-                #Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$websiteStagingSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
                 #Website alerts
                 az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$webSiteName actionGroupName=$actionGroupName 
                 $timing = -join($timing, "13. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
