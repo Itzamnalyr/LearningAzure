@@ -300,9 +300,9 @@ jobs:
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
-              scriptLocation: 'drop/EnvironmentARMTemplate/PowerShell/ImportBACPAC.ps1'
+              scriptLocation: scriptPath
+              scriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/ImportBACPAC.ps1'
               arguments: '-ResourceGroupName ${{parameters.resourceGroupName}} -DBServerName ${{parameters.databaseServerName}} -ServerAdmin ${{parameters.databaseLoginName}} -ServerPassword ${{parameters.databaseLoginPassword}} -DatabaseName "${{parameters.databaseName}}" -StorageAccountName "samsappprodeustorage" -StorageUri "https://samsappprodeustorage.blob.core.windows.net/" -StorageAccountKey ${{parameters.storageAccountKey}} -StorageContainerName "bacpacs" -Edition "Basic" -ServiceObjectiveName "Basic" -RunImportAlways $false'           
-              scriptPath: '$(build.artifactstagingdirectory)'
           - task: SqlAzureDacpacDeployment@1
             displayName: 'Azure SQL dacpac publish'
             inputs:
