@@ -109,6 +109,7 @@ jobs:
                 $location = "${{parameters.resourceGroupLocation}}" 
                 $locationShort = "${{parameters.resourceGroupLocationShort}}"                
                 $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
+                $dataKeyVaultName = "${{parameters.keyVaultURL}}"
                 $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
                 $webSiteName = "$appPrefix-$environment-$locationShort-web"
                 $sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
@@ -169,7 +170,7 @@ jobs:
                 $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\Storage.json" --parameters storageAccountName=$storageAccountName
                 $storageJSON = $storageOutput | ConvertFrom-Json
                 $storageAccountAccessKey = $storageJSON.properties.outputs.storageAccountKey.value
-                az keyvault secret set --vault-name $keyVaultName --name "storageAccountAccessKey" --value $storageAccountAccessKey #Upload the secret into the key vault
+                az keyvault secret set --vault-name $dataKeyVaultName --name "storageAccountAccessKey" --value $storageAccountAccessKey #Upload the secret into the key vault
                 $timing = -join($timing, "5. Storage created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
                 Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
 
@@ -217,8 +218,8 @@ jobs:
                 $serviceAPIProdSlotIdentityPrincipalId = ($serviceAPIProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
                 $serviceAPIStagingSlotIdentityPrincipalId =($serviceAPIStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
                 Write-Host "Setting access policies for key vault"
-                az keyvault set-policy --name $keyVaultName --object-id $serviceAPIProdSlotIdentityPrincipalId --secret-permissions list get
-                az keyvault set-policy --name $keyVaultName --object-id $serviceAPIStagingSlotIdentityPrincipalId --secret-permissions list get
+                az keyvault set-policy --name $dataKeyVaultName --object-id $serviceAPIProdSlotIdentityPrincipalId --secret-permissions list get
+                az keyvault set-policy --name $dataKeyVaultName --object-id $serviceAPIStagingSlotIdentityPrincipalId --secret-permissions list get
                 #Web service alerts
                 az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$serviceAPIName actionGroupName=$actionGroupName 
                 $timing = -join($timing, "12. Web service created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
@@ -234,8 +235,8 @@ jobs:
                 Write-Host "prod: " $websiteProdSlotIdentityPrincipalId
                 Write-Host "staging: " $websiteStagingSlotIdentityPrincipalId
                 Write-Host "Setting access policies for key vault"
-                az keyvault set-policy --name $keyVaultName --object-id $websiteProdSlotIdentityPrincipalId --secret-permissions list get
-                az keyvault set-policy --name $keyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
+                az keyvault set-policy --name $dataKeyVaultName --object-id $websiteProdSlotIdentityPrincipalId --secret-permissions list get
+                az keyvault set-policy --name $dataKeyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
                 #Website alerts
                 az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$webSiteName actionGroupName=$actionGroupName 
                 $timing = -join($timing, "13. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
