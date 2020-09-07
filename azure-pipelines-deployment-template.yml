@@ -155,7 +155,8 @@ jobs:
 
                 #key vault
                 $results = az keyvault list-deleted  --subscription 07db7d0b-a6cb-4e58-b07e-e1d541c39f5b
-                if ($results -ne $null -and $results.Length -gt 2)
+                $results = $results | ConvertFrom-Json
+                if ($results -ne $null -and $results.Length -gt 0)
                 {
                     Write-Host "Purging existing keyvault"
                     az keyvault purge --name $keyVaultName                     
