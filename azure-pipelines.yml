@@ -12,6 +12,9 @@ schedules:
     - master
   always: true
 
+#TODO: Remove condition from top level build
+#TODO: Remove enabled: false flag from unit tests
+
 variables:
 - group: 'SamLearnsAzure KeyVault'
 - name: vmImage #Note this weird name/value syntax if you need to reference a variable group in variables
@@ -20,6 +23,7 @@ variables:
 stages:
 - stage: Build
   displayName: 'Build & Test stage'
+  #condition: eq('1', '2')
   jobs:
   - template: azure-pipelines-build-template.yml
     parameters:
@@ -48,7 +52,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptAppServiceContributerClientSecret: $(letsEncryptAppServiceContributerClientSecret)
       ASPNETCOREEnvironmentSetting: 'Development'
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
@@ -93,7 +97,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptletsEncryptAppServiceContributerClientSecret: $(letsEncryptAppServiceContributerClientSecret)
       ASPNETCOREEnvironmentSetting: 'Development'
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
@@ -137,7 +141,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdQA)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyQA)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptAppServiceContributerClientSecret: $(letsEncryptAppServiceContributerClientSecret)
       captureStartErrors: false
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'QA'  
@@ -180,7 +184,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdProd)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyProd)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptAppServiceContributerClientSecret: $(letsEncryptAppServiceContributerClientSecret)
       captureStartErrors: false
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'Prod'  

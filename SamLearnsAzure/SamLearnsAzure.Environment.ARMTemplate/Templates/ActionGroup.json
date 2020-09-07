@@ -1,0 +1,51 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "actionGroupName": {
+      "type": "String"
+    },
+    "appPrefix": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 15
+    },
+    "environment": {
+      "type": "string"
+    },
+    "contactEmailAddress": {
+      "type": "string"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "microsoft.insights/actionGroups",
+      "apiVersion": "2019-03-01",
+      "name": "[parameters('actionGroupName')]",
+      "location": "Global",
+      "tags": {
+        "displayName": "Action Group"
+      },
+      "properties": {
+        "groupShortName": "[concat(parameters('environment'),'-actgrp')]",
+        "enabled": true,
+        "emailReceivers": [
+          {
+            "name": "[concat(parameters('appPrefix'), ' ', parameters('environment'), ' team')]",
+            "emailAddress": "[parameters('contactEmailAddress')]",
+            "useCommonAlertSchema": false
+          }
+        ],
+        "smsReceivers": [],
+        "webhookReceivers": [],
+        "itsmReceivers": [],
+        "azureAppPushReceivers": [],
+        "automationRunbookReceivers": [],
+        "voiceReceivers": [],
+        "logicAppReceivers": [],
+        "azureFunctionReceivers": []
+      }
+    }
+  ]
+}

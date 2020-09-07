@@ -1,0 +1,75 @@
+
+
+
+stages:
+- stage: Build
+  displayName: 'Build & Test stage'
+  jobs:
+  - job: BuildARMTemplates
+    condition: false
+    displayName: 'Build Copy ARM templates job'
+    pool:
+      vmImage: "Windows-Latest"
+    steps:
+    - task: CopyFiles@2
+      displayName: 'Copy environment ARM template files to: $(build.artifactstagingdirectory)'
+      inputs:
+        SourceFolder: '$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Environment.ARMTemplate'
+        Contents: '**\*' # **\* = Copy all files and all files in sub directories
+        TargetFolder: '$(build.artifactstagingdirectory)\EnvironmentARMTemplate'
+
+    - task: AzureCLI@2
+      displayName: 'Deploy ARM templates for storage and key vault'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        scriptType: ps
+        scriptLocation: inlineScript
+        inlineScript: | 
+          $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+          $timing = ""
+          $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeconds, "`n")
+          Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
+
+          $resourceGroupName = "SamLearnsAzurePR456"
+          $appPrefix = "samsapp"
+          $environment = "pr456"
+          $location = "East US" 
+          $locationShort = "eu"                
+          $keyVaultName = "$appPrefix-$environment-$locationShort-keyvault"
+          $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
+          $webSiteName = "$appPrefix-$environment-$locationShort-web"
+          $sqlserverName = "$appPrefix-$environment-$locationShort-sqlserver"
+          $hostingPlanName = "$appPrefix-$environment-$locationShort-hostingplan"
+          $storageAccountName = "$appPrefix$environment$($locationShort)storage"
+          $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
+          $actionGroupShortName = "$environment-actgrp"
+          $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
+          $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
+          $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
+          $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
+
+          $sqlDatabaseName = "samsdb" 
+          $sqlAdministratorLoginUser = "samlearnsazuresqladmin"
+          $sqlAdministratorLoginPassword = "Sam1sL3arn1ngS0S0muchaboutAzur3!!!" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
+          $administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
+          $administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
+          $templatesLocation = "$(system.defaultworkingdirectory)\SamLearnsAzure\SamLearnsAzure.Environment.ARMTemplate\Templates"
+        
+
+          az group create --name $resourceGroupName --location $location 
+
+          #storage
+          $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\Storage.json" --parameters storageAccountName=$storageAccountName
+          $storageJSON = $storageOutput | ConvertFrom-Json
+          $storageAccountAccessKey = $storageJSON.properties.outputs.storageAccountKey.value
+          $timing = -join($timing, "5. Storage created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+          Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
+
+          #SQL
+          $sqlOutput = az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=$sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
+          $sqlJSON = $sqlOutput | ConvertFrom-Json
+          $sqlServerAddress = $sqlJSON.properties.outputs.sqlServerIPAddress.value
+          $timing = -join($timing, "8. SQL created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+          Write-Host "8. SQL created: "$stopwatch.Elapsed.TotalSeconds
+
+          

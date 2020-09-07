@@ -17,12 +17,6 @@ param
 	[string] $RedisConnectionString
 )
 
-Write-Host "Setting access policies for key vault"
-Set-AzKeyVaultAccessPolicy -VaultName "$KeyVaultName" -ObjectId "$servicePrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
-Set-AzKeyVaultAccessPolicy -VaultName "$KeyVaultName" -ObjectId "$serviceStagingSlotPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
-Set-AzKeyVaultAccessPolicy -VaultName "$KeyVaultName" -ObjectId "$websitePrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
-Set-AzKeyVaultAccessPolicy -VaultName "$KeyVaultName" -ObjectId "$websiteStagingSlotPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
-
 Write-Host "Setting key vault secrets"
 #Get the application insights instrumentation key from the ARM Template outputs
 $applicationInsightsInstrumentationKeyName = "ApplicationInsights--InstrumentationKey$Environment"
