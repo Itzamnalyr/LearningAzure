@@ -109,7 +109,7 @@ jobs:
                 $location = "${{parameters.resourceGroupLocation}}" 
                 $locationShort = "${{parameters.resourceGroupLocationShort}}"                
                 $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
-                $dataKeyVaultName = "${{parameters.keyVaultURL}}"
+                $dataKeyVaultName = "${{parameters.keyVaultName}}"
                 $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
                 $webSiteName = "$appPrefix-$environment-$locationShort-web"
                 $sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
