@@ -368,6 +368,21 @@ jobs:
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
+              scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureCore.ps1
+              arguments: |
+                -appPrefix = "samsapp"
+                -environment = "${{parameters.environmentLowercase}}"
+                -resourceGroupName = "${{parameters.resourceGroupName}}"
+                -location = "${{parameters.resourceGroupLocation}}" 
+                -locationShort = "${{parameters.resourceGroupLocationShort}}"   
+                -dataKeyVaultName = "${{parameters.keyVaultName}}"
+                -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            enabled: false
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
               scriptLocation: inlineScript
               inlineScript: | 
                 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -379,7 +394,8 @@ jobs:
                 $environment = "${{parameters.environmentLowercase}}"
                 $resourceGroupName = "${{parameters.resourceGroupName}}"
                 $location = "${{parameters.resourceGroupLocation}}" 
-                $locationShort = "${{parameters.resourceGroupLocationShort}}"                
+                $locationShort = "${{parameters.resourceGroupLocationShort}}"   
+                
                 $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
                 $dataKeyVaultName = "${{parameters.keyVaultName}}"
                 $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
