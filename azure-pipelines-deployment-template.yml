@@ -795,9 +795,9 @@ jobs:
                -TestEnvironment "${{parameters.environment}}" 
                -KeyVaultURL "${{parameters.keyVaultURL}}" 
                -KeyVaultClientId "${{parameters.keyVaultClientId}}" 
-               -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}"  
-
-
+               -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}"
+            enabled: false  
+            
   - deployment: DeploySwapServiceAppSlots
     displayName: "Deploy swap service slots to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
