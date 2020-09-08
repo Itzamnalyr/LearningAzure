@@ -190,20 +190,20 @@ jobs:
               downloadType: 'single'
               artifactName: 'drop'
               downloadPath: '$(build.artifactstagingdirectory)'
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebCore.ps1
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com"             
           - task: PowerShell@2
             displayName: 'Set CName DNS entries in GoDaddy'
             inputs:
               targetType: FilePath
               filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
-              arguments: |
-                -godaddy_domain "samlearnsazure.com" 
-                -godaddy_name "${{parameters.environmentLowercase}}" 
-                -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" 
-                -godaddy_type "CNAME" 
-                -godaddy_key "${{parameters.godaddy_key}}" 
-                -godaddy_secret "${{parameters.godaddy_secret}}"
+              arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"
             continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
-            enabled: true
           - task: AzureCLI@2
             displayName: 'Deploy infrastructure with ARM templates'
             enabled: false
