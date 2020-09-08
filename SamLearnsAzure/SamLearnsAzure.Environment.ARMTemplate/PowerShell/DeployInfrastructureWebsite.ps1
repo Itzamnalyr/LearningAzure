@@ -7,7 +7,8 @@
 	[string] $resourceGroupLocationShort,
 	[string] $dataKeyVaultName,
 	[string] $templatesLocation,
-	[string] $contactEmailAddress
+	[string] $contactEmailAddress,
+	[string] $letsEncryptAppServiceContributerClientSecret
 )
 
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -23,40 +24,20 @@ Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
 Write-Host "dataKeyVaultName: $dataKeyVaultName"
 Write-Host "templatesLocation: $templatesLocation"
 Write-Host "contactEmailAddress: $contactEmailAddress"
+Write-Host "letsEncryptAppServiceContributerClientSecret: $letsEncryptAppServiceContributerClientSecret"
 
 #Variables
-$appPrefix = "samsapp"
-$environment = "${{parameters.environmentLowercase}}"
-$resourceGroupName = "${{parameters.resourceGroupName}}"
-$location = "${{parameters.resourceGroupLocation}}" 
-$resourceGroupLocationShort = "${{parameters.resourceGroupLocationShort}}"                
-$keyVaultName = "$appPrefix-$environment-$resourceGroupLocationShort-vault" #Must be <= 23 characters
-$dataKeyVaultName = "${{parameters.keyVaultName}}"
-$serviceAPIName = "$appPrefix-$environment-$resourceGroupLocationShort-service"
 $webSiteName = "$appPrefix-$environment-$resourceGroupLocationShort-web"
-$sqlServerName = "$appPrefix-$environment-$resourceGroupLocationShort-sqlserver"
 $webhostingName = "$appPrefix-$environment-$resourceGroupLocationShort-hostingplan"
 $storageAccountName = "$appPrefix$environment$($resourceGroupLocationShort)storage" #Must be <= 24 lowercase letters and numbers.
 $actionGroupName = "$appPrefix-$environment-$resourceGroupLocationShort-actionGroup"
-$actionGroupShortName = "$environment-actgrp"
-$applicationInsightsName = "$appPrefix-$environment-$resourceGroupLocationShort-appinsights"
-$applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
-$redisCacheName = "$appPrefix-$environment-$resourceGroupLocationShort-redis"
-$cdnName = "$appPrefix-$environment-$resourceGroupLocationShort-cdn"   
-$sqlDatabaseName = "${{parameters.databaseName}}" 
-$sqlAdministratorLoginUser = "${{parameters.databaseLoginName}}"
-$sqlAdministratorLoginPassword = "${{parameters.databaseLoginPassword}}" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
-$administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
-$administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
-$websiteDomainName = "$environment.samlearnsazure.com"
-$letsEncryptAppServiceContributerClientSecret="RSRf?J_z+1t6W*EPpxkVhXTs9Szirku5"
-$azureDevOpsPrincipalId = "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
-$contactEmailAddress="samsmithnz@gmail.com"
-$templatesLocation = "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"               
-if ($keyVaultName.Length -gt 24)
+if ($environment -ne "Prod")
 {
-    Write-Host "Key vault name must be 3-24 characters in length"
-    Break
+	$websiteDomainName = "$environment.samlearnsazure.com"
+}
+else
+{
+	$websiteDomainName = "samlearnsazure.com"
 }
 if ($storageAccountName.Length -gt 24)
 {
@@ -85,12 +66,12 @@ az keyvault set-policy --name $dataKeyVaultName --object-id $websiteProdSlotIden
 az keyvault set-policy --name $dataKeyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
 #Website alerts
 az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$webSiteName actionGroupName=$actionGroupName 
-$timing = -join($timing, "13. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-Write-Host "13. Website created: "$stopwatch.Elapsed.TotalSeconds
+$timing = -join($timing, "3. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+Write-Host "3. Website created: "$stopwatch.Elapsed.TotalSeconds
 
 Write-Host "websitePrincipalId: "$websiteProdSlotIdentityPrincipalId
 Write-Host "websiteStagingSlotPrincipalId: "$websiteStagingSlotIdentityPrincipalId
-$timing = -join($timing, "14. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-Write-Host "14. All Done: "$stopwatch.Elapsed.TotalSeconds
+$timing = -join($timing, "4. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+Write-Host "4. All Done: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Timing: `n$timing"
 Write-Host "Were there errors? (If the next line is blank, then no!) $error"
