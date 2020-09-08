@@ -246,6 +246,7 @@ jobs:
                 Write-Host "Timing: `n$timing"
                 Write-Host "Were there errors? (If the next line is blank, then no!) $error"
 
+
   - deployment: DeployRedis
     displayName: "Deploy redis to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
@@ -362,7 +363,7 @@ jobs:
               arguments: '-godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"'
             continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
             enabled: true
-           - task: AzureCLI@2
+          - task: AzureCLI@2
             displayName: 'Deploy infrastructure with ARM templates'
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
@@ -556,6 +557,7 @@ jobs:
               SqlPassword: '${{parameters.databaseLoginPassword}}'
               DacpacFile: '$(build.artifactstagingdirectory)/drop/Database/SamLearnsAzure.Database.dacpac'
               additionalArguments: '/p:BlockOnPossibleDataLoss=true'
+
 
   - deployment: DeployWebServiceApp
     displayName: "Deploy webservice app to ${{parameters.environment}} job"
