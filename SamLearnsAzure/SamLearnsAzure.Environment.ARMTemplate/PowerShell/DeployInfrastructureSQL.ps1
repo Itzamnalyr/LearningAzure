@@ -34,19 +34,10 @@ Write-Host "administratorUserSid: $administratorUserSid"
 Write-Host "storageAccountAccessKey: $storageAccountAccessKey"
 Write-Host "azureDevOpsPrincipalId: $azureDevOpsPrincipalId"
 
-
-#administratorUserLogin=$administratorUserLogin 
-#administratorUserSid=$administratorUserSid 
-storageAccountName=$storageAccountName 
-#storageAccountAccessKey=$storageAccountAccessKey
-
 #Variables
-$storageAccountName = "$appPrefix$environment$($locationShort)storage" #Must be <= 24 lowercase letters and numbers.
-$sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
+$storageAccountName = "$appPrefix$environment$($resourceGroupLocationShort)storage" #Must be <= 24 lowercase letters and numbers.
+$sqlServerName = "$appPrefix-$environment-$resourceGroupLocationShort-sqlserver"
 $sqlDatabaseName = "${{parameters.databaseName}}" 
-
-$administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
-$administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
 if ($storageAccountName.Length -gt 24)
 {
     Write-Host "Storage account name must be 3-24 characters in length"

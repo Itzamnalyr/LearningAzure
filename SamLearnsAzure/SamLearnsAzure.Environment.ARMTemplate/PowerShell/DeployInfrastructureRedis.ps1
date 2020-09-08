@@ -23,7 +23,7 @@ Write-Host "dataKeyVaultName: $dataKeyVaultName"
 Write-Host "templatesLocation: $templatesLocation"
 
 #Variables
-$redisCacheName = "$appPrefix-$environment-$locationShort-redis"
+$redisCacheName = "$appPrefix-$environment-$resourceGroupLocationShort-redis"
 $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 

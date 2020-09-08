@@ -23,8 +23,8 @@ Write-Host "dataKeyVaultName: $dataKeyVaultName"
 Write-Host "templatesLocation: $templatesLocation"
 
 #Variables
-$storageAccountName = "$appPrefix$environment$($locationShort)storage" #Must be <= 24 lowercase letters and numbers.
-$cdnName = "$appPrefix-$environment-$locationShort-cdn"   
+$storageAccountName = "$appPrefix$environment$($resourceGroupLocationShort)storage" #Must be <= 24 lowercase letters and numbers.
+$cdnName = "$appPrefix-$environment-$resourceGroupLocationShort-cdn"   
 if ($storageAccountName.Length -gt 24)
 {
     Write-Host "Storage account name must be 3-24 characters in length"
