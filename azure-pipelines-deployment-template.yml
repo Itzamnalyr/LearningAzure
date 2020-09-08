@@ -43,25 +43,11 @@ parameters: # defaults for any parameters that aren't specified
   websiteUrl: 'https://samsapp-dev-eu-web.azurewebsites.net/'
  
 jobs:
-  - deployment: DeployInfrastructure
-    displayName: "Deploy infrastructure to ${{parameters.environment}} job"
+  - deployment: DeployCoreInfrastructure
+    displayName: "Deploy core infrastructure to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
     pool:
       vmImage: "windows-latest"    
-    variables:
-      ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
-      AppSettings.Environment: ${{parameters.environment}}
-      AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
-      AppSettings.ImagesStorageCDNURL: ${{parameters.imagesStorageCDNURL}}
-      AppSettings.ImagesStorageURL: ${{parameters.imagesStorageURL}}
-      AppSettings.PartImagesContainerName: ${{parameters.partImagesContainerName}}
-      AppSettings.SetImagesContainerName: ${{parameters.setImagesContainerName}}
-      AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
-      AppSettings.WebServiceURL: ${{parameters.serviceURL}}
-      AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
-      AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
-      AppSettings.CaptureStartErrors: ${{parameters.captureStartErrors}}
-      ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}} 
     strategy:
       runOnce:
         deploy:
@@ -75,14 +61,6 @@ jobs:
               downloadPath: '$(build.artifactstagingdirectory)'
           - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
             displayName: 'Show all build variables in build output.'
-          - task: PowerShell@2
-            displayName: 'Set CName DNS entries in GoDaddy'
-            inputs:
-              targetType: FilePath
-              filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
-              arguments: '-godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"'
-            continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
-            enabled: false
           - task: AzurePowerShell@4 
             displayName: 'Run Azure PowerShell to remove deployments older than 30 days' #This addresses a deployment quota limit: https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deployment-quota-exceeded
             inputs:
@@ -92,7 +70,7 @@ jobs:
               azurePowerShellVersion: LatestVersion
             enabled: false
           - task: AzureCLI@2
-            displayName: 'Deploy ARM templates'
+            displayName: 'Deploy infrastructure with ARM templates'
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
@@ -176,10 +154,172 @@ jobs:
                 $timing = -join($timing, "5. Storage created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
                 Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
 
+                Write-Host "storageAccountAccessKey: "$storageAccountAccessKey
+                $timing = -join($timing, "14. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "14. All Done: "$stopwatch.Elapsed.TotalSeconds
+                Write-Host "Timing: `n$timing"
+                Write-Host "Were there errors? (If the next line is blank, then no!) $error"
+
+
+  - deployment: DeployCDN
+    displayName: "Deploy CDN to ${{parameters.environment}} job"
+    environment: ${{parameters.environment}}
+    dependsOn: DeployCoreInfrastructure
+    pool:
+      vmImage: "windows-latest"    
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download the build artifacts'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(build.artifactstagingdirectory)'
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: | 
+                $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+                $timing = ""
+                $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeconds, "`n")
+                Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
+
+                $appPrefix = "samsapp"
+                $environment = "${{parameters.environmentLowercase}}"
+                $resourceGroupName = "${{parameters.resourceGroupName}}"
+                $location = "${{parameters.resourceGroupLocation}}" 
+                $locationShort = "${{parameters.resourceGroupLocationShort}}"                
+                $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
+                $dataKeyVaultName = "${{parameters.keyVaultName}}"
+                $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
+                $webSiteName = "$appPrefix-$environment-$locationShort-web"
+                $sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
+                $webhostingName = "$appPrefix-$environment-$locationShort-hostingplan"
+                $storageAccountName = "$appPrefix$environment$($locationShort)storage" #Must be <= 24 lowercase letters and numbers.
+                $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
+                $actionGroupShortName = "$environment-actgrp"
+                $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
+                $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
+                $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
+                $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
+                $sqlDatabaseName = "${{parameters.databaseName}}" 
+                $sqlAdministratorLoginUser = "${{parameters.databaseLoginName}}"
+                $sqlAdministratorLoginPassword = "${{parameters.databaseLoginPassword}}" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
+                $administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
+                $administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
+                $websiteDomainName = "$environment.samlearnsazure.com"
+                $letsEncryptAppServiceContributerClientSecret="RSRf?J_z+1t6W*EPpxkVhXTs9Szirku5"
+                $azureDevOpsPrincipalId = "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+                $contactEmailAddress="samsmithnz@gmail.com"
+                $templatesLocation = "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"               
+                if ($keyVaultName.Length -gt 24)
+                {
+                    Write-Host "Key vault name must be 3-24 characters in length"
+                    Break
+                }
+                if ($storageAccountName.Length -gt 24)
+                {
+                    Write-Host "Storage account name must be 3-24 characters in length"
+                    Break
+                }
+                if ($letsEncryptAppServiceContributerClientSecret -eq $null)
+                {
+                    Write-Host "$letsEncryptAppServiceContributerClientSecret is null. Please set this secret before continuing"
+                    Break
+                }
+                $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
+
                 #CDN
                 az deployment group create --resource-group $resourceGroupName --name $cdnName --template-file "$templatesLocation\CDN.json" --parameters cdnName=$cdnName storageAccountName=$storageAccountName
                 $timing = -join($timing, "6. CDN  created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
                 Write-Host "6. CDN created: "$stopwatch.Elapsed.TotalSeconds
+
+                $timing = -join($timing, "14. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "14. All Done: "$stopwatch.Elapsed.TotalSeconds
+                Write-Host "Timing: `n$timing"
+                Write-Host "Were there errors? (If the next line is blank, then no!) $error"
+
+  - deployment: DeployRedis
+    displayName: "Deploy redis to ${{parameters.environment}} job"
+    environment: ${{parameters.environment}}
+    dependsOn: DeployCoreInfrastructure
+    pool:
+      vmImage: "windows-latest"    
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download the build artifacts'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(build.artifactstagingdirectory)'
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: | 
+                $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+                $timing = ""
+                $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeconds, "`n")
+                Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
+
+                $appPrefix = "samsapp"
+                $environment = "${{parameters.environmentLowercase}}"
+                $resourceGroupName = "${{parameters.resourceGroupName}}"
+                $location = "${{parameters.resourceGroupLocation}}" 
+                $locationShort = "${{parameters.resourceGroupLocationShort}}"                
+                $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
+                $dataKeyVaultName = "${{parameters.keyVaultName}}"
+                $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
+                $webSiteName = "$appPrefix-$environment-$locationShort-web"
+                $sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
+                $webhostingName = "$appPrefix-$environment-$locationShort-hostingplan"
+                $storageAccountName = "$appPrefix$environment$($locationShort)storage" #Must be <= 24 lowercase letters and numbers.
+                $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
+                $actionGroupShortName = "$environment-actgrp"
+                $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
+                $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
+                $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
+                $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
+                $sqlDatabaseName = "${{parameters.databaseName}}" 
+                $sqlAdministratorLoginUser = "${{parameters.databaseLoginName}}"
+                $sqlAdministratorLoginPassword = "${{parameters.databaseLoginPassword}}" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
+                $administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
+                $administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
+                $websiteDomainName = "$environment.samlearnsazure.com"
+                $letsEncryptAppServiceContributerClientSecret="RSRf?J_z+1t6W*EPpxkVhXTs9Szirku5"
+                $azureDevOpsPrincipalId = "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+                $contactEmailAddress="samsmithnz@gmail.com"
+                $templatesLocation = "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"               
+                if ($keyVaultName.Length -gt 24)
+                {
+                    Write-Host "Key vault name must be 3-24 characters in length"
+                    Break
+                }
+                if ($storageAccountName.Length -gt 24)
+                {
+                    Write-Host "Storage account name must be 3-24 characters in length"
+                    Break
+                }
+                if ($letsEncryptAppServiceContributerClientSecret -eq $null)
+                {
+                    Write-Host "$letsEncryptAppServiceContributerClientSecret is null. Please set this secret before continuing"
+                    Break
+                }
+                $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
                 #Redis  
                 $redisOutput = az deployment group create --resource-group $resourceGroupName --name $redisCacheName --template-file "$templatesLocation\Redis.json" --parameters redisCacheName=$redisCacheName
@@ -191,16 +331,94 @@ jobs:
                 $timing = -join($timing, "7. Redis created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
                 Write-Host "7. Redis created: "$stopwatch.Elapsed.TotalSeconds
 
-                #SQL
-                $sqlOutput = az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=$sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
-                $sqlJSON = $sqlOutput | ConvertFrom-Json
-                $sqlServerAddress = $sqlJSON.properties.outputs.sqlServerIPAddress.value
-                $sqlConnectionStringName = "ConnectionStrings--SamsAppConnectionString$Environment"
-                $sqlConnectionStringValue = "Server=tcp:$sqlServerName.database.windows.net,1433;Initial Catalog=$sqlDatabaseName;Persist Security Info=False;User ID=$sqlAdministratorLoginUser;Password=$sqlAdministratorLoginPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-                Write-Host "Setting value $sqlConnectionStringValue for $sqlConnectionStringName to key vault"
-                az keyvault secret set --vault-name $dataKeyVaultName --name "$sqlConnectionStringName" --value $sqlConnectionStringValue #Upload the secret into the key vault
-                $timing = -join($timing, "8. SQL created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-                Write-Host "8. SQL created: "$stopwatch.Elapsed.TotalSeconds
+                $timing = -join($timing, "14. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "14. All Done: "$stopwatch.Elapsed.TotalSeconds
+                Write-Host "Timing: `n$timing"
+                Write-Host "Were there errors? (If the next line is blank, then no!) $error"
+
+
+  - deployment: DeployInfrastructureWebCore
+    displayName: "Deploy web core infrastructure to ${{parameters.environment}} job"
+    environment: ${{parameters.environment}}
+    dependsOn: DeployCoreInfrastructure
+    pool:
+      vmImage: "windows-latest"    
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download the build artifacts'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(build.artifactstagingdirectory)'
+          - task: PowerShell@2
+            displayName: 'Set CName DNS entries in GoDaddy'
+            inputs:
+              targetType: FilePath
+              filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
+              arguments: '-godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"'
+            continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
+            enabled: true
+           - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: | 
+                $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+                $timing = ""
+                $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeconds, "`n")
+                Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
+
+                $appPrefix = "samsapp"
+                $environment = "${{parameters.environmentLowercase}}"
+                $resourceGroupName = "${{parameters.resourceGroupName}}"
+                $location = "${{parameters.resourceGroupLocation}}" 
+                $locationShort = "${{parameters.resourceGroupLocationShort}}"                
+                $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
+                $dataKeyVaultName = "${{parameters.keyVaultName}}"
+                $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
+                $webSiteName = "$appPrefix-$environment-$locationShort-web"
+                $sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
+                $webhostingName = "$appPrefix-$environment-$locationShort-hostingplan"
+                $storageAccountName = "$appPrefix$environment$($locationShort)storage" #Must be <= 24 lowercase letters and numbers.
+                $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
+                $actionGroupShortName = "$environment-actgrp"
+                $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
+                $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
+                $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
+                $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
+                $sqlDatabaseName = "${{parameters.databaseName}}" 
+                $sqlAdministratorLoginUser = "${{parameters.databaseLoginName}}"
+                $sqlAdministratorLoginPassword = "${{parameters.databaseLoginPassword}}" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
+                $administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
+                $administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
+                $websiteDomainName = "$environment.samlearnsazure.com"
+                $letsEncryptAppServiceContributerClientSecret="RSRf?J_z+1t6W*EPpxkVhXTs9Szirku5"
+                $azureDevOpsPrincipalId = "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+                $contactEmailAddress="samsmithnz@gmail.com"
+                $templatesLocation = "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"               
+                if ($keyVaultName.Length -gt 24)
+                {
+                    Write-Host "Key vault name must be 3-24 characters in length"
+                    Break
+                }
+                if ($storageAccountName.Length -gt 24)
+                {
+                    Write-Host "Storage account name must be 3-24 characters in length"
+                    Break
+                }
+                if ($letsEncryptAppServiceContributerClientSecret -eq $null)
+                {
+                    Write-Host "$letsEncryptAppServiceContributerClientSecret is null. Please set this secret before continuing"
+                    Break
+                }
+                $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
                 #Action Group
                 az deployment group create --resource-group $resourceGroupName --name $actionGroupName --template-file "$templatesLocation\ActionGroup.json" --parameters actionGroupName=$actionGroupName appPrefix=$appPrefix environment=$environment contactEmailAddress=$contactEmailAddress
@@ -222,79 +440,19 @@ jobs:
                 $timing = -join($timing, "11. Web hosting created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
                 Write-Host "11. Web hosting created: "$stopwatch.Elapsed.TotalSeconds
 
-                #Web service
-                az deployment group create --resource-group $resourceGroupName --name $serviceAPIName --template-file "$templatesLocation\WebService.json" --parameters serviceAPIName=$serviceAPIName hostingPlanName=$webhostingName actionGroupName=$actionGroupName sqlServerName=$sqlServerName sqlServerAddress=$sqlServerAddress sqlDatabaseName=$sqlDatabaseName sqlDatabaseLoginName=$sqlAdministratorLoginUser sqlDatabaseLoginPassword=$sqlAdministratorLoginPassword
-                #web service managed identity and setting keyvault access permissions
-                $serviceAPIProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $serviceAPIName 
-                $serviceAPIStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $serviceAPIName  --slot staging
-                $serviceAPIProdSlotIdentityPrincipalId = ($serviceAPIProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
-                $serviceAPIStagingSlotIdentityPrincipalId =($serviceAPIStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
-                Write-Host "Setting access policies for key vault"
-                az keyvault set-policy --name $dataKeyVaultName --object-id $serviceAPIProdSlotIdentityPrincipalId --secret-permissions list get
-                az keyvault set-policy --name $dataKeyVaultName --object-id $serviceAPIStagingSlotIdentityPrincipalId --secret-permissions list get
-                #Web service alerts
-                az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$serviceAPIName actionGroupName=$actionGroupName 
-                $timing = -join($timing, "12. Web service created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-                Write-Host "12. Web service created: "$stopwatch.Elapsed.TotalSeconds
-
-                #Web site
-                az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName actionGroupName=$actionGroupName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret="$letsEncryptAppServiceContributerClientSecret"
-                #web site managed identity and setting keyvault access permissions
-                $websiteProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName 
-                $websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName  --slot staging
-                $websiteProdSlotIdentityPrincipalId = ($websiteProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
-                $websiteStagingSlotIdentityPrincipalId =($websiteStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
-                Write-Host "prod: " $websiteProdSlotIdentityPrincipalId
-                Write-Host "staging: " $websiteStagingSlotIdentityPrincipalId
-                Write-Host "Setting access policies for key vault"
-                az keyvault set-policy --name $dataKeyVaultName --object-id $websiteProdSlotIdentityPrincipalId --secret-permissions list get
-                az keyvault set-policy --name $dataKeyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
-                #Website alerts
-                az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$webSiteName actionGroupName=$actionGroupName 
-                $timing = -join($timing, "13. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-                Write-Host "13. Website created: "$stopwatch.Elapsed.TotalSeconds
-
-                Write-Host "storageAccountAccessKey: "$storageAccountAccessKey
-                Write-Host "sqlServerIPAddress: "$sqlServerIPAddress
-                Write-Host "servicePrincipalId: "$serviceAPIProdSlotIdentityPrincipalId
-                Write-Host "serviceStagingSlotPrincipalId: "$serviceAPIStagingSlotIdentityPrincipalId
-                Write-Host "websitePrincipalId: "$websiteProdSlotIdentityPrincipalId
-                Write-Host "websiteStagingSlotPrincipalId: "$websiteStagingSlotIdentityPrincipalId
                 Write-Host "applicationInsightsInstrumentationKey: "$applicationInsightsInstrumentationKey
                 $timing = -join($timing, "14. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
                 Write-Host "14. All Done: "$stopwatch.Elapsed.TotalSeconds
                 Write-Host "Timing: `n$timing"
                 Write-Host "Were there errors? (If the next line is blank, then no!) $error"
 
-          #- task: AzureResourceGroupDeployment@2
-          #  displayName: 'Azure Deployment: Deploy ARM Template to resource group'
-          #  inputs:
-          #    azureSubscription: 'SamLearnsAzure connection to Azure Portal'
-          #    resourceGroupName: '${{parameters.resourceGroupName}}'
-          #    location: '${{parameters.resourceGroupLocation}}'
-          #    csmFile: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/azuredeploy.json'
-          #    csmParametersFile: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/azuredeploy.parameters.json'
-          #    overrideParameters: '-userPrincipalLogin ${{parameters.userPrincipalLogin}} -databaseLoginName ${{parameters.databaseLoginName}} -databaseLoginPassword ${{parameters.databaseLoginPassword}} -environment ${{parameters.environmentLowercase}} -locationShort ${{parameters.resourceGroupLocationShort}}  -appServiceContributerClientSecret "${{parameters.appServiceContributerClientSecret}}" -websiteDomainName ${{parameters.websiteDomainName}} -roleAssignmentId ${{parameters.roleAssignmentId}} -letsEncryptUniqueRoleAssignmentGuid ${{parameters.letsEncryptUniqueRoleAssignmentGuid}}'
-          #- task: keesschollaart.arm-outputs.arm-outputs.ARM Outputs@5
-          #  displayName: 'Extract ARM template outputs to pipeline variables'
-          #  inputs:
-          #    ConnectedServiceNameARM: 'SamLearnsAzure connection to Azure Portal'
-          #    resourceGroupName: ${{parameters.resourceGroupName}}
-          #- task: AzurePowerShell@4 #Note that pipeline variables servicePrincipalId, websitePrincipalId, applicationInsightsInstrumentationKeyOutput, storageAccountKeyOutput, DatabaseLoginPassword, redisConnectionStringOutput are populated from the previous output task
-          #  displayName: 'Run Azure PowerShell to setup KeyVault with ARM template output variables'
-          #  inputs:
-          #    azureSubscription: 'SamLearnsAzure connection to Azure Portal'
-          #    ScriptPath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/KeyVault.ps1'
-          #    ScriptArguments: '-KeyVaultName "${{parameters.KeyVaultName}}" -Environment "${{parameters.Environment}}" -ServicePrincipalId "$(servicePrincipalId)" -ServiceStagingSlotPrincipalId "$(serviceStagingSlotPrincipalId)" -WebsitePrincipalId "$(websitePrincipalId)" -WebsiteStagingSlotPrincipalId "$(websiteStagingSlotPrincipalId)" -ApplicationInsightsInstrumentationKey "$(applicationInsightsInstrumentationKeyOutput)" -StorageAccountKey "$(storageAccountKeyOutput)" -DatabaseServerName "${{parameters.DatabaseServerName}}" -DatabaseLoginName "${{parameters.DatabaseLoginName}}" -DatabaseLoginPassword "${{parameters.DatabaseLoginPassword}}" -RedisConnectionString "$(redisConnectionStringOutput)"'
-          #    azurePowerShellVersion: LatestVersion
-
 
   - deployment: DeployDatabase
     displayName: "Deploy database to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
-    dependsOn: DeployInfrastructure
+    dependsOn: DeployCoreInfrastructure
     pool:
-      vmImage: ${{parameters.vmImage}}        
+      vmImage: ${{parameters.vmImage}}          
     strategy:
       runOnce:
         deploy:
@@ -306,6 +464,80 @@ jobs:
               downloadType: 'single'
               artifactName: 'drop'
               downloadPath: '$(build.artifactstagingdirectory)'
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: | 
+                $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+                $timing = ""
+                $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeconds, "`n")
+                Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
+
+                $appPrefix = "samsapp"
+                $environment = "${{parameters.environmentLowercase}}"
+                $resourceGroupName = "${{parameters.resourceGroupName}}"
+                $location = "${{parameters.resourceGroupLocation}}" 
+                $locationShort = "${{parameters.resourceGroupLocationShort}}"                
+                $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
+                $dataKeyVaultName = "${{parameters.keyVaultName}}"
+                $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
+                $webSiteName = "$appPrefix-$environment-$locationShort-web"
+                $sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
+                $webhostingName = "$appPrefix-$environment-$locationShort-hostingplan"
+                $storageAccountName = "$appPrefix$environment$($locationShort)storage" #Must be <= 24 lowercase letters and numbers.
+                $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
+                $actionGroupShortName = "$environment-actgrp"
+                $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
+                $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
+                $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
+                $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
+                $sqlDatabaseName = "${{parameters.databaseName}}" 
+                $sqlAdministratorLoginUser = "${{parameters.databaseLoginName}}"
+                $sqlAdministratorLoginPassword = "${{parameters.databaseLoginPassword}}" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
+                $administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
+                $administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
+                $websiteDomainName = "$environment.samlearnsazure.com"
+                $letsEncryptAppServiceContributerClientSecret="RSRf?J_z+1t6W*EPpxkVhXTs9Szirku5"
+                $azureDevOpsPrincipalId = "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+                $contactEmailAddress="samsmithnz@gmail.com"
+                $templatesLocation = "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"               
+                if ($keyVaultName.Length -gt 24)
+                {
+                    Write-Host "Key vault name must be 3-24 characters in length"
+                    Break
+                }
+                if ($storageAccountName.Length -gt 24)
+                {
+                    Write-Host "Storage account name must be 3-24 characters in length"
+                    Break
+                }
+                if ($letsEncryptAppServiceContributerClientSecret -eq $null)
+                {
+                    Write-Host "$letsEncryptAppServiceContributerClientSecret is null. Please set this secret before continuing"
+                    Break
+                }
+                $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
+
+                #SQL
+                $sqlOutput = az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=$sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
+                $sqlJSON = $sqlOutput | ConvertFrom-Json
+                $sqlServerAddress = $sqlJSON.properties.outputs.sqlServerIPAddress.value
+                $sqlConnectionStringName = "ConnectionStrings--SamsAppConnectionString$Environment"
+                $sqlConnectionStringValue = "Server=tcp:$sqlServerName.database.windows.net,1433;Initial Catalog=$sqlDatabaseName;Persist Security Info=False;User ID=$sqlAdministratorLoginUser;Password=$sqlAdministratorLoginPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+                Write-Host "Setting value $sqlConnectionStringValue for $sqlConnectionStringName to key vault"
+                az keyvault secret set --vault-name $dataKeyVaultName --name "$sqlConnectionStringName" --value $sqlConnectionStringValue #Upload the secret into the key vault
+                $timing = -join($timing, "8. SQL created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "8. SQL created: "$stopwatch.Elapsed.TotalSeconds
+
+                Write-Host "sqlServerIPAddress: "$sqlServerIPAddress
+                $timing = -join($timing, "14. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "14. All Done: "$stopwatch.Elapsed.TotalSeconds
+                Write-Host "Timing: `n$timing"
+                Write-Host "Were there errors? (If the next line is blank, then no!) $error"
           - task: AzureCLI@2
             displayName: 'Restore database from backup, if needed'
             inputs:
@@ -328,7 +560,11 @@ jobs:
   - deployment: DeployWebServiceApp
     displayName: "Deploy webservice app to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
-    dependsOn: DeployInfrastructure
+    dependsOn: 
+    - DeployCoreInfrastructure
+    - DeployCDN
+    - DeployRedis
+    - DeployDatabase
     pool:
       vmImage: ${{parameters.vmImage}}        
     variables:
@@ -356,6 +592,85 @@ jobs:
               downloadType: 'single'
               artifactName: 'drop'
               downloadPath: '$(build.artifactstagingdirectory)'
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: | 
+                $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+                $timing = ""
+                $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeconds, "`n")
+                Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
+
+                $appPrefix = "samsapp"
+                $environment = "${{parameters.environmentLowercase}}"
+                $resourceGroupName = "${{parameters.resourceGroupName}}"
+                $location = "${{parameters.resourceGroupLocation}}" 
+                $locationShort = "${{parameters.resourceGroupLocationShort}}"                
+                $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
+                $dataKeyVaultName = "${{parameters.keyVaultName}}"
+                $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
+                $webSiteName = "$appPrefix-$environment-$locationShort-web"
+                $sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
+                $webhostingName = "$appPrefix-$environment-$locationShort-hostingplan"
+                $storageAccountName = "$appPrefix$environment$($locationShort)storage" #Must be <= 24 lowercase letters and numbers.
+                $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
+                $actionGroupShortName = "$environment-actgrp"
+                $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
+                $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
+                $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
+                $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
+                $sqlDatabaseName = "${{parameters.databaseName}}" 
+                $sqlAdministratorLoginUser = "${{parameters.databaseLoginName}}"
+                $sqlAdministratorLoginPassword = "${{parameters.databaseLoginPassword}}" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
+                $administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
+                $administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
+                $websiteDomainName = "$environment.samlearnsazure.com"
+                $letsEncryptAppServiceContributerClientSecret="RSRf?J_z+1t6W*EPpxkVhXTs9Szirku5"
+                $azureDevOpsPrincipalId = "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+                $contactEmailAddress="samsmithnz@gmail.com"
+                $templatesLocation = "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"               
+                if ($keyVaultName.Length -gt 24)
+                {
+                    Write-Host "Key vault name must be 3-24 characters in length"
+                    Break
+                }
+                if ($storageAccountName.Length -gt 24)
+                {
+                    Write-Host "Storage account name must be 3-24 characters in length"
+                    Break
+                }
+                if ($letsEncryptAppServiceContributerClientSecret -eq $null)
+                {
+                    Write-Host "$letsEncryptAppServiceContributerClientSecret is null. Please set this secret before continuing"
+                    Break
+                }
+                $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
+
+                #Web service
+                az deployment group create --resource-group $resourceGroupName --name $serviceAPIName --template-file "$templatesLocation\WebService.json" --parameters serviceAPIName=$serviceAPIName hostingPlanName=$webhostingName actionGroupName=$actionGroupName sqlServerName=$sqlServerName sqlServerAddress=$sqlServerAddress sqlDatabaseName=$sqlDatabaseName sqlDatabaseLoginName=$sqlAdministratorLoginUser sqlDatabaseLoginPassword=$sqlAdministratorLoginPassword
+                #web service managed identity and setting keyvault access permissions
+                $serviceAPIProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $serviceAPIName 
+                $serviceAPIStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $serviceAPIName  --slot staging
+                $serviceAPIProdSlotIdentityPrincipalId = ($serviceAPIProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
+                $serviceAPIStagingSlotIdentityPrincipalId =($serviceAPIStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
+                Write-Host "Setting access policies for key vault"
+                az keyvault set-policy --name $dataKeyVaultName --object-id $serviceAPIProdSlotIdentityPrincipalId --secret-permissions list get
+                az keyvault set-policy --name $dataKeyVaultName --object-id $serviceAPIStagingSlotIdentityPrincipalId --secret-permissions list get
+                #Web service alerts
+                az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$serviceAPIName actionGroupName=$actionGroupName 
+                $timing = -join($timing, "12. Web service created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "12. Web service created: "$stopwatch.Elapsed.TotalSeconds
+
+                Write-Host "servicePrincipalId: "$serviceAPIProdSlotIdentityPrincipalId
+                Write-Host "serviceStagingSlotPrincipalId: "$serviceAPIStagingSlotIdentityPrincipalId
+                $timing = -join($timing, "14. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "14. All Done: "$stopwatch.Elapsed.TotalSeconds
+                Write-Host "Timing: `n$timing"
+                Write-Host "Were there errors? (If the next line is blank, then no!) $error"
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: web service'
             inputs:
@@ -375,7 +690,11 @@ jobs:
   - deployment: DeployWebsiteApp
     displayName: "Deploy website app to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
-    dependsOn: DeployInfrastructure
+    dependsOn: 
+    - DeployCoreInfrastructure
+    - DeployCDN
+    - DeployRedis
+    - DeployDatabase
     pool:
       vmImage: ${{parameters.vmImage}}        
     variables:
@@ -403,6 +722,87 @@ jobs:
               downloadType: 'single'
               artifactName: 'drop'
               downloadPath: '$(build.artifactstagingdirectory)'
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: | 
+                $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+                $timing = ""
+                $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeconds, "`n")
+                Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
+
+                $appPrefix = "samsapp"
+                $environment = "${{parameters.environmentLowercase}}"
+                $resourceGroupName = "${{parameters.resourceGroupName}}"
+                $location = "${{parameters.resourceGroupLocation}}" 
+                $locationShort = "${{parameters.resourceGroupLocationShort}}"                
+                $keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
+                $dataKeyVaultName = "${{parameters.keyVaultName}}"
+                $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
+                $webSiteName = "$appPrefix-$environment-$locationShort-web"
+                $sqlServerName = "$appPrefix-$environment-$locationShort-sqlserver"
+                $webhostingName = "$appPrefix-$environment-$locationShort-hostingplan"
+                $storageAccountName = "$appPrefix$environment$($locationShort)storage" #Must be <= 24 lowercase letters and numbers.
+                $actionGroupName = "$appPrefix-$environment-$locationShort-actionGroup"
+                $actionGroupShortName = "$environment-actgrp"
+                $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
+                $applicationInsightsAvailablityTestName = "Availability home page test-$applicationInsightsName"
+                $redisCacheName = "$appPrefix-$environment-$locationShort-redis"
+                $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
+                $sqlDatabaseName = "${{parameters.databaseName}}" 
+                $sqlAdministratorLoginUser = "${{parameters.databaseLoginName}}"
+                $sqlAdministratorLoginPassword = "${{parameters.databaseLoginPassword}}" #The password is case-sensitive and must contain lower case, upper case, numbers and special characters. 
+                $administratorUserLogin = "c6193b13-08e7-4519-b7b4-e6b1875b15a8"
+                $administratorUserSid = "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8"
+                $websiteDomainName = "$environment.samlearnsazure.com"
+                $letsEncryptAppServiceContributerClientSecret="RSRf?J_z+1t6W*EPpxkVhXTs9Szirku5"
+                $azureDevOpsPrincipalId = "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+                $contactEmailAddress="samsmithnz@gmail.com"
+                $templatesLocation = "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"               
+                if ($keyVaultName.Length -gt 24)
+                {
+                    Write-Host "Key vault name must be 3-24 characters in length"
+                    Break
+                }
+                if ($storageAccountName.Length -gt 24)
+                {
+                    Write-Host "Storage account name must be 3-24 characters in length"
+                    Break
+                }
+                if ($letsEncryptAppServiceContributerClientSecret -eq $null)
+                {
+                    Write-Host "$letsEncryptAppServiceContributerClientSecret is null. Please set this secret before continuing"
+                    Break
+                }
+                $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
+
+                #Web site
+                az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName actionGroupName=$actionGroupName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret="$letsEncryptAppServiceContributerClientSecret"
+                #web site managed identity and setting keyvault access permissions
+                $websiteProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName 
+                $websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName  --slot staging
+                $websiteProdSlotIdentityPrincipalId = ($websiteProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
+                $websiteStagingSlotIdentityPrincipalId =($websiteStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
+                Write-Host "prod: " $websiteProdSlotIdentityPrincipalId
+                Write-Host "staging: " $websiteStagingSlotIdentityPrincipalId
+                Write-Host "Setting access policies for key vault"
+                az keyvault set-policy --name $dataKeyVaultName --object-id $websiteProdSlotIdentityPrincipalId --secret-permissions list get
+                az keyvault set-policy --name $dataKeyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
+                #Website alerts
+                az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$webSiteName actionGroupName=$actionGroupName 
+                $timing = -join($timing, "13. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "13. Website created: "$stopwatch.Elapsed.TotalSeconds
+
+                Write-Host "websitePrincipalId: "$websiteProdSlotIdentityPrincipalId
+                Write-Host "websiteStagingSlotPrincipalId: "$websiteStagingSlotIdentityPrincipalId
+                $timing = -join($timing, "14. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+                Write-Host "14. All Done: "$stopwatch.Elapsed.TotalSeconds
+                Write-Host "Timing: `n$timing"
+                Write-Host "Were there errors? (If the next line is blank, then no!) $error"
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: website'
             inputs:
@@ -419,30 +819,15 @@ jobs:
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
 
-#  - deployment: DeployAppInsightsAnnotation
-#    displayName: "Deploy application insights annotation to ${{parameters.environment}} job"
-#    environment: ${{parameters.environment}}
-#    dependsOn: DeployInfrastructure
-#    pool:
-#      vmImage: ${{parameters.vmImage}}        
-#    strategy:
-#      runOnce:
-#        deploy:
-#          steps:
-#          - task: ms-appinsights.appinsightsreleaseannotations.release-task.ms-appinsights.ReleaseAnnotation@1
-#            displayName: 'Add release annotation to Azure Application Insights'
-#            inputs:
-#              applicationId: '${{parameters.applicationInsightsApplicationId}}'
-#              apiKey: '${{parameters.applicationInsightsApiKey}}'
-
   - deployment: DeployFunctionalTests
     displayName: "Deploy functional tests to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
     dependsOn: 
+    - DeployCDN
+    - DeployRedis
     - DeployDatabase
-    - DeployWebServiceapp
-    - DeployWebsiteapp
-    #- DeployAppInsightsAnnotation
+    - DeployWebServiceApp
+    - DeployWebsiteApp
     pool:
       vmImage: ${{parameters.vmImage}}        
     strategy:
