@@ -74,14 +74,7 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureCore.ps1
-              arguments: |
-                -appPrefix "samsapp"
-                -environment "${{parameters.environmentLowercase}}"
-                -resourceGroupName "${{parameters.resourceGroupName}}"
-                -resourceGroupLocation "${{parameters.resourceGroupLocation}}" 
-                -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}"   
-                -dataKeyVaultName "${{parameters.keyVaultName}}"
-                -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"
 
 
   - deployment: DeployCDN
