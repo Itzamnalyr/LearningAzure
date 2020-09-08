@@ -6,9 +6,9 @@
 	[string] $resourceGroupLocation,
 	[string] $resourceGroupLocationShort,
 	[string] $dataKeyVaultName,
+	[string] $templatesLocation,
 	[string] $administratorUserSid,
-	[string] $azureDevOpsPrincipalId,
-	[string] $templatesLocation
+	[string] $azureDevOpsPrincipalId
 )
 
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
