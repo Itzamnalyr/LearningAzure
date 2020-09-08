@@ -6,6 +6,8 @@
 	[string] $resourceGroupLocation,
 	[string] $resourceGroupLocationShort,
 	[string] $dataKeyVaultName,
+	[string] $administratorUserSid,
+	[string] $azureDevOpsPrincipalId,
 	[string] $templatesLocation
 )
 
@@ -20,6 +22,8 @@ Write-Host "resourceGroupName: $resourceGroupName"
 Write-Host "resourceGroupLocation: $resourceGroupLocation"
 Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
 Write-Host "dataKeyVaultName: $dataKeyVaultName"
+Write-Host "administratorUserSid: $administratorUserSid"
+Write-Host "azureDevOpsPrincipalId: $azureDevOpsPrincipalId"
 Write-Host "templatesLocation: $templatesLocation"
 
 #Variables
