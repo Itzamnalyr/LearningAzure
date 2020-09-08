@@ -22,7 +22,7 @@ variables:
 
 stages:
 - stage: Build
-  displayName: 'Build & Test stage'
+  displayName: 'Build & Test Stage'
   #condition: eq('1', '2')
   jobs:
   - template: azure-pipelines-build-template.yml

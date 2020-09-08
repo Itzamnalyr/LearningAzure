@@ -30,6 +30,27 @@
     </None>
     <Content Include="Deploy-AzureResourceGroup.ps1" />
     <Content Include="DeploymentCommands.ps1" />
+    <None Include="PowerShell\DeployInfrastructureCDN.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="PowerShell\DeployInfrastructureRedis.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="PowerShell\DeployInfrastructureSQL.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="PowerShell\DeployInfrastructureWebCore.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="PowerShell\DeployInfrastructureWebService.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="PowerShell\DeployInfrastructureWebsite.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="PowerShell\DeployInfrastructureCore.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="PowerShell\GoDaddyDNSSetup.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
