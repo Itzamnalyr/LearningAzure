@@ -78,8 +78,8 @@ jobs:
                 -appPrefix "samsapp"
                 -environment "${{parameters.environmentLowercase}}"
                 -resourceGroupName "${{parameters.resourceGroupName}}"
-                -location "${{parameters.resourceGroupLocation}}" 
-                -locationShort "${{parameters.resourceGroupLocationShort}}"   
+                -resourceGroupLocation "${{parameters.resourceGroupLocation}}" 
+                -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}"   
                 -dataKeyVaultName "${{parameters.keyVaultName}}"
                 -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"
 
@@ -620,6 +620,7 @@ jobs:
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
 
+
   - deployment: DeployWebsiteApp
     displayName: "Deploy website app to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
@@ -752,6 +753,7 @@ jobs:
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
 
+
   - deployment: DeployFunctionalTests
     displayName: "Deploy functional tests to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
@@ -795,6 +797,7 @@ jobs:
                -KeyVaultClientId "${{parameters.keyVaultClientId}}" 
                -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}"  
 
+
   - deployment: DeploySwapServiceAppSlots
     displayName: "Deploy swap service slots to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
@@ -813,6 +816,7 @@ jobs:
               WebAppName: '${{parameters.serviceName}}'
               ResourceGroupName: '${{parameters.resourceGroupName}}'
               SourceSlot: '${{parameters.stagingSlotName}}'
+
 
   - deployment: DeploySwapWebsiteAppSlots
     displayName: "Deploy swap website slots to ${{parameters.environment}} job"

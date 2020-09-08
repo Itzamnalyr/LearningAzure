@@ -3,8 +3,8 @@
 	[string] $appPrefix,
 	[string] $environment,
 	[string] $resourceGroupName,
-	[string] $location,
-	[string] $locationShort,
+	[string] $resourceGroupLocation,
+	[string] $resourceGroupLocationShort,
 	[string] $dataKeyVaultName,
 	[string] $templatesLocation
 )
@@ -13,10 +13,18 @@ $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 $timing = ""
 $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeconds, "`n")
 Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
+Write-Host "Parameters:"
+Write-Host "appPrefix: $appPrefix"
+Write-Host "environment: $environment"
+Write-Host "resourceGroupName: $resourceGroupName"
+Write-Host "resourceGroupLocation: $resourceGroupLocation"
+Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
+Write-Host "dataKeyVaultName: $dataKeyVaultName"
+Write-Host "templatesLocation: $templatesLocation"
 
 #Variables
-$keyVaultName = "$appPrefix-$environment-$locationShort-vault" #Must be <= 23 characters
-$storageAccountName = "$appPrefix$environment$($locationShort)storage" #Must be <= 24 lowercase letters and numbers.          
+$keyVaultName = "$appPrefix-$environment-$resourceGroupLocationShort-vault" #Must be <= 23 characters
+$storageAccountName = "$appPrefix$environment$($resourceGroupLocationShort)storage" #Must be <= 24 lowercase letters and numbers.          
 if ($keyVaultName.Length -gt 24)
 {
     Write-Host "Key vault name must be 3-24 characters in length"
@@ -31,7 +39,7 @@ $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSecon
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
 #Resource group
-az group create --location "$location" --name "$resourceGroupName"
+az group create --location $resourceGroupLocation --name $resourceGroupName
 $timing = -join($timing, "3. Resource group created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "3. Resource group created: "$stopwatch.Elapsed.TotalSeconds
 
