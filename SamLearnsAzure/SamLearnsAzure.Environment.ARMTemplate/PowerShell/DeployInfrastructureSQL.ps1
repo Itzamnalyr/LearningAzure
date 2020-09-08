@@ -7,6 +7,7 @@
 	[string] $resourceGroupLocationShort,
 	[string] $dataKeyVaultName,
 	[string] $templatesLocation,
+	[string] $sqlDatabaseName,
 	[string] $sqlAdministratorLoginUser,
 	[string] $sqlAdministratorLoginPassword,
 	[string] $administratorUserLogin,
@@ -27,6 +28,7 @@ Write-Host "resourceGroupLocation: $resourceGroupLocation"
 Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
 Write-Host "dataKeyVaultName: $dataKeyVaultName"
 Write-Host "templatesLocation: $templatesLocation"
+Write-Host "sqlDatabaseName: $sqlDatabaseName"
 Write-Host "sqlAdministratorLoginUser: $sqlAdministratorLoginUser"
 Write-Host "sqlAdministratorLoginPassword: $sqlAdministratorLoginPassword"
 Write-Host "administratorUserLogin: $administratorUserLogin"
@@ -37,7 +39,6 @@ Write-Host "azureDevOpsPrincipalId: $azureDevOpsPrincipalId"
 #Variables
 $storageAccountName = "$appPrefix$environment$($resourceGroupLocationShort)storage" #Must be <= 24 lowercase letters and numbers.
 $sqlServerName = "$appPrefix-$environment-$resourceGroupLocationShort-sqlserver"
-$sqlDatabaseName = "${{parameters.databaseName}}" 
 if ($storageAccountName.Length -gt 24)
 {
     Write-Host "Storage account name must be 3-24 characters in length"

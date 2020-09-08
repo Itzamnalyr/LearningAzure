@@ -1,5 +1,4 @@
-﻿#TODO: Delete this file
-#######################################################################################
+﻿#######################################################################################
 #Extract important information from arm template variables and store in key vault
 #######################################################################################
 param
@@ -17,6 +16,26 @@ param
 	[string] $DatabaseLoginPassword,
 	[string] $RedisConnectionString
 )
+
+Write-Host "Key vault clean up"
+$secrets = az keyvault secret list --vault-name $KeyVaultName
+$secrets2 = $secrets | ConvertFrom-Json
+$secrets2 | select name | ft
+
+Write-Host "looking..."
+foreach($secret in $secrets2){
+    if ($secret.name  -like '*Dev2')
+    #if ($secret.name  -like '*PR4*' -and $secret.name -notlike "*PR456")
+    {
+        Write-Host "Deleting key $($secret.name)"
+        az keyvault secret delete --name $secret.name --vault-name samsapp-data-eu-keyvault 
+    }
+    else
+    {
+       # Write-Host "Found nothing"
+    }
+}
+    
 
 Write-Host "Setting key vault secrets"
 #Get the application insights instrumentation key from the ARM Template outputs
