@@ -6,9 +6,7 @@
 	[string] $resourceGroupLocation,
 	[string] $resourceGroupLocationShort,
 	[string] $dataKeyVaultName,
-	[string] $templatesLocation,
-	[string] $administratorUserSid,
-	[string] $azureDevOpsPrincipalId
+	[string] $templatesLocation
 )
 
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -24,6 +22,7 @@ Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
 Write-Host "dataKeyVaultName: $dataKeyVaultName"
 Write-Host "templatesLocation: $templatesLocation"
 
+#Variables
 $storageAccountName = "$appPrefix$environment$($locationShort)storage" #Must be <= 24 lowercase letters and numbers.
 $cdnName = "$appPrefix-$environment-$locationShort-cdn"   
 if ($storageAccountName.Length -gt 24)

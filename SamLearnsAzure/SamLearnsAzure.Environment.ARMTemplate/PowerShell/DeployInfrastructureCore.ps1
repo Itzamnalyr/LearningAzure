@@ -22,9 +22,9 @@ Write-Host "resourceGroupName: $resourceGroupName"
 Write-Host "resourceGroupLocation: $resourceGroupLocation"
 Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
 Write-Host "dataKeyVaultName: $dataKeyVaultName"
+Write-Host "templatesLocation: $templatesLocation"
 Write-Host "administratorUserSid: $administratorUserSid"
 Write-Host "azureDevOpsPrincipalId: $azureDevOpsPrincipalId"
-Write-Host "templatesLocation: $templatesLocation"
 
 #Variables
 $keyVaultName = "$appPrefix-$environment-$resourceGroupLocationShort-vault" #Must be <= 23 characters
