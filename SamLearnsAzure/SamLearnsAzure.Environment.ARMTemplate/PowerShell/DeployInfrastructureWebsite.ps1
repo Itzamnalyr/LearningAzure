@@ -1,8 +1,30 @@
-﻿$stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+﻿param
+(
+	[string] $appPrefix,
+	[string] $environment,
+	[string] $resourceGroupName,
+	[string] $resourceGroupLocation,
+	[string] $resourceGroupLocationShort,
+	[string] $dataKeyVaultName,
+	[string] $templatesLocation,
+	[string] $contactEmailAddress
+)
+
+$stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 $timing = ""
 $timing = -join($timing, "1. Deployment started: ", $stopwatch.Elapsed.TotalSeconds, "`n")
 Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
+Write-Host "Parameters:"
+Write-Host "appPrefix: $appPrefix"
+Write-Host "environment: $environment"
+Write-Host "resourceGroupName: $resourceGroupName"
+Write-Host "resourceGroupLocation: $resourceGroupLocation"
+Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
+Write-Host "dataKeyVaultName: $dataKeyVaultName"
+Write-Host "templatesLocation: $templatesLocation"
+Write-Host "contactEmailAddress: $contactEmailAddress"
 
+#Variables
 $appPrefix = "samsapp"
 $environment = "${{parameters.environmentLowercase}}"
 $resourceGroupName = "${{parameters.resourceGroupName}}"

@@ -152,7 +152,7 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureSQL.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -sqlDatabaseName "${{parameters.databaseName}}" $sqlDatabaseName -sqlAdministratorLoginUser "${{parameters.databaseLoginName}}" -sqlAdministratorLoginPassword "${{parameters.databaseLoginPassword}}" -administratorUserLogin "c6193b13-08e7-4519-b7b4-e6b1875b15a8" -administratorUserSid "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8" -storageAccountAccessKey "${{parameters.storageAccountKey}}" -azureDevOpsPrincipalId "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -sqlDatabaseName "${{parameters.databaseName}}" -sqlAdministratorLoginUser "${{parameters.databaseLoginName}}" -sqlAdministratorLoginPassword "${{parameters.databaseLoginPassword}}" -administratorUserLogin "c6193b13-08e7-4519-b7b4-e6b1875b15a8" -administratorUserSid "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8" -storageAccountAccessKey "${{parameters.storageAccountKey}}" -azureDevOpsPrincipalId "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
           - task: AzureCLI@2
             displayName: 'Restore database from backup, if needed'
             inputs:
@@ -295,10 +295,7 @@ jobs:
     displayName: "Deploy webservice app to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
     dependsOn: 
-    - DeployCoreInfrastructure
-    - DeployCDN
-    - DeployRedis
-    - DeployDatabase
+    - DeployInfrastructureWebCore
     pool:
       vmImage: ${{parameters.vmImage}}        
     variables:
@@ -328,6 +325,14 @@ jobs:
               downloadPath: '$(build.artifactstagingdirectory)'
           - task: AzureCLI@2
             displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebCore.ps1
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -sqlDatabaseName "${{parameters.databaseName}}" -sqlAdministratorLoginUser "${{parameters.databaseLoginName}}" -sqlAdministratorLoginPassword "${{parameters.databaseLoginPassword}}"
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            enabled: false
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
@@ -426,10 +431,7 @@ jobs:
     displayName: "Deploy website app to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
     dependsOn: 
-    - DeployCoreInfrastructure
-    - DeployCDN
-    - DeployRedis
-    - DeployDatabase
+    - DeployInfrastructureWebCore
     pool:
       vmImage: ${{parameters.vmImage}}        
     variables:
@@ -457,6 +459,13 @@ jobs:
               downloadType: 'single'
               artifactName: 'drop'
               downloadPath: '$(build.artifactstagingdirectory)'
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebCore.ps1
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com"             
           - task: AzureCLI@2
             displayName: 'Deploy infrastructure with ARM templates'
             inputs:
@@ -559,9 +568,6 @@ jobs:
     displayName: "Deploy functional tests to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
     dependsOn: 
-    - DeployCDN
-    - DeployRedis
-    - DeployDatabase
     - DeployWebServiceApp
     - DeployWebsiteApp
     pool:
