@@ -86,7 +86,9 @@ Write-Host "4. Key vault created: "$stopwatch.Elapsed.TotalSeconds
 $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\Storage.json" --parameters storageAccountName=$storageAccountName
 $storageJSON = $storageOutput | ConvertFrom-Json
 $storageAccountAccessKey = $storageJSON.properties.outputs.storageAccountKey.value
-az keyvault secret set --vault-name $keyVaultName --name "storageAccountAccessKey" --value $storageAccountAccessKey #Upload the secret into the key vault
+$storageAccountName = "StorageAccountKey$Environment"
+Write-Host "Setting value $storageAccountAccessKey for $storageAccountName to key vault"
+az keyvault secret set --vault-name $dataKeyVaultName --name "$storageAccountName" --value $storageAccountAccessKey #Upload the secret into the key vault
 $timing = -join($timing, "5. Storage created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
 
@@ -99,13 +101,20 @@ Write-Host "6. CDN created: "$stopwatch.Elapsed.TotalSeconds
 $redisOutput = az deployment group create --resource-group $resourceGroupName --name $redisCacheName --template-file "$templatesLocation\Redis.json" --parameters redisCacheName=$redisCacheName
 $redisJSON = $redisOutput | ConvertFrom-Json
 $redisConnectionString = $redisJSON.properties.outputs.redisConnectionStringOutput.value
+$redisCacheConnectionStringName = "AppSettings--RedisCacheConnectionString$Environment"
+Write-Host "Setting value $redisConnectionString for $redisCacheConnectionStringName to key vault"
+az keyvault secret set --vault-name $dataKeyVaultName --name "$redisCacheConnectionStringName" --value $redisConnectionString #Upload the secret into the key vault
 $timing = -join($timing, "7. Redis created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "7. Redis created: "$stopwatch.Elapsed.TotalSeconds
 
 #SQL
-$sqlOutput = az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
+$sqlOutput = az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=$sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
 $sqlJSON = $sqlOutput | ConvertFrom-Json
 $sqlServerAddress = $sqlJSON.properties.outputs.sqlServerIPAddress.value
+$sqlConnectionStringName = "ConnectionStrings--SamsAppConnectionString$Environment"
+$sqlConnectionStringValue = "Server=tcp:$sqlServerName.database.windows.net,1433;Initial Catalog=$sqlDatabaseName;Persist Security Info=False;User ID=$sqlAdministratorLoginUser;Password=$sqlAdministratorLoginPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+Write-Host "Setting value $sqlConnectionStringValue for $sqlConnectionStringName to key vault"
+az keyvault secret set --vault-name $dataKeyVaultName --name "$sqlConnectionStringName" --value $sqlConnectionStringValue #Upload the secret into the key vault
 $timing = -join($timing, "8. SQL created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "8. SQL created: "$stopwatch.Elapsed.TotalSeconds
 
@@ -115,9 +124,12 @@ $timing = -join($timing, "9. Action group created: ", $stopwatch.Elapsed.TotalSe
 Write-Host "9. Action group created: "$stopwatch.Elapsed.TotalSeconds
 
 #Application Insights
-$applicationInsightsOutput = az deployment group create --resource-group $resourceGroupName --name $applicationInsightsName --template-file "$templatesLocation\ApplicationInsights.json" --parameters applicationInsightsName=$applicationInsightsName applicationInsightsAvailablityTestName=$applicationInsightsAvailablityTestName websiteDomainName=$websiteDomainName 
+$applicationInsightsOutput = az deployment group create --resource-group $resourceGroupName --name $applicationInsightsName --template-file "$templatesLocation\ApplicationInsights.json" --parameters applicationInsightsName=$applicationInsightsName applicationInsightsAvailablityTestName="$applicationInsightsAvailablityTestName" websiteDomainName=$websiteDomainName 
 $applicationInsightsJSON = $applicationInsightsOutput | ConvertFrom-Json
 $applicationInsightsInstrumentationKey = $applicationInsightsJSON.properties.outputs.applicationInsightsInstrumentationKeyOutput.value
+$applicationInsightsInstrumentationKeyName = "ApplicationInsights--InstrumentationKey$Environment"
+Write-Host "Setting value $ApplicationInsightsInstrumentationKey for $applicationInsightsInstrumentationKeyName to key vault"
+az keyvault secret set --vault-name $dataKeyVaultName --name "$applicationInsightsInstrumentationKeyName" --value $ApplicationInsightsInstrumentationKey #Upload the secret into the key vault
 $timing = -join($timing, "10. Application created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "10. Application insights created: "$stopwatch.Elapsed.TotalSeconds
 
