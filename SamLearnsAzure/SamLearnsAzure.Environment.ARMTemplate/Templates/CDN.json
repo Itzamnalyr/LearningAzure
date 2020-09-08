@@ -14,7 +14,7 @@
   "resources": [
     {
       "type": "Microsoft.Cdn/profiles",
-      "apiVersion": "2016-04-02",
+      "apiVersion": "2020-04-15",
       "name": "[parameters('cdnName')]",
       "location": "[resourceGroup().location]",
       "tags": {
@@ -30,7 +30,7 @@
     },
     {
       "type": "Microsoft.Cdn/profiles/endpoints",
-      "apiVersion": "2016-04-02",
+      "apiVersion": "2020-04-15",
       "name": "[concat(parameters('cdnName'), '/', parameters('cdnName'), 'endpoint')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
@@ -102,7 +102,7 @@
     },
     {
       "type": "Microsoft.Cdn/profiles/endpoints/origins",
-      "apiVersion": "2016-04-02",
+      "apiVersion": "2020-04-15",
       "name": "[concat(parameters('cdnName'), '/', parameters('cdnName'), 'endpoint/', parameters('storageAccountName'), '-blob-core-windows-net')]",
       "dependsOn": [
         "[resourceId('Microsoft.Cdn/profiles/endpoints', parameters('cdnName'), concat(parameters('cdnName'), 'endpoint'))]",

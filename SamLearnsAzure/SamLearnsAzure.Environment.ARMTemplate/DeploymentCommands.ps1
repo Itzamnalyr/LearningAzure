@@ -86,9 +86,9 @@ Write-Host "4. Key vault created: "$stopwatch.Elapsed.TotalSeconds
 $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\Storage.json" --parameters storageAccountName=$storageAccountName
 $storageJSON = $storageOutput | ConvertFrom-Json
 $storageAccountAccessKey = $storageJSON.properties.outputs.storageAccountKey.value
-$storageAccountName = "StorageAccountKey$Environment"
-Write-Host "Setting value $storageAccountAccessKey for $storageAccountName to key vault"
-az keyvault secret set --vault-name $dataKeyVaultName --name "$storageAccountName" --value $storageAccountAccessKey #Upload the secret into the key vault
+$storageAccountNameKV = "StorageAccountKey$Environment"
+Write-Host "Setting value $storageAccountAccessKey for $storageAccountNameKV to key vault"
+az keyvault secret set --vault-name $dataKeyVaultName --name "$storageAccountNameKV" --value $storageAccountAccessKey #Upload the secret into the key vault
 $timing = -join($timing, "5. Storage created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
 
