@@ -1,0 +1,191 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sqlServerName": {
+      "type": "string"
+    },
+    "sqlAdministratorLogin": {
+      "type": "string"
+    },
+    "sqlAdministratorLoginPassword": {
+      "type": "string"
+    },
+    "administratorUserLogin": {
+      "type": "string",
+      "metadata": {
+        "description": "login id of the AAD user that will have admin access to SQL server and the Key Vault. "
+      }
+    },
+    "administratorUserSid": {
+      "type": "string",
+      "metadata": {
+        "description": "Sid Id of the AAD user that will have admin access to the SQL server and the Key Vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets. I suspect this is not being used"
+      }
+    },
+    "databaseName": {
+      "type": "string"
+    },
+    "databaseCollation": {
+      "type": "string",
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "databaseEdition": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "Premium"
+      ]
+    },
+    "databaseMaxSizeBytes": {
+      "type": "string",
+      "defaultValue": "1073741824"
+    },
+    "databaseSKUName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "Describes the SKU name category, Basic, Standard, Premium"
+      }
+    },
+    "databaseSKUTier": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the SKU tier"
+      }
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "storageAccountAccessKey": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[parameters('sqlServerName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "SqlServer"
+      },
+      "apiVersion": "2014-04-01-preview",
+      "properties": {
+        "administratorLogin": "[parameters('sqlAdministratorLogin')]",
+        "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "[parameters('databaseName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "tags": {
+            "displayName": "Database"
+          },
+          "apiVersion": "2017-10-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
+          ],
+          "sku": {
+            "name": "[parameters('databaseSKUName')]",
+            "tier": "[parameters('databaseSKUTier')]"
+          },
+          "properties": {
+            "edition": "[parameters('databaseEdition')]",
+            "collation": "[parameters('databaseCollation')]",
+            "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]"
+          }
+        },
+        {
+          "type": "firewallrules",
+          "name": "AllowAllWindowsAzureIps",
+          "apiVersion": "2014-04-01",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
+          ],
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "endIpAddress": "0.0.0.0",
+            "startIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "type": "administrators",
+          "name": "activeDirectory",
+          "apiVersion": "2014-04-01",
+          "properties": {
+            "administratorType": "ActiveDirectory",
+            "login": "[parameters('administratorUserLogin')]",
+            "sid": "[parameters('administratorUserSid')]",
+            "tenantId": "[subscription().tenantid]"
+          },
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
+          ]
+        },
+        {
+          "type": "auditingSettings",
+          "name": "AuditingSettings",
+          "apiVersion": "2017-03-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+          ],
+          "properties": {
+            "state": "Enabled",
+            "storageEndpoint": "[concat('https://', parameters('storageAccountName'), '.blob.core.windows.net')]",
+            "storageAccountAccessKey": "[parameters('storageAccountAccessKey')]",
+            "retentionDays": "180",
+            "storageAccountSubscriptionId": "[subscription().subscriptionId]",
+            "isStorageSecondaryKeyInUse": false,
+            "auditActionsAndGroups": [
+              "SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP",
+              "FAILED_DATABASE_AUTHENTICATION_GROUP",
+              "BATCH_COMPLETED_GROUP"
+            ],
+            "isAzureMonitorTargetEnabled": false
+          }
+        }
+        //{
+        //  "type": "Microsoft.Sql/servers/auditingPolicies",
+        //  "apiVersion": "2017-03-01-preview",
+        //  "name": "[concat(variables('sqlServerName'), '/Default')]",
+        //  "location": "[resourceGroup().location]",
+        //  "dependsOn": [
+        //    "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]"
+        //  ],
+        //  "properties": {
+        //    "auditingState": "New",
+        //    "eventTypesToAudit": "PlainSQL_Success,PlainSQL_Failure,ParameterizedSQL_Success,ParameterizedSQL_Failure,StoredProcedure_Success,StoredProcedure_Failure,Login_Success,Login_Failure,TransactionManagement_Success,TransactionManagement_Failure",
+        //    "fullAuditLogsTableName": "SQLDBAuditLogsSamsappdeveusqlserver",
+        //    "auditLogsTableName": "Samsappdeveusqlserver",
+        //    "retentionDays": "180"
+        //  }
+        //}
+      ]
+    }
+  ],
+  "outputs": {
+    "sqlServerIPAddress": {
+      "type": "string",
+      "value": "[reference(concat('Microsoft.Sql/servers/', parameters('sqlServerName'))).fullyQualifiedDomainName]"
+    }
+  }
+}

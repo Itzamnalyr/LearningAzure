@@ -12,6 +12,9 @@ schedules:
     - master
   always: true
 
+#TODO: Remove condition from top level build
+#TODO: Remove enabled: false flag from unit tests
+
 variables:
 - group: 'SamLearnsAzure KeyVault'
 - name: vmImage #Note this weird name/value syntax if you need to reference a variable group in variables
@@ -19,7 +22,8 @@ variables:
 
 stages:
 - stage: Build
-  displayName: 'Build & Test stage'
+  displayName: 'Build & Test Stage'
+  #condition: eq('1', '2')
   jobs:
   - template: azure-pipelines-build-template.yml
     parameters:
@@ -48,7 +52,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptAppServiceContributerClientSecret: $(appServiceContributerClientSecret)
       ASPNETCOREEnvironmentSetting: 'Development'
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
@@ -66,7 +70,7 @@ stages:
       imagesStorageURL: 'https://samsapp$(prLC)eustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringDev)'
       resourceGroupName: 'SamLearnsAzure$(prUC)'
-      resourceGroupLocation: 'East US'
+      resourceGroupLocation: 'eastus'
       resourceGroupLocationShort: 'eu'
       roleAssignmentId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
       samsAppConnectionString: '$(ConnectionStrings--SamsAppConnectionStringDev)'
@@ -93,7 +97,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptletsEncryptAppServiceContributerClientSecret: $(appServiceContributerClientSecret)
       ASPNETCOREEnvironmentSetting: 'Development'
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
@@ -111,7 +115,7 @@ stages:
       imagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringDev)'
       resourceGroupName: 'SamLearnsAzureDev'
-      resourceGroupLocation: 'East US'
+      resourceGroupLocation: 'eastus'
       resourceGroupLocationShort: 'eu'
       roleAssignmentId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
       samsAppConnectionString: '$(ConnectionStrings--SamsAppConnectionStringDev)'
@@ -137,7 +141,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdQA)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyQA)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptAppServiceContributerClientSecret: $(appServiceContributerClientSecret)
       captureStartErrors: false
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'QA'  
@@ -154,7 +158,7 @@ stages:
       imagesStorageURL: 'https://samsappqaeustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringQA)'
       resourceGroupName: 'SamLearnsAzureQA'
-      resourceGroupLocation: 'East US'
+      resourceGroupLocation: 'eastus'
       resourceGroupLocationShort: 'eu'
       roleAssignmentId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
       samsAppConnectionString: '$(ConnectionStrings--SamsAppConnectionStringQA)'
@@ -180,7 +184,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdProd)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyProd)
       applicationInsightsLocation: 'East US'
-      appServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptAppServiceContributerClientSecret: $(appServiceContributerClientSecret)
       captureStartErrors: false
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'Prod'  
@@ -197,7 +201,7 @@ stages:
       imagesStorageURL: 'https://samsappprodeustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringProd)'
       resourceGroupName: 'SamLearnsAzureProd'
-      resourceGroupLocation: 'East US'
+      resourceGroupLocation: 'eastus'
       resourceGroupLocationShort: 'eu'
       roleAssignmentId: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
       samsAppConnectionString: '$(ConnectionStrings--SamsAppConnectionStringProd)'
