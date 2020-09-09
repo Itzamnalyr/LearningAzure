@@ -92,6 +92,21 @@
           "properties": {}
         },
         {
+          "type": "Microsoft.Web/sites/hostNameBindings",
+          "name": "[concat(parameters('webSiteName'),'/',parameters('websiteDomainName'))]",
+          "apiVersion": "2016-08-01",
+          "location": "[resourceGroup().location]",
+          "tags": {
+            "displayName": "Website bindings"
+          },
+          "properties": {
+            "siteName": "[parameters('webSiteName')]"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('webSiteName'))]"
+          ]
+        },
+        {
           "type": "siteextensions",
           "apiVersion": "2018-11-01",
           "name": "letsencrypt",
@@ -217,7 +232,7 @@
     //    ]
     //  }
     //}
-  ]//,
+  ] //,
   //"outputs": {
   //  "websitePrincipalId": {
   //    "type": "string",
