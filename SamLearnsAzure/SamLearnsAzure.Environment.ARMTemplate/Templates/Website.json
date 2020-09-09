@@ -1,0 +1,132 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webSiteName": {
+      "type": "string"
+    },
+    "hostingPlanName": {
+      "type": "string"
+    },
+    "actionGroupName": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "websiteDomainName": {
+      "type": "string"
+    },
+    "letsEncryptUniqueRoleAssignmentGuid": {
+      "type": "string",
+      "defaultValue": "6e4cff57-e63a-403e-822c-e98e5ba02145",
+      "metadata": {
+        "description": "A Guid that will serve as the name for the roleAssignment. Should be unique and remain constant"
+      }
+    },
+    "contactEmailAddress": {
+      "type": "string"
+    },
+    "letsEncryptAppServiceContributerClientId": {
+      "type": "string",
+      "defaultValue": "c6193b13-08e7-4519-b7b4-e6b1875b15a8",
+      "metadata": {
+        "description": "ClientId of the Service Principal that the LetsEncrypt extension should use"
+      }
+    },
+    "letsEncryptAppServiceContributorObjectId": {
+      "type": "string",
+      "defaultValue": "ca1af823-ed55-4cca-a202-1bee11370834",
+      "metadata": {
+        "description": "ObjectId of the Service Principal that the LetsEncrypt extension should use"
+      }
+    },
+    "letsEncryptAppServiceContributerClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "ClientSecret of the Service Principal that the LetsEncrypt extension should use -- Pro tip: DO NOT CHECK THIS INTO SOURCE CONTROL, USE A KEY VAULT"
+      }
+    },
+    "letsEncryptRoleAssignmentId": {
+      "type": "string",
+      "defaultValue": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "metadata": {
+        "description": "The unique string for the role assignment of the let's encrypt user"
+      }
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('webSiteName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "empty",
+        "displayName": "Web Service Webapp"
+      },
+      "properties": {
+        "name": "[parameters('webSiteName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+        "httpsOnly": true
+      },
+      "resources": [
+        {
+          "apiVersion": "2018-11-01",
+          "type": "slots",
+          "name": "Staging",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[parameters('webSiteName')]"
+          ],
+          "properties": {}
+        },
+        {
+          "type": "Microsoft.Web/sites/hostNameBindings",
+          "name": "[concat(parameters('webSiteName'),'/',parameters('websiteDomainName'))]",
+          "apiVersion": "2016-08-01",
+          "location": "[resourceGroup().location]",
+          "tags": {
+            "displayName": "Website bindings"
+          },
+          "properties": {
+            "siteName": "[parameters('webSiteName')]"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('webSiteName'))]"
+          ]
+        },
+        {
+          "type": "siteextensions",
+          "apiVersion": "2018-11-01",
+          "name": "letsencrypt",
+          "dependsOn": [
+            "[parameters('webSiteName')]"
+          ],
+          "properties": {}
+        },
+        {
+          "type": "config",
+          "apiVersion": "2018-11-01",
+          "name": "appsettings",
+          "dependsOn": [
+            "[parameters('webSiteName')]"
+          ],
+          "properties": {
+            "letsencrypt:Tenant": "[subscription().tenantId]",
+            "letsencrypt:SubscriptionId": "[subscription().subscriptionId]",
+            "letsencrypt:ResourceGroupName": "[resourceGroup().name]",
+            "letsencrypt:ServicePlanResourceGroupName": "[resourceGroup().name]",
+            "letsencrypt:ClientId": "[parameters('letsEncryptAppServiceContributerClientId')]",
+            "letsencrypt:ClientSecret": "[parameters('letsEncryptAppServiceContributerClientSecret')]",
+            "letsencrypt:Email": "[parameters('contactEmailAddress')]"
+          }
+        }
+      ]
+    }
+  ]
+}

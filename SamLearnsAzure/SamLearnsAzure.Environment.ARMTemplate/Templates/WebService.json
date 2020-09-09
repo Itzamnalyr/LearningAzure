@@ -1,0 +1,79 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serviceAPIName": {
+      "type": "string"
+    },
+    "hostingPlanName": {
+      "type": "string"
+    },
+    "actionGroupName": {
+      "type": "string"
+    },
+    "sqlServerName": {
+      "type": "string"
+    },
+    "sqlServerAddress": {
+      "type": "string"
+    },
+    "sqlDatabaseName": {
+      "type": "string"
+    },
+    "sqlDatabaseLoginName": {
+      "type": "string"
+    },
+    "sqlDatabaseLoginPassword": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('serviceAPIName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "empty",
+        "displayName": "Web Service Webapp"
+      },
+      "properties": {
+        "name": "[parameters('serviceAPIName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+        "httpsOnly": true
+      },
+      "resources": [
+        {
+          "type": "config",
+          "apiVersion": "2018-11-01",
+          "name": "connectionstrings",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[parameters('serviceAPIName')]"
+          ],
+          "properties": {
+            "DefaultConnection": {
+              "value": "[concat('Server=tcp:', parameters('sqlServerAddress'), ',1433;Initial Catalog=', parameters('sqlDatabaseName'), ';Persist Security Info=False;User Id=', parameters('sqlDatabaseLoginName'), ';Password=', parameters('sqlDatabaseLoginPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]",
+              "type": "SQLServer"
+            }
+          }
+        },
+        {
+          "apiVersion": "2018-11-01",
+          "type": "slots",
+          "name": "Staging",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[parameters('serviceAPIName')]"
+          ],
+          "properties": {
+          }
+        }
+      ]
+    }
+  ]
+}
