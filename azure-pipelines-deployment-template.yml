@@ -221,7 +221,7 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebCore.ps1
-              arguments: -appPrefix "samsapp" -environment "$(environmentLowercase)" -resourceGroupName "$(resourceGroupName)" -resourceGroupLocation "$(resourceGroupLocation)" -resourceGroupLocationShort "$(resourceGroupLocationShort)" -dataKeyVaultName "$(keyVaultName)" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -sqlDatabaseName "$(sqlDatabaseName)" -sqlAdministratorLoginUser "$(sqlAdministratorLoginUser)" -sqlAdministratorLoginPassword "$(sqlAdministratorLoginPassword)" -letsEncryptAppServiceContributerClientSecret "$(letsEncryptAppServiceContributerClientSecret)" 
+              arguments: -appPrefix "samsapp" -environment "$(environmentLowercase)" -resourceGroupName "$(resourceGroupName)" -resourceGroupLocation "$(resourceGroupLocation)" -resourceGroupLocationShort "$(resourceGroupLocationShort)" -dataKeyVaultName "$(dataKeyVaultName)" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -sqlDatabaseName "$(sqlDatabaseName)" -sqlAdministratorLoginUser "$(sqlAdministratorLoginUser)" -sqlAdministratorLoginPassword "$(sqlAdministratorLoginPassword)" -letsEncryptAppServiceContributerClientSecret "$(letsEncryptAppServiceContributerClientSecret)" 
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: web service'
             inputs:
