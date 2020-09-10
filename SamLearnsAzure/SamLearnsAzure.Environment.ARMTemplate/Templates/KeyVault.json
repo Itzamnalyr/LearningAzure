@@ -76,7 +76,7 @@
     {
       "type": "Microsoft.KeyVault/vaults",
       "name": "[parameters('keyVaultName')]",
-      "apiVersion": "2015-06-01",
+      "apiVersion": "2016-10-01",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "KeyVault"
@@ -87,6 +87,10 @@
         "enabledForVolumeEncryption": "[parameters('vaultEnableVaultForVolumeEncryption')]",
         "enableSoftDelete": true,
         "tenantId": "[subscription().tenantid]",
+        "sku": {
+          "family": "A",
+          "name": "[parameters('vaultSku')]"
+        },
         "accessPolicies": [
           {
             "tenantId": "[subscription().tenantid]",
@@ -129,11 +133,7 @@
           //    "certificates": []
           //  }
           //}
-        ],
-        "sku": {
-          "name": "[parameters('vaultSku')]",
-          "family": "A"
-        }
+        ]
       },
       "resources": []
     }

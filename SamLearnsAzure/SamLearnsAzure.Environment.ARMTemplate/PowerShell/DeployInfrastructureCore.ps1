@@ -52,8 +52,14 @@ $results = az keyvault list-deleted  --subscription 07db7d0b-a6cb-4e58-b07e-e1d5
 $results = $results | ConvertFrom-Json
 if ($results -ne $null -and $results.Length -gt 0)
 {
-    Write-Host "Purging existing keyvault"
-    az keyvault purge --name $keyVaultName                     
+    #if we have purged keyvaults, search to see if we've used this name before and purge it
+    foreach($purgedKV in $results) {
+        if ($purgedKV.name -eq $keyVaultName)
+        {
+            Write-Host "Purging existing keyvault" $purgedKV.name         
+            az keyvault purge --name $keyVaultName                     
+        }
+    }
 }
 az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
 $timing = -join($timing, "4. Key vault created:: ", $stopwatch.Elapsed.TotalSeconds, "`n");
