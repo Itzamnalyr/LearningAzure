@@ -180,17 +180,17 @@ jobs:
     pool:
       vmImage: windows-latest  
     variables:
-      environmentLowercase: "${{parameters.environmentLowercase}}"
-      resourceGroupName: "${{parameters.resourceGroupName}}"
-      resourceGroupLocation: "${{parameters.resourceGroupLocation}}"
-      dataKeyVaultName: "${{parameters.keyVaultName}}"
-      templatesLocation: "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"
-      sqlDatabaseName: "${{parameters.databaseName}}" 
-      sqlAdministratorLoginUser: "${{parameters.databaseLoginName}}" 
-      sqlAdministratorLoginPassword: "${{parameters.databaseLoginPassword}}" 
-      letsEncryptAppServiceContributerClientSecret: "${{parameters.letsEncryptAppServiceContributerClientSecret}}"
-      godaddy_key: "${{parameters.godaddy_key}}"
-      godaddy_secret: "${{parameters.godaddy_secret}}"
+      environmentLowercase: ${{parameters.environmentLowercase}}
+      resourceGroupName: ${{parameters.resourceGroupName}}
+      resourceGroupLocation: ${{parameters.resourceGroupLocation}}
+      dataKeyVaultName: ${{parameters.keyVaultName}}
+      templatesLocation: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates
+      sqlDatabaseName: ${{parameters.databaseName}}
+      sqlAdministratorLoginUser: ${{parameters.databaseLoginName}}
+      sqlAdministratorLoginPassword: ${{parameters.databaseLoginPassword}}
+      letsEncryptAppServiceContributerClientSecret: ${{parameters.letsEncryptAppServiceContributerClientSecret}}
+      godaddy_key: ${{parameters.godaddy_key}}
+      godaddy_secret: ${{parameters.godaddy_secret}}
       ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
       AppSettings.Environment: ${{parameters.environment}}
       AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
