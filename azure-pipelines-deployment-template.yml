@@ -180,17 +180,6 @@ jobs:
     pool:
       vmImage: windows-latest  
     variables:
-      environmentLowercase: ${{parameters.environmentLowercase}}
-      resourceGroupName: ${{parameters.resourceGroupName}}
-      resourceGroupLocation: ${{parameters.resourceGroupLocation}}
-      resourceGroupLocationShort: ${{parameters.resourceGroupLocationShort}}
-      dataKeyVaultName: ${{parameters.keyVaultName}}
-      sqlDatabaseName: ${{parameters.databaseName}}
-      sqlAdministratorLoginUser: ${{parameters.databaseLoginName}}
-      sqlAdministratorLoginPassword: ${{parameters.databaseLoginPassword}}
-      letsEncryptAppServiceContributerClientSecret: ${{parameters.letsEncryptAppServiceContributerClientSecret}}
-      godaddy_key: ${{parameters.godaddy_key}}
-      godaddy_secret: ${{parameters.godaddy_secret}}
       ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
       AppSettings.Environment: ${{parameters.environment}}
       AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
@@ -221,7 +210,7 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWeb.ps1
-              arguments: -appPrefix "samsapp" -environment "$(environmentLowercase)" -resourceGroupName "$(resourceGroupName)" -resourceGroupLocation "$(resourceGroupLocation)" -resourceGroupLocationShort "$(resourceGroupLocationShort)" -dataKeyVaultName "$(dataKeyVaultName)" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -sqlDatabaseName "$(sqlDatabaseName)" -sqlAdministratorLoginUser "$(sqlAdministratorLoginUser)" -sqlAdministratorLoginPassword "$(sqlAdministratorLoginPassword)" -letsEncryptAppServiceContributerClientSecret "$(letsEncryptAppServiceContributerClientSecret)" 
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -sqlDatabaseName "${{parameters.databaseName}}" -sqlAdministratorLoginUser "${{parameters.databaseLoginName}}" -sqlAdministratorLoginPassword "${{parameters.databaseLoginPassword}}" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: web service'
             inputs:
@@ -257,9 +246,8 @@ jobs:
             inputs:
               targetType: FilePath
               filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
-              arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "$(environmentLowercase)" -godaddy_destination "$(websiteName).azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "$(godaddy_key)" -godaddy_secret "$(godaddy_secret)"
+              arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"
             continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
-
 
   - deployment: DeployFunctionalTests
     displayName: "Deploy functional tests to ${{parameters.environment}} job"
