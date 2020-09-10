@@ -10,7 +10,7 @@
 	[string] $contactEmailAddress,
 	[string] $sqlDatabaseName,
 	[string] $sqlAdministratorLoginUser, 
-	[string] $sqlAdministratorLoginPassword
+	[string] $sqlAdministratorLoginPassword,
 	[string] $letsEncryptAppServiceContributerClientSecret
 )
 
