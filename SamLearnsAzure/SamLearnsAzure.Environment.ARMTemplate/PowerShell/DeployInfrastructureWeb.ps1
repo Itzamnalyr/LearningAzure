@@ -8,7 +8,6 @@
 	[string] $dataKeyVaultName,
 	[string] $templatesLocation,
 	[string] $contactEmailAddress
-
 	[string] $sqlDatabaseName,
 	[string] $sqlAdministratorLoginUser, 
 	[string] $sqlAdministratorLoginPassword
