@@ -39,6 +39,9 @@
     <None Include="PowerShell\DeployInfrastructureSQL.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="PowerShell\DeployInfrastructureWeb.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="PowerShell\DeployInfrastructureWebCore.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -134,7 +134,7 @@ jobs:
     environment: ${{parameters.environment}}
     dependsOn: DeployCoreInfrastructure
     pool:
-      vmImage: ${{parameters.vmImage}}          
+      vmImage: windows-latest          
     strategy:
       runOnce:
         deploy:
@@ -173,12 +173,37 @@ jobs:
               additionalArguments: '/p:BlockOnPossibleDataLoss=true'
 
 
-  - deployment: DeployInfrastructureWebCore
+  - deployment: DeployInfrastructureWeb
     displayName: "Deploy web core infrastructure to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
     dependsOn: DeployCoreInfrastructure
     pool:
-      vmImage: windows-latest    
+      vmImage: windows-latest  
+    variables:
+      environmentLowercase: "${{parameters.environmentLowercase}}"
+      resourceGroupName: "${{parameters.resourceGroupName}}"
+      resourceGroupLocation: "${{parameters.resourceGroupLocation}}"
+      dataKeyVaultName: "${{parameters.keyVaultName}}"
+      templatesLocation: "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"
+      sqlDatabaseName: "${{parameters.databaseName}}" 
+      sqlAdministratorLoginUser: "${{parameters.databaseLoginName}}" 
+      sqlAdministratorLoginPassword: "${{parameters.databaseLoginPassword}}" 
+      letsEncryptAppServiceContributerClientSecret: "${{parameters.letsEncryptAppServiceContributerClientSecret}}"
+      godaddy_key: "${{parameters.godaddy_key}}"
+      godaddy_secret: "${{parameters.godaddy_secret}}"
+      ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
+      AppSettings.Environment: ${{parameters.environment}}
+      AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
+      AppSettings.ImagesStorageCDNURL: ${{parameters.imagesStorageCDNURL}}
+      AppSettings.ImagesStorageURL: ${{parameters.imagesStorageURL}}
+      AppSettings.PartImagesContainerName: ${{parameters.partImagesContainerName}}
+      AppSettings.SetImagesContainerName: ${{parameters.setImagesContainerName}}
+      AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
+      AppSettings.WebServiceURL: ${{parameters.serviceURL}}
+      AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
+      AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
+      AppSettings.CaptureStartErrors: ${{parameters.captureStartErrors}}
+      ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}}
     strategy:
       runOnce:
         deploy:
@@ -196,58 +221,7 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebCore.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com"             
-          - task: PowerShell@2
-            displayName: 'Set CName DNS entries in GoDaddy'
-            inputs:
-              targetType: FilePath
-              filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
-              arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"
-            continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
-
-
-  - deployment: DeployWebServiceApp
-    displayName: "Deploy webservice app to ${{parameters.environment}} job"
-    environment: ${{parameters.environment}}
-    dependsOn: 
-    - DeployCDN
-    - DeployRedis
-    - DeployDatabase
-    - DeployInfrastructureWebCore
-    pool:
-      vmImage: ${{parameters.vmImage}}        
-    variables:
-      ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
-      AppSettings.Environment: ${{parameters.environment}}
-      AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
-      AppSettings.ImagesStorageCDNURL: ${{parameters.imagesStorageCDNURL}}
-      AppSettings.ImagesStorageURL: ${{parameters.imagesStorageURL}}
-      AppSettings.PartImagesContainerName: ${{parameters.partImagesContainerName}}
-      AppSettings.SetImagesContainerName: ${{parameters.setImagesContainerName}}
-      AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
-      AppSettings.WebServiceURL: ${{parameters.serviceURL}}
-      AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
-      AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
-      AppSettings.CaptureStartErrors: ${{parameters.captureStartErrors}}
-      ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}} 
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadBuildArtifacts@0
-            displayName: 'Download the build artifacts'
-            inputs:
-              buildType: 'current'
-              downloadType: 'single'
-              artifactName: 'drop'
-              downloadPath: '$(build.artifactstagingdirectory)'
-          - task: AzureCLI@2
-            displayName: 'Deploy infrastructure with ARM templates'
-            inputs:
-              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
-              scriptType: ps
-              scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebService.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -sqlDatabaseName "${{parameters.databaseName}}" -sqlAdministratorLoginUser "${{parameters.databaseLoginName}}" -sqlAdministratorLoginPassword "${{parameters.databaseLoginPassword}}"
+              arguments: -appPrefix "samsapp" -environment "$(environmentLowercase)" -resourceGroupName "$(resourceGroupName)" -resourceGroupLocation "$(resourceGroupLocation)" -resourceGroupLocationShort "$(resourceGroupLocationShort)" -dataKeyVaultName "$(keyVaultName)" -templatesLocation "$(templatesLocation)" -contactEmailAddress "samsmithnz@gmail.com" -sqlDatabaseName "$(sqlDatabaseName)" -sqlAdministratorLoginUser "$(sqlAdministratorLoginUser)" -sqlAdministratorLoginPassword "$(sqlAdministratorLoginPassword)" -letsEncryptAppServiceContributerClientSecret "$(letsEncryptAppServiceContributerClientSecret)" 
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: web service'
             inputs:
@@ -263,50 +237,6 @@ jobs:
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
-
-
-  - deployment: DeployWebsiteApp
-    displayName: "Deploy website app to ${{parameters.environment}} job"
-    environment: ${{parameters.environment}}
-    dependsOn: 
-    - DeployCDN
-    - DeployRedis
-    - DeployDatabase
-    - DeployInfrastructureWebCore
-    pool:
-      vmImage: ${{parameters.vmImage}}        
-    variables:
-      ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
-      AppSettings.Environment: ${{parameters.environment}}
-      AppSettings.KeyVaultURL: ${{parameters.keyVaultURL}}
-      AppSettings.ImagesStorageCDNURL: ${{parameters.imagesStorageCDNURL}}
-      AppSettings.ImagesStorageURL: ${{parameters.imagesStorageURL}}
-      AppSettings.PartImagesContainerName: ${{parameters.partImagesContainerName}}
-      AppSettings.SetImagesContainerName: ${{parameters.setImagesContainerName}}
-      AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
-      AppSettings.WebServiceURL: ${{parameters.serviceURL}}
-      AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
-      AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
-      AppSettings.CaptureStartErrors: ${{parameters.captureStartErrors}}
-      ConnectionStrings.SamsAppConnectionString: ${{parameters.samsAppConnectionString}} 
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadBuildArtifacts@0
-            displayName: 'Download the build artifacts'
-            inputs:
-              buildType: 'current'
-              downloadType: 'single'
-              artifactName: 'drop'
-              downloadPath: '$(build.artifactstagingdirectory)'
-          - task: AzureCLI@2
-            displayName: 'Deploy infrastructure with ARM templates'
-            inputs:
-              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
-              scriptType: ps
-              scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebsite.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: website'
             inputs:
@@ -322,16 +252,25 @@ jobs:
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
+          - task: PowerShell@2
+            displayName: 'Set CName DNS entries in GoDaddy'
+            inputs:
+              targetType: FilePath
+              filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
+              arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "$(environmentLowercase)" -godaddy_destination "$(websiteName).azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "$(godaddy_key)" -godaddy_secret "$(godaddy_secret)"
+            continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
 
 
   - deployment: DeployFunctionalTests
     displayName: "Deploy functional tests to ${{parameters.environment}} job"
     environment: ${{parameters.environment}}
     dependsOn: 
-    - DeployWebServiceApp
-    - DeployWebsiteApp
+    - DeployCDN
+    - DeployRedis
+    - DeployDatabase
+    - DeployInfrastructureWeb
     pool:
-      vmImage: ${{parameters.vmImage}}        
+      vmImage: windows-latest        
     strategy:
       runOnce:
         deploy:
@@ -371,7 +310,7 @@ jobs:
     dependsOn: 
     - DeployFunctionalTests
     pool:
-      vmImage: ${{parameters.vmImage}}        
+      vmImage: windows-latest        
     strategy:
       runOnce:
         deploy:
@@ -391,7 +330,7 @@ jobs:
     dependsOn: 
     - DeployFunctionalTests
     pool:
-      vmImage: ${{parameters.vmImage}}        
+      vmImage: windows-latest          
     strategy:
       runOnce:
         deploy:
