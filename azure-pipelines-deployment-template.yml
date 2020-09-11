@@ -204,6 +204,13 @@ jobs:
               downloadType: 'single'
               artifactName: 'drop'
               downloadPath: '$(build.artifactstagingdirectory)'
+          - task: PowerShell@2
+            displayName: 'Set CName DNS entries in GoDaddy'
+            inputs:
+              targetType: FilePath
+              filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
+              arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"
+            continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
           - task: AzureCLI@2
             displayName: 'Deploy infrastructure with ARM templates'
             inputs:
@@ -226,13 +233,6 @@ jobs:
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
-          - task: PowerShell@2
-            displayName: 'Set CName DNS entries in GoDaddy'
-            inputs:
-              targetType: FilePath
-              filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
-              arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"
-            continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: website'
             inputs:
