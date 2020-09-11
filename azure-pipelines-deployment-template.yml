@@ -44,7 +44,7 @@ parameters: # defaults for any parameters that aren't specified
  
 jobs:
   - deployment: DeployCoreInfrastructure
-    displayName: "Deploy core infrastructure to ${{parameters.environment}} job"
+    displayName: "Deploy key vault and storage"
     environment: ${{parameters.environment}}
     pool:
       vmImage: windows-latest    
@@ -78,7 +78,7 @@ jobs:
 
 
   - deployment: DeployCDN
-    displayName: "Deploy CDN to ${{parameters.environment}} job"
+    displayName: "Deploy CDN"
     environment: ${{parameters.environment}}
     dependsOn: DeployCoreInfrastructure
     pool:
@@ -104,7 +104,7 @@ jobs:
 
 
   - deployment: DeployRedis
-    displayName: "Deploy redis to ${{parameters.environment}} job"
+    displayName: "Deploy redis"
     environment: ${{parameters.environment}}
     dependsOn: DeployCoreInfrastructure
     pool:
@@ -130,11 +130,11 @@ jobs:
 
 
   - deployment: DeployDatabase
-    displayName: "Deploy SQL database to ${{parameters.environment}} job"
+    displayName: "Deploy SQL"
     environment: ${{parameters.environment}}
     dependsOn: DeployCoreInfrastructure
     pool:
-      vmImage: ${{parameters.vmImage}}          
+      vmImage: windows-latest          
     strategy:
       runOnce:
         deploy:
@@ -174,7 +174,7 @@ jobs:
 
 
   - deployment: DeployInfrastructureWebCore
-    displayName: "Deploy web core infrastructure to ${{parameters.environment}} job"
+    displayName: "Deploy web core infrastructure"
     environment: ${{parameters.environment}}
     dependsOn: DeployCoreInfrastructure
     pool:
@@ -207,15 +207,12 @@ jobs:
 
 
   - deployment: DeployWebServiceApp
-    displayName: "Deploy webservice app to ${{parameters.environment}} job"
+    displayName: "Deploy webservice app"
     environment: ${{parameters.environment}}
     dependsOn: 
-    - DeployCDN
-    - DeployRedis
-    - DeployDatabase
     - DeployInfrastructureWebCore
     pool:
-      vmImage: ${{parameters.vmImage}}        
+      vmImage: windows-latest        
     variables:
       ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
       AppSettings.Environment: ${{parameters.environment}}
@@ -266,15 +263,12 @@ jobs:
 
 
   - deployment: DeployWebsiteApp
-    displayName: "Deploy website app to ${{parameters.environment}} job"
+    displayName: "Deploy website app"
     environment: ${{parameters.environment}}
     dependsOn: 
-    - DeployCDN
-    - DeployRedis
-    - DeployDatabase
     - DeployInfrastructureWebCore
     pool:
-      vmImage: ${{parameters.vmImage}}        
+      vmImage: windows-latest        
     variables:
       ApplicationInsights.InstrumentationKey: ${{parameters.applicationInsightsInstrumentationKey}}
       AppSettings.Environment: ${{parameters.environment}}
@@ -325,13 +319,16 @@ jobs:
 
 
   - deployment: DeployFunctionalTests
-    displayName: "Deploy functional tests to ${{parameters.environment}} job"
+    displayName: "Deploy functional tests"
     environment: ${{parameters.environment}}
-    dependsOn: 
+    dependsOn:
+    - DeployCDN 
+    - DeployRedis
+    - DeployDatabase
     - DeployWebServiceApp
     - DeployWebsiteApp
     pool:
-      vmImage: ${{parameters.vmImage}}        
+      vmImage: windows-latest        
     strategy:
       runOnce:
         deploy:
@@ -343,11 +340,6 @@ jobs:
               downloadType: 'single'
               artifactName: 'drop'
               downloadPath: '$(build.artifactstagingdirectory)'
-          - task: PowerShell@2
-            displayName: 'Check that chrome files exist'
-            inputs:
-              targetType: inline
-              script: dir "$(build.artifactstagingdirectory)/drop/FunctionalTests/SamLearnsAzure.FunctionalTests"
           - task: VSTest@2
             displayName: 'Run functional smoke tests on website and web service'
             inputs:
@@ -366,12 +358,12 @@ jobs:
             enabled: true  
             
   - deployment: DeploySwapServiceAppSlots
-    displayName: "Deploy swap service slots to ${{parameters.environment}} job"
+    displayName: "Deploy swap service slots"
     environment: ${{parameters.environment}}
     dependsOn: 
     - DeployFunctionalTests
     pool:
-      vmImage: ${{parameters.vmImage}}        
+      vmImage: windows-latest        
     strategy:
       runOnce:
         deploy:
@@ -386,12 +378,12 @@ jobs:
 
 
   - deployment: DeploySwapWebsiteAppSlots
-    displayName: "Deploy swap website slots to ${{parameters.environment}} job"
+    displayName: "Deploy swap website slots"
     environment: ${{parameters.environment}}
     dependsOn: 
     - DeployFunctionalTests
     pool:
-      vmImage: ${{parameters.vmImage}}        
+      vmImage: windows-latest        
     strategy:
       runOnce:
         deploy:
