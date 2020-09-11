@@ -44,7 +44,7 @@ parameters: # defaults for any parameters that aren't specified
  
 jobs:
   - deployment: DeployCoreInfrastructure
-    displayName: "Deploy core infrastructure to ${{parameters.environment}} job"
+    displayName: "Deploy key vault and azure storage"
     environment: ${{parameters.environment}}
     pool:
       vmImage: windows-latest    
@@ -78,7 +78,7 @@ jobs:
 
 
   - deployment: DeployCDN
-    displayName: "Deploy CDN to ${{parameters.environment}} job"
+    displayName: "Deploy CDN"
     environment: ${{parameters.environment}}
     dependsOn: DeployCoreInfrastructure
     pool:
@@ -104,7 +104,7 @@ jobs:
 
 
   - deployment: DeployRedis
-    displayName: "Deploy redis to ${{parameters.environment}} job"
+    displayName: "Deploy redis"
     environment: ${{parameters.environment}}
     dependsOn: DeployCoreInfrastructure
     pool:
@@ -130,7 +130,7 @@ jobs:
 
 
   - deployment: DeployDatabase
-    displayName: "Deploy SQL database to ${{parameters.environment}} job"
+    displayName: "Deploy SQL database"
     environment: ${{parameters.environment}}
     dependsOn: DeployCoreInfrastructure
     pool:
@@ -174,7 +174,7 @@ jobs:
 
 
   - deployment: DeployInfrastructureWeb
-    displayName: "Deploy web infrastructure to ${{parameters.environment}} job"
+    displayName: "Deploy web infrastructure"
     environment: ${{parameters.environment}}
     dependsOn: DeployCoreInfrastructure
     pool:
@@ -250,7 +250,7 @@ jobs:
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
 
   - deployment: DeployFunctionalTests
-    displayName: "Deploy functional tests to ${{parameters.environment}} job"
+    displayName: "Deploy functional tests"
     environment: ${{parameters.environment}}
     dependsOn: 
     - DeployCDN
@@ -293,7 +293,7 @@ jobs:
             enabled: true  
             
   - deployment: DeploySwapServiceAppSlots
-    displayName: "Deploy swap service slots to ${{parameters.environment}} job"
+    displayName: "Deploy swap service slots"
     environment: ${{parameters.environment}}
     dependsOn: 
     - DeployFunctionalTests
@@ -313,7 +313,7 @@ jobs:
 
 
   - deployment: DeploySwapWebsiteAppSlots
-    displayName: "Deploy swap website slots to ${{parameters.environment}} job"
+    displayName: "Deploy swap website slots"
     environment: ${{parameters.environment}}
     dependsOn: 
     - DeployFunctionalTests
