@@ -76,7 +76,7 @@ $timing = -join($timing, "5. Storage created: ", $stopwatch.Elapsed.TotalSeconds
 Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
 
 Write-Host "storageAccountAccessKey: "$storageAccountAccessKey
-$timing = -join($timing, "6. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+$timing = -join($timing, "6. All Done: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "6. All Done: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Timing: `n$timing"
 Write-Host "Were there errors? (If the next line is blank, then no!) $error"

@@ -38,7 +38,7 @@ az deployment group create --resource-group $resourceGroupName --name $cdnName -
 $timing = -join($timing, "3. CDN  created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "3. CDN created: "$stopwatch.Elapsed.TotalSeconds
 
-$timing = -join($timing, "4. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+$timing = -join($timing, "4. All Done: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "4. All Done: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Timing: `n$timing"
 Write-Host "Were there errors? (If the next line is blank, then no!) $error"

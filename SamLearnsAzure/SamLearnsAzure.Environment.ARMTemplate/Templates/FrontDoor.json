@@ -1,13 +1,130 @@
-﻿//{
-//  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-//  "contentVersion": "1.0.0.0",
-//  "parameters": {
-
-//  },
-//  "variables": {
-//  },
-//  "resources": [
-//  ],
-//  "outputs": {
-//  }
-//}
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "frontDoorName": {
+      "type": "string"
+    },
+    "frontDoorBackEndAddresses": {
+      "type": "array",
+      "defaultValue": [
+        "samsapp-dev-eu-web.azurewebsites.net"
+      ]
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Network/frontdoors",
+      "apiVersion": "2020-05-01",
+      "name": "[parameters('frontDoorName')]",
+      "location": "Global",
+      "properties": {
+        "resourceState": "Enabled",
+        "backendPools": [
+          {
+            "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontDoorName')), concat('/BackendPools/', parameters('frontDoorName'), '-pool'))]",
+            "name": "[concat(parameters('frontDoorName'), '-pool')]",
+            "properties": {
+              "copy": [
+                {
+                  "name": "backends",
+                  "count": "[length(parameters('frontDoorBackEndAddresses'))]",
+                  "input": {
+                    "address": "[parameters('frontDoorBackEndAddresses')[copyIndex('backends')]]",
+                    "httpPort": 80,
+                    "httpsPort": 443,
+                    "priority": 1,
+                    "weight": 50,
+                    "backendHostHeader": "[parameters('frontDoorBackEndAddresses')[copyIndex('backends')]]",
+                    "enabledState": "Enabled"
+                  }
+                }
+              ],
+              "healthProbeSettings": {
+                "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontDoorName')), '/healthProbeSettings/healthProbeSettings-1600296316402')]"
+              },
+              "loadBalancingSettings": {
+                "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontDoorName')), '/loadBalancingSettings/loadBalancingSettings-1600296316403')]"
+              },
+              "resourceState": "Enabled"
+            }
+          }
+        ],
+        "healthProbeSettings": [
+          {
+            "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontDoorName')), '/HealthProbeSettings/healthProbeSettings-1600296316402')]",
+            "name": "healthProbeSettings-1600296316402",
+            "properties": {
+              "intervalInSeconds": 30,
+              "path": "/",
+              "protocol": "Https",
+              "resourceState": "Enabled",
+              "enabledState": "Enabled",
+              "healthProbeMethod": "Head"
+            }
+          }
+        ],
+        "frontendEndpoints": [
+          {
+            "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontDoorName')), concat('/FrontendEndpoints/', parameters('frontDoorName'), '-azurefd-net'))]",
+            "name": "[concat(parameters('frontDoorName'), '-azurefd-net')]",
+            "properties": {
+              "hostName": "[concat(parameters('frontDoorName'), '.azurefd.net')]",
+              "sessionAffinityEnabledState": "Disabled",
+              "sessionAffinityTtlSeconds": 0,
+              "resourceState": "Enabled"
+            }
+          }
+        ],
+        "loadBalancingSettings": [
+          {
+            "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontDoorName')), '/LoadBalancingSettings/loadBalancingSettings-1600296316403')]",
+            "name": "loadBalancingSettings-1600296316403",
+            "properties": {
+              "additionalLatencyMilliseconds": 0,
+              "sampleSize": 4,
+              "successfulSamplesRequired": 2,
+              "resourceState": "Enabled"
+            }
+          }
+        ],
+        "routingRules": [
+          {
+            "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontDoorName')), concat('/RoutingRules/', parameters('frontDoorName'), '-routing'))]",
+            "name": "[concat(parameters('frontDoorName'), '-routing')]",
+            "properties": {
+              "frontendEndpoints": [
+                {
+                  "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontDoorName')), concat('/frontendEndpoints/', parameters('frontDoorName'), '-azurefd-net'))]"
+                }
+              ],
+              "acceptedProtocols": [
+                "Http",
+                "Https"
+              ],
+              "patternsToMatch": [
+                "/*"
+              ],
+              "enabledState": "Enabled",
+              "resourceState": "Enabled",
+              "routeConfiguration": {
+                "@odata.type": "#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
+                "forwardingProtocol": "HttpsOnly",
+                "backendPool": {
+                  "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontDoorName')), concat('/backendPools/', parameters('frontDoorName'), '-pool'))]"
+                }
+              }
+            }
+          }
+        ],
+        "backendPoolsSettings": {
+          "enforceCertificateNameCheck": "Enabled",
+          "sendRecvTimeoutSeconds": 30
+        },
+        "enabledState": "Enabled",
+        "friendlyName": "[parameters('frontDoorName')]"
+      }
+    }
+  ]
+}

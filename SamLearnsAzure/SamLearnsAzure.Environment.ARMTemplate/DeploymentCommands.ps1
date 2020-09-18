@@ -43,6 +43,9 @@ $applicationInsightsAvailablityTestName = "$applicationInsightsName-availability
 $azureDevOpsPrincipalId = "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
 $contactEmailAddress="samsmithnz@gmail.com"
 
+$frontDoorName = "$appPrefix-$environment-$locationShort-frontdoor"
+$frontDoorBackEndAddresses = "['$webSiteName.azurewebsites.net']"  #create an array of strings for each of the back end pool resources
+
 $templatesLocation = "C:\Users\samsmit\source\repos\SamLearnsAzure\SamLearnsAzure\SamLearnsAzure.Environment.ARMTemplate\Templates"
 
 if ($keyVaultName.Length -gt 24)
@@ -175,6 +178,12 @@ $timing = -join($timing, "13. Website created: ", $stopwatch.Elapsed.TotalSecond
 Write-Host "13. Website created: "$stopwatch.Elapsed.TotalSeconds
 
 
+#Frontdoor
+az deployment group create --resource-group $resourceGroupName --name $frontDoorName --template-file "$templatesLocation\FrontDoor.json" --parameters frontDoorName=$frontDoorName frontDoorBackEndAddresses=$frontDoorBackEndAddresses 
+$timing = -join($timing, "14. Frontdoor created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+Write-Host "14. Frontdoor created: "$stopwatch.Elapsed.TotalSeconds
+
+
 Write-Host "storageAccountAccessKey: "$storageAccountAccessKey
 Write-Host "sqlServerIPAddress: "$sqlServerIPAddress
 Write-Host "servicePrincipalId: "$serviceAPIProdSlotIdentityPrincipalId
@@ -182,20 +191,8 @@ Write-Host "serviceStagingSlotPrincipalId: "$serviceAPIStagingSlotIdentityPrinci
 Write-Host "websitePrincipalId: "$websiteProdSlotIdentityPrincipalId
 Write-Host "websiteStagingSlotPrincipalId: "$websiteStagingSlotIdentityPrincipalId
 Write-Host "applicationInsightsInstrumentationKey: "$applicationInsightsInstrumentationKey
-$timing = -join($timing, "14. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-Write-Host "14. All Done: "$stopwatch.Elapsed.TotalSeconds
+$timing = -join($timing, "15. All Done: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+Write-Host "15. All Done: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Timing: `n$timing"
 Write-Host "Were there errors? (If the next line is blank, then no!) $error"
                 
-#Deployment Order
-#1. Key Vault
-#2. Storage must be after key vault, as it stores the storage access key in the key vault
-#3a CDN must be after storage, as it connects to the storage for the CDN cache
-#3b Redis must be after key vault, as it stores the redis connection string in the key vault 
-
-#4a. Azure SQL service & database (lumped together, as we just have one database)
-#4b. web hosting
-#5a. web app must be after web hosting
-#6 Application Insights must be after web app
-
-#7 Front door must be after web apps

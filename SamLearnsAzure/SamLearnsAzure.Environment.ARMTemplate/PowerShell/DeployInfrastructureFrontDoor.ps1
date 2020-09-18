@@ -22,22 +22,22 @@ Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
 Write-Host "dataKeyVaultName: $dataKeyVaultName"
 Write-Host "templatesLocation: $templatesLocation"
 
+
 #Variables
-$redisCacheName = "$appPrefix-$environment-$resourceGroupLocationShort-redis"
+$frontDoorName = "$appPrefix-$environment-$resourceGroupLocationShort-frontdoor"
+$webSiteName = "$appPrefix-$environment-$resourceGroupLocationShort-web"
+$serviceAPIName = "$appPrefix-$environment-$resourceGroupLocationShort-service"
+$frontDoorBackEndAddresses = "['$webSiteName.azurewebsites.net']"  #create an array of strings for each of the back end pool resources
 $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
-#Redis  
-$redisOutput = az deployment group create --resource-group $resourceGroupName --name $redisCacheName --template-file "$templatesLocation\Redis.json" --parameters redisCacheName=$redisCacheName
-$redisJSON = $redisOutput | ConvertFrom-Json
-$redisConnectionString = $redisJSON.properties.outputs.redisConnectionStringOutput.value
-$redisCacheConnectionStringName = "AppSettings--RedisCacheConnectionString$Environment"
-Write-Host "Setting value $redisConnectionString for $redisCacheConnectionStringName to key vault"
-az keyvault secret set --vault-name $dataKeyVaultName --name "$redisCacheConnectionStringName" --value $redisConnectionString #Upload the secret into the key vault
-$timing = -join($timing, "3. Redis created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-Write-Host "3. Redis created: "$stopwatch.Elapsed.TotalSeconds
+#Frontdoor
+az deployment group create --resource-group $resourceGroupName --name $frontDoorName --template-file "$templatesLocation\FrontDoor.json" --parameters frontDoorName=$frontDoorName frontDoorBackEndAddresses=$frontDoorBackEndAddresses 
+$timing = -join($timing, "14. Frontdoor created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+Write-Host "14. Frontdoor created: "$stopwatch.Elapsed.TotalSeconds
 
-$timing = -join($timing, "4. All Done: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-Write-Host "4. All Done: "$stopwatch.Elapsed.TotalSeconds
+Write-Host "sqlServerIPAddress: "$sqlServerIPAddress
+$timing = -join($timing, "15. All Done: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+Write-Host "15. All Done: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Timing: `n$timing"
 Write-Host "Were there errors? (If the next line is blank, then no!) $error"

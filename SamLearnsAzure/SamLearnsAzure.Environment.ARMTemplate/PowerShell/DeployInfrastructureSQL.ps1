@@ -59,7 +59,7 @@ $timing = -join($timing, "8. SQL created: ", $stopwatch.Elapsed.TotalSeconds, "`
 Write-Host "8. SQL created: "$stopwatch.Elapsed.TotalSeconds
 
 Write-Host "sqlServerIPAddress: "$sqlServerIPAddress
-$timing = -join($timing, "14. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-Write-Host "14. All Done: "$stopwatch.Elapsed.TotalSeconds
+$timing = -join($timing, "15. All Done: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+Write-Host "15. All Done: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Timing: `n$timing"
 Write-Host "Were there errors? (If the next line is blank, then no!) $error"

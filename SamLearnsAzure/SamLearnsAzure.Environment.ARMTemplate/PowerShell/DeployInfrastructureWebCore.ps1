@@ -62,7 +62,7 @@ $timing = -join($timing, "5. Web hosting created: ", $stopwatch.Elapsed.TotalSec
 Write-Host "5. Web hosting created: "$stopwatch.Elapsed.TotalSeconds
 
 Write-Host "applicationInsightsInstrumentationKey: "$applicationInsightsInstrumentationKey
-$timing = -join($timing, "6. All Done created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+$timing = -join($timing, "6. All Done: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "6. All Done: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Timing: `n$timing"
 Write-Host "Were there errors? (If the next line is blank, then no!) $error"

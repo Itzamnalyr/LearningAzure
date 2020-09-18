@@ -36,16 +36,13 @@
     <None Include="PowerShell\DeployInfrastructureRedis.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="PowerShell\DeployInfrastructureFrontDoor.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="PowerShell\DeployInfrastructureSQL.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="PowerShell\DeployInfrastructureWebCore.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="PowerShell\DeployInfrastructureWebService.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="PowerShell\DeployInfrastructureWebsite.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="PowerShell\DeployInfrastructureCore.ps1">
