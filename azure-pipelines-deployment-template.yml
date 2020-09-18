@@ -12,6 +12,7 @@ parameters: # defaults for any parameters that aren't specified
   databaseLoginPassword: '***secret'
   databaseServerName: 'samsapp-dev-eu-sqlserver'
   databaseName: samsdb
+  frontDoorDomainName: 'devfd.samlearnsazure.com'
   godaddy_key: '***secret'
   godaddy_secret: '***secret'
   keyVaultName: 'samsapp-data-eu-keyvault'
@@ -198,13 +199,20 @@ jobs:
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebCore.ps1
               arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com"             
           - task: PowerShell@2
-            displayName: 'Set CName DNS entries in GoDaddy'
+            displayName: 'Set FrontDoor CName DNS entries in GoDaddy'
+            inputs:
+              targetType: FilePath
+              filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
+              arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}fd" -godaddy_destination "samsapp-${{parameters.environmentLowercase}}-${{parameters.resourceGroupLocationShort}}-frontdoor.azurefd.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"
+            continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
+          - task: PowerShell@2
+            displayName: 'Set Website CName DNS entries in GoDaddy'
             inputs:
               targetType: FilePath
               filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
               arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"
             continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
-
+                        
 
   - deployment: DeployWebServiceApp
     displayName: "Deploy webservice app"
@@ -341,8 +349,8 @@ jobs:
             inputs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
-              scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebsite.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates"
+              scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureFrontDoor.ps1
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -customDomain "${{parameters.frontDoorDomainName}}"
 
   - deployment: DeployFunctionalTests
     displayName: "Deploy functional tests"

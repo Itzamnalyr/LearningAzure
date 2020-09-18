@@ -61,6 +61,7 @@ stages:
       databaseLoginName: $(databaseLoginNameDev) 
       databaseLoginPassword: $(databaseLoginPasswordDev)
       databaseServerName: 'samsapp-$(prLC)-eu-sqlserver'
+      frontDoorDomainName: '$(prLC)fd.samlearnsazure.com'
       godaddy_key: $(GoDaddyAPIKey)
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
@@ -106,6 +107,7 @@ stages:
       databaseLoginName: $(databaseLoginNameDev) 
       databaseLoginPassword: $(databaseLoginPasswordDev)
       databaseServerName: 'samsapp-dev-eu-sqlserver'
+      frontDoorDomainName: 'devfd.samlearnsazure.com'
       godaddy_key: $(GoDaddyAPIKey)
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
@@ -149,6 +151,7 @@ stages:
       databaseLoginName: $(databaseLoginNameQA) 
       databaseLoginPassword: $(databaseLoginPasswordQA)
       databaseServerName: 'samsapp-qa-eu-sqlserver'
+      frontDoorDomainName: 'qafd.samlearnsazure.com'
       godaddy_key: $(GoDaddyAPIKey)
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
@@ -192,6 +195,7 @@ stages:
       databaseLoginName: $(databaseLoginNameProd) 
       databaseLoginPassword: $(databaseLoginPasswordProd)
       databaseServerName: 'samsapp-prod-eu-sqlserver'
+      frontDoorDomainName: 'fd.samlearnsazure.com'
       godaddy_key: $(GoDaddyAPIKey)
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
