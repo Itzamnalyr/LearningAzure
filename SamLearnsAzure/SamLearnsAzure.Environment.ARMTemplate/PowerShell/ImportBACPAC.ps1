@@ -17,6 +17,17 @@ param
 	[bool] $RunImportAlways
 )
 
+Write-Host "ResourceGroupName: $ResourceGroupName"
+Write-Host "DBServerName: $DBServerName"
+Write-Host "ServerAdmin: $ServerAdmin"
+Write-Host "DatabaseName: $DatabaseName"
+Write-Host "StorageAccountName: $StorageAccountName"
+Write-Host "StorageUri: $StorageUri"
+Write-Host "StorageContainerName: $StorageContainerName"
+Write-Host "Edition: $Edition"
+Write-Host "ServiceObjectiveName: $ServiceObjectiveName"
+
+
 # Check if there is data in the database
 if ($RunImportAlways -eq $false)
 {
