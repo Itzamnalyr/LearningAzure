@@ -337,8 +337,8 @@ jobs:
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
 
 
-  - deployment: DeployWebsiteApp2
-    displayName: "Deploy website app"
+  - deployment: DeployWebsite2App
+    displayName: "Deploy website2 app"
     environment: ${{parameters.environment}}
     dependsOn: 
     - DeployInfrastructureWebCore
@@ -429,7 +429,7 @@ jobs:
     - DeployDatabase
     - DeployWebServiceApp
     - DeployWebsiteApp
-    - DeployWebsiteApp2
+    - DeployWebsite2App
     - DeployFrontDoor
     pool:
       vmImage: windows-latest        
