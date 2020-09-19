@@ -82,7 +82,7 @@
             "id": "[concat(resourceId('Microsoft.Network/frontdoors', parameters('frontDoorName')), '/LoadBalancingSettings/loadBalancingSettings-1600296316403')]",
             "name": "loadBalancingSettings-1600296316403",
             "properties": {
-              "additionalLatencyMilliseconds": 0,
+              "additionalLatencyMilliseconds": 100,
               "sampleSize": 4,
               "successfulSamplesRequired": 2,
               "resourceState": "Enabled"

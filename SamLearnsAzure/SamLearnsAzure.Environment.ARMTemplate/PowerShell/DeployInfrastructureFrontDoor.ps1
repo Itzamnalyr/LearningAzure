@@ -27,7 +27,8 @@ Write-Host "customDomain: $customDomain"
 #Variables
 $frontDoorName = "$appPrefix-$environment-$resourceGroupLocationShort-frontdoor"
 $webSiteName = "$appPrefix-$environment-$resourceGroupLocationShort-web"
-$frontDoorBackEndAddresses = "['$webSiteName.azurewebsites.net']"  #create an array of strings for each of the back end pool resources
+$webSite2Name = "$appPrefix-$($environment)2-$resourceGroupLocationShort-web"
+$frontDoorBackEndAddresses = "['$webSiteName.azurewebsites.net','$webSite2Name.azurewebsites.net']"  #create an array of strings for each of the back end pool resources
 $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 

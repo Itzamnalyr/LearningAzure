@@ -86,6 +86,10 @@ stages:
       websiteDomainName: '$(prLC).samlearnsazure.com'
       websiteStagingUrl: 'https://samsapp-$(prLC)-eu-web-staging.azurewebsites.net/'
       websiteUrl: 'https://samsapp-$(prLC)-eu-web.azurewebsites.net/'
+      website2Name: 'samsapp-$(prLC)2-eu-web'
+      website2DomainName: '$(prLC)2.samlearnsazure.com'
+      website2StagingUrl: 'https://samsapp-$(prLC)2-eu-web-staging.azurewebsites.net/'
+      website2Url: 'https://samsapp-$(prLC)2-eu-web.azurewebsites.net/'
 
 - stage: DeployDev
   displayName: 'Deploy Dev Stage'
@@ -131,6 +135,10 @@ stages:
       websiteDomainName: 'dev.samlearnsazure.com'
       websiteStagingUrl: 'https://samsapp-dev-eu-web-staging.azurewebsites.net/'
       websiteUrl: 'https://samsapp-dev-eu-web.azurewebsites.net/'
+      website2Name: 'samsapp-dev2-eu-web'
+      website2DomainName: 'dev2.samlearnsazure.com'
+      website2StagingUrl: 'https://samsapp-dev2-eu-web-staging.azurewebsites.net/'
+      website2Url: 'https://samsapp-dev2-eu-web.azurewebsites.net/'
 
 - stage: DeployQA
   displayName: 'Deploy QA Stage'
@@ -175,6 +183,10 @@ stages:
       websiteDomainName: 'qa.samlearnsazure.com'
       websiteStagingUrl: 'https://samsapp-qa-eu-web-staging.azurewebsites.net/'
       websiteUrl: 'https://samsapp-qa-eu-web.azurewebsites.net/'
+      website2Name: 'samsapp-qa2-eu-web'
+      website2DomainName: 'qa2.samlearnsazure.com'
+      website2StagingUrl: 'https://samsapp-qa2-eu-web-staging.azurewebsites.net/'
+      website2Url: 'https://samsapp-qa2-eu-web.azurewebsites.net/'
       
 - stage: DeployProd
   displayName: 'Deploy Prod Stage'
@@ -218,4 +230,8 @@ stages:
       websiteName: 'samsapp-prod-eu-web'
       websiteDomainName: 'samlearnsazure.com'
       websiteStagingUrl: 'https://samsapp-prod-eu-web-staging.azurewebsites.net/'
-      websiteUrl: 'https://samsapp-prod-eu-web.azurewebsites.net/'     
+      websiteUrl: 'https://samsapp-prod-eu-web.azurewebsites.net/'  
+      website2Name: 'samsapp-prod2-eu-web'
+      website2DomainName: 'prod2.samlearnsazure.com'
+      website2StagingUrl: 'https://samsapp-prod2-eu-web-staging.azurewebsites.net/'
+      website2Url: 'https://samsapp-prod2-eu-web.azurewebsites.net/'     

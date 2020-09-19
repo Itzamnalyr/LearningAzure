@@ -23,6 +23,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
         private ChromeDriver _driver;
         private TestContext _testContextInstance;
         private string _webUrl = null;
+        private string _web2Url = null;
         private string _environment = null;
         //private string _keyVaultURL = null;
         //private string _keyVaultClientId = null;
@@ -55,6 +56,28 @@ namespace SamLearnsAzure.FunctionalTests.Website
         [TestMethod]
         [TestCategory("SkipWhenLiveUnitTesting")]
         [TestCategory("WebsiteSmokeTest")]
+        public void GotoSamLearnsAzureWeb2HomeIndexPageTest()
+        {
+            //Arrange
+            bool webLoaded;
+
+            //Act
+            string webURL = _web2Url + "home";
+            Console.WriteLine("webURL:" + webURL);
+            _driver.Navigate().GoToUrl(webURL);
+            webLoaded = (_driver.Url == webURL);
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/main/h2");
+            Console.WriteLine("data:" + data.Text);
+
+            //Assert
+            Assert.IsTrue(webLoaded);
+            Assert.IsTrue(data != null);
+            Assert.AreEqual(data.Text, "Environment: " + _environment + "2");
+        }
+
+        [TestMethod]
+        [TestCategory("SkipWhenLiveUnitTesting")]
+        [TestCategory("WebsiteSmokeTest")]
         public void GotoSamLearnsAzureWebHomeSetPageTest()
         {
             //Arrange
@@ -63,6 +86,29 @@ namespace SamLearnsAzure.FunctionalTests.Website
 
             //Act
             string webURL = _webUrl + "home/set?setnum=" + setNum;
+            Console.WriteLine("webURL:" + webURL);
+            _driver.Navigate().GoToUrl(webURL);
+            webLoaded = (_driver.Url == webURL);
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/div/main/div[1]/span/strong");
+            Console.WriteLine("data:" + data.Text);
+
+            //Assert
+            Assert.IsTrue(webLoaded);
+            Assert.IsTrue(data != null);
+            Assert.IsTrue(data.Text != null);
+        }
+
+        [TestMethod]
+        [TestCategory("SkipWhenLiveUnitTesting")]
+        [TestCategory("WebsiteSmokeTest")]
+        public void GotoSamLearnsAzureWeb2HomeSetPageTest()
+        {
+            //Arrange
+            bool webLoaded;
+            string setNum = "75218-1";
+
+            //Act
+            string webURL = _web2Url + "home/set?setnum=" + setNum;
             Console.WriteLine("webURL:" + webURL);
             _driver.Navigate().GoToUrl(webURL);
             webLoaded = (_driver.Url == webURL);
@@ -201,6 +247,7 @@ namespace SamLearnsAzure.FunctionalTests.Website
             else
             {
                 _webUrl = TestContext.Properties["WebsiteUrl"].ToString();
+                _web2Url = TestContext.Properties["Website2Url"].ToString();
                 _environment = TestContext.Properties["TestEnvironment"].ToString();
                 //_keyVaultURL = TestContext.Properties["KeyVaultURL"].ToString();
                 //_keyVaultClientId = TestContext.Properties["KeyVaultClientId"].ToString();

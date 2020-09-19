@@ -48,6 +48,8 @@
     <None Include="PowerShell\DeployInfrastructureCore.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="PowerShell\DeployInfrastructureWebService.ps1" />
+    <None Include="PowerShell\DeployInfrastructureWebsite.ps1" />
     <None Include="PowerShell\GoDaddyDNSSetup.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -2,6 +2,7 @@
 (
 	[string] $appPrefix,
 	[string] $environment,
+	[string] $webAppEnvironment,
 	[string] $resourceGroupName,
 	[string] $resourceGroupLocation,
 	[string] $resourceGroupLocationShort,
@@ -18,6 +19,7 @@ Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Parameters:"
 Write-Host "appPrefix: $appPrefix"
 Write-Host "environment: $environment"
+Write-Host "webAppEnvironment: $webAppEnvironment"
 Write-Host "resourceGroupName: $resourceGroupName"
 Write-Host "resourceGroupLocation: $resourceGroupLocation"
 Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
@@ -27,13 +29,13 @@ Write-Host "contactEmailAddress: $contactEmailAddress"
 Write-Host "letsEncryptAppServiceContributerClientSecret: $letsEncryptAppServiceContributerClientSecret"
 
 #Variables
-$webSiteName = "$appPrefix-$environment-$resourceGroupLocationShort-web"
+$webSiteName = "$appPrefix-$webAppEnvironment-$resourceGroupLocationShort-web"
 $webhostingName = "$appPrefix-$environment-$resourceGroupLocationShort-hostingplan"
 $storageAccountName = "$appPrefix$environment$($resourceGroupLocationShort)storage" #Must be <= 24 lowercase letters and numbers.
 $actionGroupName = "$appPrefix-$environment-$resourceGroupLocationShort-actionGroup"
-if ($environment -ne "Prod")
+if ($webAppEnvironment -ne "Prod")
 {
-	$websiteDomainName = "$environment.samlearnsazure.com"
+	$websiteDomainName = "$webAppEnvironment.samlearnsazure.com"
 }
 else
 {
@@ -53,10 +55,10 @@ $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSecon
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
 #Web site
-az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName actionGroupName=$actionGroupName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret=$letsEncryptAppServiceContributerClientSecret
+az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret=$letsEncryptAppServiceContributerClientSecret
 #web site managed identity and setting keyvault access permissions
 $websiteProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName 
-$websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName  --slot staging
+$websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName --slot staging
 $websiteProdSlotIdentityPrincipalId = ($websiteProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
 $websiteStagingSlotIdentityPrincipalId =($websiteStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
 Write-Host "prod: " $websiteProdSlotIdentityPrincipalId
