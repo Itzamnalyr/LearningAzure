@@ -319,7 +319,7 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebsite.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}"  -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: website'
             inputs:

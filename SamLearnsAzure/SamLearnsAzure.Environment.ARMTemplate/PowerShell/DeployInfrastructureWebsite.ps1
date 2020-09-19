@@ -19,6 +19,7 @@ Write-Host "1. Deployment started: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Parameters:"
 Write-Host "appPrefix: $appPrefix"
 Write-Host "environment: $environment"
+Write-Host "webAppEnvironment: $webAppEnvironment"
 Write-Host "resourceGroupName: $resourceGroupName"
 Write-Host "resourceGroupLocation: $resourceGroupLocation"
 Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
@@ -57,7 +58,7 @@ Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName actionGroupName=$actionGroupName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret=$letsEncryptAppServiceContributerClientSecret
 #web site managed identity and setting keyvault access permissions
 $websiteProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName 
-$websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName  --slot staging
+$websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName --slot staging
 $websiteProdSlotIdentityPrincipalId = ($websiteProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
 $websiteStagingSlotIdentityPrincipalId =($websiteStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
 Write-Host "prod: " $websiteProdSlotIdentityPrincipalId
