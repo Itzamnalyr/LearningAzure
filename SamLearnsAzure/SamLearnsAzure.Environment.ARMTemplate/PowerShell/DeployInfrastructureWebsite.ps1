@@ -32,7 +32,7 @@ Write-Host "letsEncryptAppServiceContributerClientSecret: $letsEncryptAppService
 $webSiteName = "$appPrefix-$webAppEnvironment-$resourceGroupLocationShort-web"
 $webhostingName = "$appPrefix-$environment-$resourceGroupLocationShort-hostingplan"
 $storageAccountName = "$appPrefix$environment$($resourceGroupLocationShort)storage" #Must be <= 24 lowercase letters and numbers.
-$actionGroupName = "$appPrefix-$webAppEnvironment-$resourceGroupLocationShort-actionGroup"
+$actionGroupName = "$appPrefix-$environment-$resourceGroupLocationShort-actionGroup"
 if ($webAppEnvironment -ne "Prod")
 {
 	$websiteDomainName = "$webAppEnvironment.samlearnsazure.com"
@@ -55,7 +55,7 @@ $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSecon
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
 #Web site
-az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName actionGroupName=$actionGroupName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret=$letsEncryptAppServiceContributerClientSecret
+az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret=$letsEncryptAppServiceContributerClientSecret
 #web site managed identity and setting keyvault access permissions
 $websiteProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName 
 $websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName --slot staging

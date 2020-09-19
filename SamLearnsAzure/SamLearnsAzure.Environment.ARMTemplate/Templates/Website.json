@@ -8,9 +8,6 @@
     "hostingPlanName": {
       "type": "string"
     },
-    "actionGroupName": {
-      "type": "string"
-    },
     "storageAccountName": {
       "type": "string"
     },
