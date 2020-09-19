@@ -2,6 +2,7 @@
 (
 	[string] $appPrefix,
 	[string] $environment,
+	[string] $webAppEnvironment,
 	[string] $resourceGroupName,
 	[string] $resourceGroupLocation,
 	[string] $resourceGroupLocationShort,
@@ -27,13 +28,13 @@ Write-Host "contactEmailAddress: $contactEmailAddress"
 Write-Host "letsEncryptAppServiceContributerClientSecret: $letsEncryptAppServiceContributerClientSecret"
 
 #Variables
-$webSiteName = "$appPrefix-$environment-$resourceGroupLocationShort-web"
+$webSiteName = "$appPrefix-$webAppEnvironment-$resourceGroupLocationShort-web"
 $webhostingName = "$appPrefix-$environment-$resourceGroupLocationShort-hostingplan"
 $storageAccountName = "$appPrefix$environment$($resourceGroupLocationShort)storage" #Must be <= 24 lowercase letters and numbers.
-$actionGroupName = "$appPrefix-$environment-$resourceGroupLocationShort-actionGroup"
-if ($environment -ne "Prod")
+$actionGroupName = "$appPrefix-$webAppEnvironment-$resourceGroupLocationShort-actionGroup"
+if ($webAppEnvironment -ne "Prod")
 {
-	$websiteDomainName = "$environment.samlearnsazure.com"
+	$websiteDomainName = "$webAppEnvironment.samlearnsazure.com"
 }
 else
 {

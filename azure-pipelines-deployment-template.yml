@@ -263,7 +263,7 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebService.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -sqlDatabaseName "${{parameters.databaseName}}" -sqlAdministratorLoginUser "${{parameters.databaseLoginName}}" -sqlAdministratorLoginPassword "${{parameters.databaseLoginPassword}}"
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -sqlDatabaseName "${{parameters.databaseName}}" -sqlAdministratorLoginUser "${{parameters.databaseLoginName}}" -sqlAdministratorLoginPassword "${{parameters.databaseLoginPassword}}"
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: web service'
             inputs:
@@ -336,6 +336,7 @@ jobs:
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
 
+
   - deployment: DeployWebsiteApp2
     displayName: "Deploy website app"
     environment: ${{parameters.environment}}
@@ -374,7 +375,7 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebsite.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}2" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}2" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: website'
             inputs:
@@ -390,6 +391,7 @@ jobs:
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
               ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
+
               
   - deployment: DeployFrontDoor
     displayName: "Deploy Front Door"
@@ -416,6 +418,7 @@ jobs:
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureFrontDoor.ps1
               arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -customDomain "${{parameters.frontDoorDomainName}}"
+
 
   - deployment: DeployFunctionalTests
     displayName: "Deploy functional tests"
@@ -457,6 +460,7 @@ jobs:
                -KeyVaultClientId "${{parameters.keyVaultClientId}}" 
                -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}"
             enabled: true  
+
             
   - deployment: DeploySwapServiceAppSlots
     displayName: "Deploy swap service slots"
