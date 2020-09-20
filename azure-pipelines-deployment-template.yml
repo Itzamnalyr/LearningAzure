@@ -429,6 +429,7 @@ jobs:
     - DeployDatabase
     - DeployWebServiceApp
     - DeployWebsiteApp
+    - DeployWebsite2App
     - DeployFrontDoor
     pool:
       vmImage: windows-latest        
