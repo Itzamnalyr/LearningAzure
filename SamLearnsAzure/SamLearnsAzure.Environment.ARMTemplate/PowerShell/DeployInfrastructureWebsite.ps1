@@ -67,7 +67,7 @@ Write-Host "Setting access policies for key vault"
 az keyvault set-policy --name $dataKeyVaultName --object-id $websiteProdSlotIdentityPrincipalId --secret-permissions list get
 az keyvault set-policy --name $dataKeyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
 #Website alerts
-az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$webSiteName actionGroupName=$actionGroupName 
+az deployment group create --resource-group $resourceGroupName --name "$($webSiteName)Alerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$webSiteName actionGroupName=$actionGroupName 
 $timing = -join($timing, "3. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "3. Website created: "$stopwatch.Elapsed.TotalSeconds
 
