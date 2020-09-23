@@ -1,0 +1,57 @@
+﻿@using SamLearnsAzure.Models
+@model SetViewModel
+@{
+    ViewData["Title"] = "Set Details";
+}
+
+<div class="BreadCrumbs">
+    <br />@Html.ActionLink("Home", "Index", "Home") &gt;
+    <span style="font-size: 24px;"><strong>@Model.Set.Name</strong> (@Model.Set.Year)</span>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <span><img src="@(Model.BaseSetImagesStorageURL)/@(Model.SetImage.SetImage)" style="max-width:200px; max-height:200px;" alt="@(Model.Set.Name) set image" /></span><br />
+    </div>
+    <div class="col-md-9">
+        <span><strong>Total parts: </strong>@(((int)Model.Set.NumParts).ToString("#,##0"))</span><br />
+        <span><strong>Theme: </strong>@Model.Set.Theme.Name</span><br />
+        @if (User.Identity.IsAuthenticated == true)
+        {
+            @Html.ActionLink("Update set image", "UpdateSetImage", "Home", new { setNum = Model.Set.SetNum })<br />
+            @Html.ActionLink("Search for missing parts", "SearchForMissingParts", "Home", new { setNum = Model.Set.SetNum })
+        }
+    </div>
+</div>
+<hr />
+<span><strong>Parts: </strong></span>
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            @for (int i = 0; i < Model.SetParts.Count; i++)
+            {
+                SetParts item = Model.SetParts[i];
+                if (i % 12 == 0)
+                {
+                    <div></div>
+                }
+                <div class="col-sm-1 col-xs-2 samsAppPart">
+                    <strong>@(item.Quantity)x</strong><br />
+                    <img src="@(Model.BaseSetPartsImagesStorageURL)/@(item.ColorId)/@(item.PartNum).png"
+                         class="img-rounded samsAppImage"
+                         onerror="if (this.src != '/images/lego.gif') { this.src = '/images/lego.gif'; }"
+                         alt="@(item.PartNum) part image" /><br />
+                    <span class="samsAppImageText">@item.ColorName</span><br />
+                    @if (User.Identity.IsAuthenticated == true)
+                    {
+                        <span class="samsAppImageText">PartNum: @Html.ActionLink(item.PartNum, "UpdatePartImage", "Home", new { setNum = Model.Set.SetNum, partNum = item.PartNum, colorId = item.ColorId, item.ColorName })</span><br />
+                    }
+                    else
+                    {
+                        <span class="samsAppImageText">PartNum: @item.PartNum</span><br />
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

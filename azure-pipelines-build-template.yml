@@ -6,8 +6,8 @@ parameters: # defaults for any parameters that aren't specified
   redisCacheConnectionString: '***secret'
 
 jobs:
-  - job: Build
-    displayName: 'Build .NET Core job'
+  - job: BuildDotNet31
+    displayName: 'Build .NET Core 3.1 job'
     pool:
       vmImage: ${{parameters.vmImage}}
     variables:
@@ -28,7 +28,7 @@ jobs:
         organization: samsmithnz
         projectKey: SamLearnsAzure
     - task: DotNetCoreCLI@2
-      displayName: 'Restore dotnet core projects'
+      displayName: 'Restore dotnet core 3.1 projects'
       inputs:
         command: restore
         projects: |
@@ -36,7 +36,7 @@ jobs:
          SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
         vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
     - task: DotNetCoreCLI@2
-      displayName: 'Publish dotnet core projects'
+      displayName: 'Publish dotnet core 3.1 projects'
       inputs:
         command: publish
         publishWebProjects: false
@@ -65,6 +65,48 @@ jobs:
       inputs:
         CredScan: true
       enabled: false
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+
+
+  - job: BuildDotNet5
+    displayName: 'Build .NET 5 job'
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    variables:
+      buildNumber: '1.0.0.0'
+    steps:
+    - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
+      displayName: 'Show all build variables in build output.'
+    - task: PowerShell@2
+      displayName: 'Generate build version number'
+      inputs:
+        targetType: FilePath
+        filePath: SamLearnsAzure/BuildVersion.ps1
+        arguments: -ProjectFile "SamLearnsAzure/SamLearnsAzure2.Web/SamLearnsAzure2.Web.csproj"
+    - task: UseDotNet@2
+      displayName: 'Install .Net 5 SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '5.0.100-rc.1.20452.10'
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore dotnet 5 projects'
+      inputs:
+        command: restore
+        projects: |
+         SamLearnsAzure/SamLearnsAzure2.Web/SamLearnsAzure2.Web.csproj
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish dotnet 5 projects'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: |
+         SamLearnsAzure/SamLearnsAzure2.Web/SamLearnsAzure2.Web.csproj
+        arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory) -p:Version=$(buildNumber) --self-contained true --runtime win-x86'
+        zipAfterPublish: true
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact'
       inputs:

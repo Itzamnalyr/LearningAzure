@@ -384,7 +384,7 @@ jobs:
               DeployToSlotFlag: true
               ResourceGroupName: '${{parameters.resourceGroupName}}'
               SlotName: '${{parameters.stagingSlotName}}'
-              Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure.Web.zip'
+              Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure2.Web.zip'
               RemoveAdditionalFilesFlag: true
               TakeAppOfflineFlag: true
               RenameFilesFlag: true

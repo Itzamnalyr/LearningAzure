@@ -1,0 +1,58 @@
+﻿@using SamLearnsAzure.Models
+@model UpdateSetImageViewModel
+@{
+    ViewData["Title"] = "Update set image details";
+}
+
+<div class="BreadCrumbs">
+    <br />@Html.ActionLink("Home", "Index", "Home") &gt; @Html.ActionLink(Model.Set.Name, "Set", "Home", new { setNum = @Model.Set.SetNum }) &gt;
+    <span style="font-size: 24px;"><strong>Update set image for @Model.Set.Name</strong></span>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <span><strong>Total parts: </strong>@(((int)Model.Set.NumParts).ToString("#,##0"))</span><br />
+        <span><strong>Theme: </strong>@Model.Set.Theme.Name</span><br />
+    </div>
+</div>
+<hr />
+<span><strong>Select a better image (showing (up to) top 10 matching Lego set number images from Bing): </strong></span><br />
+@{
+    int firstLoopLimit;
+    int secondLoopLimit;
+    if (Model.PotentialSetImages.Count > 5)
+    {
+        firstLoopLimit = 5;
+        secondLoopLimit = Model.PotentialSetImages.Count - 5;
+    }
+    else
+    {
+        firstLoopLimit = Model.PotentialSetImages.Count;
+        secondLoopLimit = 0;
+    }
+}
+<div class="row">
+    @for (int i = 0; i < firstLoopLimit; i++)
+    {
+        <div class="col-md-2">
+            <a href='@Url.Action("UpdateSetImageSave", "Home", new { setNum = Model.Set.SetNum, imageUrl = Model.PotentialSetImages[i].SetImage })'>
+                <img id="@Model.PotentialSetImages[i].SetImage"
+                     src="@(Model.PotentialSetImages[i].SetImage)"
+                     style="max-width:200px; max-height:200px;"
+                     alt="@Model.PotentialSetImages[i].SetImage" />
+            </a><br />
+        </div>
+    }
+</div>
+<div class="row">
+    @for (int i = 0; i < secondLoopLimit; i++)
+    {
+        <div class="col-md-2">
+            <a href='@Url.Action("UpdateSetImageSave", "Home", new { setNum = Model.Set.SetNum, imageUrl = Model.PotentialSetImages[i+5].SetImage })'>
+                <img id="@Model.PotentialSetImages[i+5].SetImage"
+                     src="@(Model.PotentialSetImages[i+5].SetImage)"
+                     style="max-width:200px; max-height:200px;"
+                     alt="@Model.PotentialSetImages[i+5].SetImage" />
+            </a><br />
+        </div>
+    }
+</div>

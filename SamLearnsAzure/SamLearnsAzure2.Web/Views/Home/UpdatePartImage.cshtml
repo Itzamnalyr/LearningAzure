@@ -1,0 +1,52 @@
+﻿@using SamLearnsAzure.Models
+@model UpdatePartImageViewModel
+@{
+    ViewData["Title"] = "Update part image details";
+}
+
+<div class="BreadCrumbs">
+    <br />@Html.ActionLink("Home", "Index", "Home") &gt; @Html.ActionLink(Model.Set.Name, "Set", "Home", new { setNum = @Model.Set.SetNum }) &gt;
+    <span style="font-size: 24px;"><strong>Update part image for @Model.CurrentSetPart.PartNum</strong></span>
+</div>
+<hr />
+<span><strong>Select a better image (showing (up to) top 10 matching Lego part number images from Bing): </strong></span><br />
+@{
+    int firstLoopLimit;
+    int secondLoopLimit;
+    if (Model.PotentialSetParts.Count > 5)
+    {
+        firstLoopLimit = 5;
+        secondLoopLimit = Model.PotentialSetParts.Count - 5;
+    }
+    else
+    {
+        firstLoopLimit = Model.PotentialSetParts.Count;
+        secondLoopLimit = 0;
+    }
+}
+<div class="row">
+    @for (int i = 0; i < firstLoopLimit; i++)
+    {
+        <div class="col-md-2">
+            <a href='@Url.Action("UpdatePartImagesave", "Home", new { setNum = Model.Set.SetNum, imageUrl = Model.PotentialSetParts[i].SourceImage })'>
+                <img id="@Model.PotentialSetParts[i].SourceImage"
+                     src="@(Model.PotentialSetParts[i].SourceImage)"
+                     style="max-width:200px; max-height:200px;"
+                     alt="@Model.PotentialSetParts[i].SourceImage" />
+            </a><br />
+        </div>
+    }
+</div>
+<div class="row">
+    @for (int i = 0; i < secondLoopLimit; i++)
+    {
+        <div class="col-md-2">
+            <a href='@Url.Action("UpdatePartImagesave", "Home", new { setNum = Model.Set.SetNum, imageUrl = Model.PotentialSetParts[i+5].SourceImage })'>
+                <img id="@Model.PotentialSetParts[i+5].SourceImage"
+                     src="@(Model.PotentialSetParts[i+5].SourceImage)"
+                     style="max-width:200px; max-height:200px;"
+                     alt="@Model.PotentialSetParts[i+5].SourceImage" />
+            </a><br />
+        </div>
+    }
+</div>

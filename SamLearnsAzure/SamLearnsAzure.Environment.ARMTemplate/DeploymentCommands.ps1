@@ -154,7 +154,7 @@ az keyvault set-policy --name $keyVaultName --object-id $serviceAPIStagingSlotId
 #Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$serviceAPIProdSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
 #Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$serviceAPIStagingSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
 #Web service alerts
-az deployment group create --resource-group $resourceGroupName --name "webSiteAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$serviceAPIName actionGroupName=$actionGroupName 
+az deployment group create --resource-group $resourceGroupName --name "webServiceAlerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$serviceAPIName actionGroupName=$actionGroupName 
 $timing = -join($timing, "12. Web service created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "12. Web service created: "$stopwatch.Elapsed.TotalSeconds
 
