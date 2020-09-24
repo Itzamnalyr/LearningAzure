@@ -60,7 +60,10 @@ if ($RunImportAlways -eq $true)
 	# Get the last file in the blob
     $Blobs = az storage blob list --container-name $StorageContainerName --prefix $DatabaseName --account-name $StorageAccountName --account-key $StorageAccountKey
 	$Blobs = $Blobs | ConvertFrom-Json 
-    $BacpacFilename = $Blobs[-1].name #Get the last item in the array
+	if ($Blobs.Length -ne 0)
+	{
+		$BacpacFilename = $Blobs[-1].name #Get the last item in the array
+	}
 	if (!$BacpacFilename)
 	{
 		Write-Error "BACPAC does not exist in container $StorageContainerName. Import aborted"

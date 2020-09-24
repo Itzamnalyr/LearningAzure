@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using SamLearnsAzure.Web.Controllers;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace SamLearnsAzure.Web
 {
@@ -69,6 +70,15 @@ namespace SamLearnsAzure.Web
                     facebookOptions.AppId = Configuration["IdentityFacebookAppId"];
                     facebookOptions.AppSecret = Configuration["IdentityFacebookAppSecret"];
                 });
+
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | 
+                                           ForwardedHeaders.XForwardedProto | 
+                                           ForwardedHeaders.XForwardedHost;
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
 
             services.AddControllersWithViews();
 
