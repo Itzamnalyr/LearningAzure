@@ -26,7 +26,7 @@ namespace SamLearnsAzure.Web.Controllers
             _featureFlagsServiceApiClient = featureFlagsServiceApiClient;
         }
 
-        [HttpGet]
+        [HttpGet, HttpHead]        
         public async Task<IActionResult> Index()
         {
             int ownerId = 1; //Sam
@@ -179,12 +179,21 @@ namespace SamLearnsAzure.Web.Controllers
             return View(featureFlagResult);
         }
 
+
+        [HttpHead]
+        public IActionResult HealthProbe()
+        {
+            return View();
+        }
+
+
         [HttpGet]
         public IActionResult Privacy()
         {
             ViewData["Message"] = "Sam Learns Azure privacy page.";
             return View();
         }
+
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

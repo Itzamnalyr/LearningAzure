@@ -71,15 +71,6 @@ namespace SamLearnsAzure.Web
                     facebookOptions.AppSecret = Configuration["IdentityFacebookAppSecret"];
                 });
 
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-                                           ForwardedHeaders.XForwardedProto |
-                                           ForwardedHeaders.XForwardedHost;
-                options.KnownNetworks.Clear();
-                options.KnownProxies.Clear();
-            });
-
             services.AddControllersWithViews();
 
             //Set a retry for the service API for 3 times
