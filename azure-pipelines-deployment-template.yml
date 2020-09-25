@@ -274,7 +274,7 @@ jobs:
               SlotName: '${{parameters.stagingSlotName}}'
               Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure.Service.zip'
               RemoveAdditionalFilesFlag: true
-              TakeAppOfflineFlag: true
+              TakeAppOfflineFlag: false
               RenameFilesFlag: true
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
@@ -330,7 +330,7 @@ jobs:
               SlotName: '${{parameters.stagingSlotName}}'
               Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure.Web.zip'
               RemoveAdditionalFilesFlag: true
-              TakeAppOfflineFlag: true
+              TakeAppOfflineFlag: false
               RenameFilesFlag: true
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
@@ -386,7 +386,7 @@ jobs:
               SlotName: '${{parameters.stagingSlotName}}'
               Package: '$(build.artifactstagingdirectory)/drop/SamLearnsAzure2.Web.zip'
               RemoveAdditionalFilesFlag: true
-              TakeAppOfflineFlag: true
+              TakeAppOfflineFlag: false
               RenameFilesFlag: true
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
