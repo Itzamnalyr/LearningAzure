@@ -180,7 +180,7 @@ namespace SamLearnsAzure.Web.Controllers
         }
 
 
-        [HttpHead]
+        [HttpGet, HttpHead]
         public IActionResult HealthProbe()
         {
             return View();

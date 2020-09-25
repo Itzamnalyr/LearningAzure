@@ -57,7 +57,7 @@
             "name": "healthProbeSettings-1600296316402",
             "properties": {
               "intervalInSeconds": 30,
-              "path": "/",
+              "path": "/home/healthprobe",
               "protocol": "Https",
               "resourceState": "Enabled",
               "enabledState": "Enabled",
