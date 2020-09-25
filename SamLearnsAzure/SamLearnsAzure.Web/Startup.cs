@@ -72,6 +72,7 @@ namespace SamLearnsAzure.Web
                 });
 
             services.AddControllersWithViews();
+            services.AddHealthChecks();
 
             //Set a retry for the service API for 3 times
             services.AddHttpClient<ServiceApiClient>()
@@ -114,6 +115,7 @@ namespace SamLearnsAzure.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHealthChecks("/health");
             });
         }
     }
