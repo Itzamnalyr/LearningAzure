@@ -38,8 +38,10 @@ namespace SamLearnsAzure.Web
                 //    return;
 
                 // health checks
-                if (req.Name.Contains("/healthprobe", StringComparison.InvariantCultureIgnoreCase))
+                if (req.Name.Contains("/health", StringComparison.InvariantCultureIgnoreCase))
+                {
                     return;
+                }
             }
 
             // Send everything else

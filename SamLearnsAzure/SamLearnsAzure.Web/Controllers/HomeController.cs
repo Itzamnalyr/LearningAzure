@@ -1,15 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using SamLearnsAzure.Models;
 using SamLearnsAzure.Web.Models;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace SamLearnsAzure.Web.Controllers
 {
@@ -177,13 +175,6 @@ namespace SamLearnsAzure.Web.Controllers
             }
 
             return View(featureFlagResult);
-        }
-
-
-        [HttpGet, HttpHead]
-        public IActionResult HealthProbe()
-        {
-            return View();
         }
 
 
