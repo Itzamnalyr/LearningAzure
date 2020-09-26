@@ -124,6 +124,21 @@
           }
         }
       ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2015-07-01",
+      "name": "[parameters('letsEncryptUniqueRoleAssignmentGuid')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/Sites', parameters('webSiteName'))]"
+      ],
+      "properties": {
+        "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', parameters('letsEncryptRoleAssignmentId'))]",
+        "principalId": "[parameters('letsEncryptAppServiceContributorObjectId')]"
+      },
+      "tags": {
+        "displayName": "Website authorization"
+      }
     }
   ]
 }
