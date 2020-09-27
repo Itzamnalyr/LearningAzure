@@ -86,7 +86,7 @@ namespace SamLearnsAzure.Web
 
             //Application insights initialization
             services.AddApplicationInsightsTelemetry();
-            services.AddApplicationInsightsTelemetryProcessor<ApplicationInsightsFilter>();
+            //services.AddApplicationInsightsTelemetryProcessor<ApplicationInsightsFilter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
