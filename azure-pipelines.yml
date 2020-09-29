@@ -35,7 +35,7 @@ stages:
 
 - stage: DeployPR
   displayName: 'Deploy PR Stage'
-  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), ne(variables['System.PullRequest.PullRequestId'], 'Null'))
+  condition: and(succeeded(), eq(1,0), eq(variables['Build.Reason'], 'PullRequest'), ne(variables['System.PullRequest.PullRequestId'], 'Null'))
   dependsOn: Build
   variables:
     ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
@@ -93,7 +93,8 @@ stages:
 
 - stage: DeployDev
   displayName: 'Deploy Dev Stage'
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  condition: succeeded()
+  #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
   dependsOn: Build
   jobs:
   - template: azure-pipelines-deployment-template.yml
