@@ -57,7 +57,7 @@
   "resources": [
     {
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2015-08-01",
+      "apiVersion": "2018-11-01",
       "name": "[parameters('webSiteName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
@@ -69,7 +69,61 @@
       "properties": {
         "name": "[parameters('webSiteName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
-        "httpsOnly": true
+        "httpsOnly": true,
+        "siteConfig": {
+          "alwaysOn": true,
+          "connectionStrings": [
+            {
+              "name": "AzureWebJobsDashboard",
+              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]",
+              "type": "Custom"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]",
+              "type": "Custom"
+            },
+            {
+              "name": "StorageConnectionString",
+              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value,';EndpointSuffix=core.windows.net')]",
+              "type": "Custom"
+            }
+          ],
+          "appSettings": [
+            {
+              "name": "letsencrypt:Tenant",
+              "value": "[subscription().tenantId]"
+            },
+            {
+              "name": "letsencrypt:SubscriptionId",
+              "value": "[subscription().subscriptionId]"
+            },
+            {
+              "name": "letsencrypt:ResourceGroupName",
+              "value": "[resourceGroup().name]"
+            },
+            {
+              "name": "letsencrypt:ServicePlanResourceGroupName",
+              "value": "[resourceGroup().name]"
+            },
+            {
+              "name": "letsencrypt:ClientId",
+              "value": "[parameters('letsEncryptAppServiceContributerClientId')]"
+            },
+            {
+              "name": "letsencrypt:ClientSecret",
+              "value": "[parameters('letsEncryptAppServiceContributerClientSecret')]"
+            },
+            {
+              "name": "letsencrypt:HostNames",
+              "value": "[parameters('websiteDomainName')]"
+            },
+            {
+              "name": "letsencrypt:Email",
+              "value": "[parameters('contactEmailAddress')]"
+            }
+          ]
+        }
       },
       "resources": [
         {
@@ -85,10 +139,10 @@
         {
           "type": "Microsoft.Web/sites/hostNameBindings",
           "name": "[concat(parameters('webSiteName'),'/',parameters('websiteDomainName'))]",
-          "apiVersion": "2016-08-01",
+          "apiVersion": "2018-11-01",
           "location": "[resourceGroup().location]",
           "tags": {
-            "displayName": "Website bindings"
+            "displayName": "Website hostname binding"
           },
           "properties": {
             "siteName": "[parameters('webSiteName')]"
@@ -105,29 +159,12 @@
             "[parameters('webSiteName')]"
           ],
           "properties": {}
-        },
-        {
-          "type": "config",
-          "apiVersion": "2018-11-01",
-          "name": "appsettings",
-          "dependsOn": [
-            "[parameters('webSiteName')]"
-          ],
-          "properties": {
-            "letsencrypt:Tenant": "[subscription().tenantId]",
-            "letsencrypt:SubscriptionId": "[subscription().subscriptionId]",
-            "letsencrypt:ResourceGroupName": "[resourceGroup().name]",
-            "letsencrypt:ServicePlanResourceGroupName": "[resourceGroup().name]",
-            "letsencrypt:ClientId": "[parameters('letsEncryptAppServiceContributerClientId')]",
-            "letsencrypt:ClientSecret": "[parameters('letsEncryptAppServiceContributerClientSecret')]",
-            "letsencrypt:Email": "[parameters('contactEmailAddress')]"
-          }
         }
       ]
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "2015-07-01",
+      "apiVersion": "2017-09-01",
       "name": "[parameters('letsEncryptUniqueRoleAssignmentGuid')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/Sites', parameters('webSiteName'))]"

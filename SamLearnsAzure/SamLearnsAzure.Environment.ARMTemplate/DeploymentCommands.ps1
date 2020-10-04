@@ -35,6 +35,7 @@ $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
 $webSiteName = "$appPrefix-$environment-$locationShort-web"
 $websiteDomainName = "$environment.samlearnsazure.com"
 
+$letsEncryptUniqueRoleAssignmentGuid = '6e4cff57-e63a-403e-822c-e98e5ba0484a'
 $letsEncryptAppServiceContributerClientSecret="RSRf?J_z+1t6W*EPpxkVhXTs9Szirku5"
 
 $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
@@ -142,7 +143,7 @@ $timing = -join($timing, "11. Web hosting created: ", $stopwatch.Elapsed.TotalSe
 Write-Host "11. Web hosting created: "$stopwatch.Elapsed.TotalSeconds
 
 #Web service
-az deployment group create --resource-group $resourceGroupName --name $serviceAPIName --template-file "$templatesLocation\WebService.json" --parameters serviceAPIName=$serviceAPIName hostingPlanName=$webhostingName actionGroupName=$actionGroupName sqlServerName=$sqlServerName sqlServerAddress=$sqlServerAddress sqlDatabaseName=$sqlDatabaseName sqlDatabaseLoginName=$sqlAdministratorLoginUser sqlDatabaseLoginPassword=$sqlAdministratorLoginPassword
+az deployment group create --resource-group $resourceGroupName --name $serviceAPIName --template-file "$templatesLocation\WebService.json" --parameters serviceAPIName=$serviceAPIName hostingPlanName=$webhostingName sqlServerName=$sqlServerName sqlServerAddress=$sqlServerAddress sqlDatabaseName=$sqlDatabaseName sqlDatabaseLoginName=$sqlAdministratorLoginUser sqlDatabaseLoginPassword=$sqlAdministratorLoginPassword
 #web service managed identity and setting keyvault access permissions
 $serviceAPIProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $serviceAPIName 
 $serviceAPIStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $serviceAPIName  --slot staging
@@ -159,7 +160,7 @@ $timing = -join($timing, "12. Web service created: ", $stopwatch.Elapsed.TotalSe
 Write-Host "12. Web service created: "$stopwatch.Elapsed.TotalSeconds
 
 #Web site
-az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName actionGroupName=$actionGroupName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret="$letsEncryptAppServiceContributerClientSecret"
+az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret="$letsEncryptAppServiceContributerClientSecret"
 #web site managed identity and setting keyvault access permissions
 $websiteProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName 
 $websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName  --slot staging

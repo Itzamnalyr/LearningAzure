@@ -6,7 +6,7 @@ pr:
     - '*'  # must quote since "*" is a YAML reserved character; we want a string
 
 schedules:
-- cron: "0 1/2 * * *"
+- cron: "0 1/2 * * *" #Run every 2 hours, starting at 1am
   branches:
     include: 
     - master
@@ -35,7 +35,7 @@ stages:
 
 - stage: DeployPR
   displayName: 'Deploy PR Stage'
-  condition: and(succeeded(), eq(1,0), eq(variables['Build.Reason'], 'PullRequest'), ne(variables['System.PullRequest.PullRequestId'], 'Null'))
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), ne(variables['System.PullRequest.PullRequestId'], 'Null'))
   dependsOn: Build
   variables:
     ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
@@ -52,7 +52,7 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
       applicationInsightsLocation: 'East US'
-      letsEncryptAppServiceContributerClientSecret: $(appServiceContributerClientSecret)
+      letsEncryptAppServiceContributerClientSecret: '$(appServiceContributerClientSecret)'
       ASPNETCOREEnvironmentSetting: 'Development'
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
@@ -66,7 +66,8 @@ stages:
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
-      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02$(System.PullRequest.PullRequestId)'
+      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba0$(System.PullRequest.PullRequestId)a'
+      letsEncryptUniqueRoleAssignmentGuid2: '6e4cff57-e63a-403e-822c-e98e5ba0$(System.PullRequest.PullRequestId)b'
       imagesStorageCDNURL: 'https://samsapp-$(prLC)-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsapp$(prLC)eustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringDev)'
@@ -93,8 +94,7 @@ stages:
 
 - stage: DeployDev
   displayName: 'Deploy Dev Stage'
-  condition: succeeded()
-  #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
   dependsOn: Build
   jobs:
   - template: azure-pipelines-deployment-template.yml
@@ -117,7 +117,8 @@ stages:
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
-      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02145'
+      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba2141a'
+      letsEncryptUniqueRoleAssignmentGuid2: '6e4cff57-e63a-403e-822c-e98e5ba2142b'
       imagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringDev)'
@@ -165,7 +166,8 @@ stages:
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
-      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02146'
+      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba2143a'
+      letsEncryptUniqueRoleAssignmentGuid2: '6e4cff57-e63a-403e-822c-e98e5ba2144b'
       imagesStorageCDNURL: 'https://samsapp-qa-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsappqaeustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringQA)'
@@ -213,7 +215,8 @@ stages:
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
-      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02147'
+      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba2145a'
+      letsEncryptUniqueRoleAssignmentGuid2: '6e4cff57-e63a-403e-822c-e98e5ba2146b'
       imagesStorageCDNURL: 'https://samsapp-prod-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsappprodeustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringProd)'

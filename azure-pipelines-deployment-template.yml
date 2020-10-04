@@ -20,6 +20,7 @@ parameters: # defaults for any parameters that aren't specified
   keyVaultClientId: '***secret'
   keyVaultClientSecret: '***secret'
   letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02145'
+  letsEncryptUniqueRoleAssignmentGuid2: '6e4cff57-e63a-403e-822c-e98e5ba02146'
   imagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/partimages'
   imagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/partimages'
   partImagesContainerName: 'partimages'
@@ -80,7 +81,7 @@ jobs:
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureCore.ps1
               arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -administratorUserSid "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8" -azureDevOpsPrincipalId "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
-            enabled: false
+            enabled: true
 
 
   - deployment: DeployCDN
@@ -107,7 +108,7 @@ jobs:
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureCDN.ps1
               arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" 
-            enabled: false
+            enabled: true
 
 
   - deployment: DeployRedis
@@ -134,7 +135,7 @@ jobs:
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureRedis.ps1
               arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" 
-            enabled: false
+            enabled: true
 
 
   - deployment: DeployDatabase
@@ -161,7 +162,7 @@ jobs:
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureSQL.ps1
               arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -sqlDatabaseName "${{parameters.databaseName}}" -sqlAdministratorLoginUser "${{parameters.databaseLoginName}}" -sqlAdministratorLoginPassword "${{parameters.databaseLoginPassword}}" -administratorUserLogin "c6193b13-08e7-4519-b7b4-e6b1875b15a8" -administratorUserSid "076f7430-ef4f-44e0-aaa7-d00c0f75b0b8" -storageAccountAccessKey "${{parameters.storageAccountKey}}" -azureDevOpsPrincipalId "e60b0582-1d81-4ab3-92db-fbdc53ddeb92"
-            enabled: false
+            enabled: true
           - task: AzureCLI@2
             displayName: 'Restore database from backup, if needed'
             inputs:
@@ -206,7 +207,7 @@ jobs:
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebCore.ps1
               arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com"
-            enabled: false             
+            enabled: true             
           - task: PowerShell@2
             displayName: 'Set FrontDoor CName DNS entries in GoDaddy'
             inputs:
@@ -214,7 +215,7 @@ jobs:
               filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
               arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}fd" -godaddy_destination "samsapp-${{parameters.environmentLowercase}}-${{parameters.resourceGroupLocationShort}}-frontdoor.azurefd.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"
             continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
-            enabled: false
+            enabled: true
           - task: PowerShell@2
             displayName: 'Set Website CName DNS entries in GoDaddy'
             inputs:
@@ -222,7 +223,7 @@ jobs:
               filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
               arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}" -godaddy_destination "${{parameters.websiteName}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"
             continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
-            enabled: false
+            enabled: true
           - task: PowerShell@2
             displayName: 'Set Website2 CName DNS entries in GoDaddy'
             inputs:
@@ -230,7 +231,7 @@ jobs:
               filePath: '$(build.artifactstagingdirectory)/drop/EnvironmentARMTemplate/PowerShell/GoDaddyDNSSetup.ps1'
               arguments: -godaddy_domain "samlearnsazure.com" -godaddy_name "${{parameters.environmentLowercase}}2" -godaddy_destination "${{parameters.website2Name}}.azurewebsites.net" -godaddy_type "CNAME" -godaddy_key "${{parameters.godaddy_key}}" -godaddy_secret "${{parameters.godaddy_secret}}"
             continueOnError: true # GoDaddy is not essential, and seems to have some reliability issues, so marking this to continue on any errors
-            enabled: false
+            enabled: true
 
 
   - deployment: DeployWebServiceApp
@@ -272,7 +273,7 @@ jobs:
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebService.ps1
               arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -sqlDatabaseName "${{parameters.databaseName}}" -sqlAdministratorLoginUser "${{parameters.databaseLoginName}}" -sqlAdministratorLoginPassword "${{parameters.databaseLoginPassword}}"
-            enabled: false
+            enabled: true
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: web service'
             inputs:
@@ -328,8 +329,8 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebsite.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}"  -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
-            enabled: false
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}"  -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptUniqueRoleAssignmentGuid "${{parameters.letsEncryptUniqueRoleAssignmentGuid}}" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
+            enabled: true
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: website'
             inputs:
@@ -385,8 +386,8 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebsite.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}2" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
-            enabled: false
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}2" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptUniqueRoleAssignmentGuid "${{parameters.letsEncryptUniqueRoleAssignmentGuid2}}" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
+            enabled: true
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: website'
             inputs:
@@ -429,7 +430,7 @@ jobs:
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureFrontDoor.ps1
               arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -customDomain "${{parameters.frontDoorDomainName}}"
-            enabled: false
+            enabled: true
 
 
   - deployment: DeployFunctionalTests

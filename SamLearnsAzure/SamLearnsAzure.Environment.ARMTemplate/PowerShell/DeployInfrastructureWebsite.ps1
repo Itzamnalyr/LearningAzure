@@ -9,6 +9,7 @@
 	[string] $dataKeyVaultName,
 	[string] $templatesLocation,
 	[string] $contactEmailAddress,
+	[string] $letsEncryptUniqueRoleAssignmentGuid,
 	[string] $letsEncryptAppServiceContributerClientSecret
 )
 
@@ -26,13 +27,13 @@ Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
 Write-Host "dataKeyVaultName: $dataKeyVaultName"
 Write-Host "templatesLocation: $templatesLocation"
 Write-Host "contactEmailAddress: $contactEmailAddress"
-Write-Host "letsEncryptAppServiceContributerClientSecret: $letsEncryptAppServiceContributerClientSecret"
+Write-Host "letsEncryptUniqueRoleAssignmentGuid: $letsEncryptUniqueRoleAssignmentGuid"
 
 #Variables
 $webSiteName = "$appPrefix-$webAppEnvironment-$resourceGroupLocationShort-web"
 $webhostingName = "$appPrefix-$environment-$resourceGroupLocationShort-hostingplan"
-$storageAccountName = "$appPrefix$environment$($resourceGroupLocationShort)storage" #Must be <= 24 lowercase letters and numbers.
 $actionGroupName = "$appPrefix-$environment-$resourceGroupLocationShort-actionGroup"
+$storageAccountName = "$appPrefix$environment$($resourceGroupLocationShort)storage" #Must be <= 24 lowercase letters and numbers.
 if ($webAppEnvironment -ne "Prod")
 {
 	$websiteDomainName = "$webAppEnvironment.samlearnsazure.com"
@@ -41,6 +42,7 @@ else
 {
 	$websiteDomainName = "samlearnsazure.com"
 }
+Write-Host "websiteDomainName: $websiteDomainName"
 if ($storageAccountName.Length -gt 24)
 {
     Write-Host "Storage account name must be 3-24 characters in length"
@@ -55,18 +57,25 @@ $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSecon
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
 #Web site
-az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret=$letsEncryptAppServiceContributerClientSecret
+az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptUniqueRoleAssignmentGuid=$letsEncryptUniqueRoleAssignmentGuid letsEncryptAppServiceContributerClientSecret=$letsEncryptAppServiceContributerClientSecret
 #web site managed identity and setting keyvault access permissions
 $websiteProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName 
 $websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName --slot staging
 $websiteProdSlotIdentityPrincipalId = ($websiteProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
 $websiteStagingSlotIdentityPrincipalId =($websiteStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
-Write-Host "prod: " $websiteProdSlotIdentityPrincipalId
-Write-Host "staging: " $websiteStagingSlotIdentityPrincipalId
-Write-Host "Setting access policies for key vault"
-az keyvault set-policy --name $dataKeyVaultName --object-id $websiteProdSlotIdentityPrincipalId --secret-permissions list get
-az keyvault set-policy --name $dataKeyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
+Write-Host "Prod PrincipalId: " $websiteProdSlotIdentityPrincipalId
+Write-Host "Staging PrincipalId: " $websiteStagingSlotIdentityPrincipalId
+Write-Host "Started access policy 1 for key vault"
+$policy1 = az keyvault set-policy --name $dataKeyVaultName --object-id $websiteProdSlotIdentityPrincipalId --secret-permissions list get
+Write-Host "Finished access policy 1 for key vault"
+Write-Host "Started access policy 2 for key vault"
+$policy2 = az keyvault set-policy --name $dataKeyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
+Write-Host "Finished access policy 2 for key vault"
+
 #Website alerts
+Write-Host "Webalerts deployment name: $($webSiteName)Alerts"
+Write-Host "webAppName: $webSiteName"
+Write-Host "actionGroupName: $actionGroupName"
 az deployment group create --resource-group $resourceGroupName --name "$($webSiteName)Alerts" --template-file "$templatesLocation\WebAppAlerts.json" --parameters webAppName=$webSiteName actionGroupName=$actionGroupName 
 $timing = -join($timing, "3. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "3. Website created: "$stopwatch.Elapsed.TotalSeconds

@@ -33,7 +33,7 @@ namespace SamLearnsAzure.Web.Controllers
             {
                 environment = "dev";
             }
-            else if (environment.ToLower().StartsWith("qa") == true)
+            else if (environment.ToLower().StartsWith("qa") == true || environment.ToLower().StartsWith("test") == true) //sometimes we have a test environment that we want to use qa settings
             {
                 environment = "qa";
             }

@@ -36,9 +36,9 @@ Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 #Frontdoor ARM template
 az deployment group create --resource-group $resourceGroupName --name $frontDoorName --template-file "$templatesLocation\FrontDoor.json" --parameters frontDoorName=$frontDoorName frontDoorBackEndAddresses=$frontDoorBackEndAddresses
 
-#Add the extension first:
+#Add extension to use Azure CLI for front door:
 az extension add --name front-door
-#Add Frontdoor custom domain to frontend-endpoint
+#Add Frontdoor custom domain to frontend-endpoint, checking to see if it exists first
 $FrontDoorFrontEndEndPointsJson = az network front-door frontend-endpoint list --front-door-name $frontDoorName --resource-group $resourceGroupName
 $FrontDoorFrontEndEndPoints = $FrontDoorFrontEndEndPointsJson | ConvertFrom-Json
 $FoundFrontEndPoint = $false
