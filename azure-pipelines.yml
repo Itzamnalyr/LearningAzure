@@ -48,9 +48,9 @@ stages:
   - template: azure-pipelines-deployment-template.yml
     parameters:
       #Note that pull request environments use Dev credentials
-      applicationInsightsApiKey: '$(ApplicationInsights--APIKeyDev)'
-      applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
-      applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
+      applicationInsightsApiKey: '$(ApplicationInsights--APIKey$(prId))'
+      applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationId$(prId))'
+      applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKey$(prId))
       applicationInsightsLocation: 'East US'
       letsEncryptAppServiceContributerClientSecret: '$(appServiceContributerClientSecret)'
       ASPNETCOREEnvironmentSetting: 'Development'
@@ -79,6 +79,9 @@ stages:
       serviceName: 'samsapp-$(prLC)-eu-service'
       serviceStagingUrl: 'https://samsapp-$(prLC)-eu-service-staging.azurewebsites.net/'
       serviceUrl: 'https://samsapp-$(prLC)-eu-service.azurewebsites.net/'
+      service2Name: 'samsapp-$(prLC)2-eu-service'
+      service2StagingUrl: 'https://samsapp-$(prLC)2-eu-service-staging.azurewebsites.net/'
+      service2Url: 'https://samsapp-$(prLC)2-eu-service.azurewebsites.net/'
       storageAccountName: 'samsapp$(prLC)eustorage'
       storageAccountKey: '$(StorageAccountKeyProd)'
       userPrincipalLogin: $(userPrincipalLogin)
@@ -130,6 +133,9 @@ stages:
       serviceName: 'samsapp-dev-eu-service'
       serviceStagingUrl: 'https://samsapp-dev-eu-service-staging.azurewebsites.net/'
       serviceUrl: 'https://samsapp-dev-eu-service.azurewebsites.net/'
+      service2Name: 'samsapp-dev2-eu-service'
+      service2StagingUrl: 'https://samsapp-dev2-eu-service-staging.azurewebsites.net/'
+      service2Url: 'https://samsapp-dev2-eu-service.azurewebsites.net/'
       storageAccountName: 'samsappdeveustorage'
       userPrincipalLogin: $(userPrincipalLogin)
       vmImage: $(vmImage)
@@ -154,7 +160,7 @@ stages:
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyQA)
       applicationInsightsLocation: 'East US'
       letsEncryptAppServiceContributerClientSecret: $(appServiceContributerClientSecret)
-      captureStartErrors: false
+      captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'QA'  
       environmentLowercase: 'qa'
@@ -179,6 +185,9 @@ stages:
       serviceName: 'samsapp-qa-eu-service'
       serviceStagingUrl: 'https://samsapp-qa-eu-service-staging.azurewebsites.net/'
       serviceUrl: 'https://samsapp-qa-eu-service.azurewebsites.net/'
+      service2Name: 'samsapp-qa2-eu-service'
+      service2StagingUrl: 'https://samsapp-qa2-eu-service-staging.azurewebsites.net/'
+      service2Url: 'https://samsapp-qa2-eu-service.azurewebsites.net/'
       storageAccountName: 'samsappqaeustorage'
       userPrincipalLogin: $(userPrincipalLogin)
       vmImage: $(vmImage)
@@ -203,7 +212,7 @@ stages:
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyProd)
       applicationInsightsLocation: 'East US'
       letsEncryptAppServiceContributerClientSecret: $(appServiceContributerClientSecret)
-      captureStartErrors: false
+      captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'Prod'  
       environmentLowercase: 'prod'
@@ -228,6 +237,9 @@ stages:
       serviceName: 'samsapp-prod-eu-service'
       serviceStagingUrl: 'https://samsapp-prod-eu-service-staging.azurewebsites.net/'
       serviceUrl: 'https://samsapp-prod-eu-service.azurewebsites.net/'
+      service2Name: 'samsapp-prod2-eu-service'
+      service2StagingUrl: 'https://samsapp-prod2-eu-service-staging.azurewebsites.net/'
+      service2Url: 'https://samsapp-prod2-eu-service.azurewebsites.net/'
       storageAccountName: 'samsappprodeustorage'
       userPrincipalLogin: $(userPrincipalLogin)
       vmImage: $(vmImage)

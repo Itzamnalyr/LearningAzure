@@ -46,6 +46,7 @@ $contactEmailAddress="samsmithnz@gmail.com"
 
 $frontDoorName = "$appPrefix-$environment-$locationShort-frontdoor"
 $frontDoorBackEndAddresses = "['$webSiteName.azurewebsites.net']"  #create an array of strings for each of the back end pool resources
+$frontDoorDomainName = "$($environment)fd.samlearnsazure.com"
 
 $templatesLocation = "C:\Users\samsmit\source\repos\SamLearnsAzure\SamLearnsAzure\SamLearnsAzure.Environment.ARMTemplate\Templates"
 
@@ -150,8 +151,8 @@ $serviceAPIStagingSlotIdentity = az webapp identity assign --resource-group $res
 $serviceAPIProdSlotIdentityPrincipalId = ($serviceAPIProdSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
 $serviceAPIStagingSlotIdentityPrincipalId =($serviceAPIStagingSlotIdentity | ConvertFrom-Json | SELECT PrincipalId).PrincipalId
 Write-Host "Setting access policies for key vault"
-az keyvault set-policy --name $keyVaultName --object-id $serviceAPIProdSlotIdentityPrincipalId --secret-permissions list,get
-az keyvault set-policy --name $keyVaultName --object-id $serviceAPIStagingSlotIdentityPrincipalId --secret-permissions list,get
+$policy1 = az keyvault set-policy --name $keyVaultName --object-id $serviceAPIProdSlotIdentityPrincipalId --secret-permissions list get
+$policy2 = az keyvault set-policy --name $keyVaultName --object-id $serviceAPIStagingSlotIdentityPrincipalId --secret-permissions list get
 #Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$serviceAPIProdSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
 #Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$serviceAPIStagingSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
 #Web service alerts
@@ -160,7 +161,7 @@ $timing = -join($timing, "12. Web service created: ", $stopwatch.Elapsed.TotalSe
 Write-Host "12. Web service created: "$stopwatch.Elapsed.TotalSeconds
 
 #Web site
-az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret="$letsEncryptAppServiceContributerClientSecret"
+az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptUniqueRoleAssignmentGuid=$letsEncryptUniqueRoleAssignmentGuid letsEncryptAppServiceContributerClientSecret="$letsEncryptAppServiceContributerClientSecret"
 #web site managed identity and setting keyvault access permissions
 $websiteProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName 
 $websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName  --slot staging
@@ -169,8 +170,8 @@ $websiteStagingSlotIdentityPrincipalId =($websiteStagingSlotIdentity | ConvertFr
 Write-Host "prod: " $websiteProdSlotIdentityPrincipalId
 Write-Host "staging: " $websiteStagingSlotIdentityPrincipalId
 Write-Host "Setting access policies for key vault"
-az keyvault set-policy --name $keyVaultName --object-id $websiteProdSlotIdentityPrincipalId --secret-permissions list,get
-az keyvault set-policy --name $keyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list,get
+$policy3 = az keyvault set-policy --name $keyVaultName --object-id $websiteProdSlotIdentityPrincipalId --secret-permissions list get
+$policy4 = az keyvault set-policy --name $keyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
 #Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$websiteProdSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
 #Set-AzKeyVaultAccessPolicy -VaultName "$keyVaultName" -ObjectId "$websiteStagingSlotIdentityPrincipalId" -PermissionsToSecrets list,get -PassThru -BypassObjectIdValidation
 #Website alerts
@@ -180,8 +181,35 @@ Write-Host "13. Website created: "$stopwatch.Elapsed.TotalSeconds
 
 
 #Frontdoor
-az deployment group create --resource-group $resourceGroupName --name $frontDoorName --template-file "$templatesLocation\FrontDoor.json" --parameters frontDoorName=$frontDoorName frontDoorBackEndAddresses=$frontDoorBackEndAddresses 
-$timing = -join($timing, "14. Frontdoor created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+az deployment group create --resource-group $resourceGroupName --name $frontDoorName --template-file "$templatesLocation\FrontDoor.json" --parameters frontDoorName=$frontDoorName frontDoorBackEndAddresses=$frontDoorBackEndAddresses
+
+#Add extension to use Azure CLI for front door:
+#az extension add --name front-door
+#Add Frontdoor custom domain to frontend-endpoint, checking to see if it exists first
+$FrontDoorFrontEndEndPointsJson = az network front-door frontend-endpoint list --front-door-name $frontDoorName --resource-group $resourceGroupName
+$FrontDoorFrontEndEndPoints = $FrontDoorFrontEndEndPointsJson | ConvertFrom-Json
+$FoundFrontEndPoint = $false
+#We can't create the frontend point if it already exists, so check again
+foreach($FrontDoorFrontEndEndPoint in $FrontDoorFrontEndEndPoints) {
+    if ($FrontDoorFrontEndEndPoint -ne $null)
+    {
+        if ($FrontDoorFrontEndEndPoint.name -eq $frontDoorDomainName.Replace(".","-"))
+        {
+            $FoundFrontEndPoint = $true
+        }
+    }
+}
+if ($FoundFrontEndPoint -eq $false)
+{
+    az network front-door frontend-endpoint create --front-door-name $frontDoorName --host-name $frontDoorDomainName --name $frontDoorDomainName.Replace(".","-") --resource-group $resourceGroupName --session-affinity-enabled Disabled --session-affinity-ttl 0
+}
+
+#Add custom domain to routing rules
+az network front-door routing-rule update --front-door-name $frontDoorName --name "$frontDoorName-routing" --resource-group $resourceGroupName --frontend-endpoints "$frontDoorName-azurefd-net".Replace(".","-") $frontDoorDomainName.Replace(".","-")
+#Debugging stuff for the routing
+#$routingRulesJson = az network front-door routing-rule list --front-door-name $frontDoorName --resource-group $resourceGroupName
+#$routingRules = $routingRulesJson  | ConvertFrom-Json 
+#$routingRules[0].frontendEndpoints$timing = -join($timing, "14. Frontdoor created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "14. Frontdoor created: "$stopwatch.Elapsed.TotalSeconds
 
 

@@ -7,7 +7,7 @@
 	[string] $resourceGroupLocationShort,
 	[string] $dataKeyVaultName,
 	[string] $templatesLocation,
-	[string] $customDomain
+	[string] $frontDoorDomainName
 )
 
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -22,7 +22,7 @@ Write-Host "resourceGroupLocation: $resourceGroupLocation"
 Write-Host "resourceGroupLocationShort: $resourceGroupLocationShort"
 Write-Host "dataKeyVaultName: $dataKeyVaultName"
 Write-Host "templatesLocation: $templatesLocation"
-Write-Host "customDomain: $customDomain"
+Write-Host "frontDoorDomainName: $frontDoorDomainName"
 
 #Variables
 $frontDoorName = "$appPrefix-$environment-$resourceGroupLocationShort-frontdoor"
@@ -44,18 +44,18 @@ $FrontDoorFrontEndEndPoints = $FrontDoorFrontEndEndPointsJson | ConvertFrom-Json
 $FoundFrontEndPoint = $false
 #We can't create the frontend point if it already exists, so check again
 foreach($FrontDoorFrontEndEndPoint in $FrontDoorFrontEndEndPoints) {
-    if ($FrontDoorFrontEndEndPoint.name -eq $customDomain.Replace(".","-"))
+    if ($FrontDoorFrontEndEndPoint.name -eq $frontDoorDomainName.Replace(".","-"))
     {
         $FoundFrontEndPoint = $true
     }
 }
 if ($FoundFrontEndPoint -eq $false)
 {
-    az network front-door frontend-endpoint create --front-door-name $frontDoorName --host-name $customDomain --name $customDomain.Replace(".","-") --resource-group $resourceGroupName --session-affinity-enabled Disabled --session-affinity-ttl 0
+    az network front-door frontend-endpoint create --front-door-name $frontDoorName --host-name $frontDoorDomainName --name $frontDoorDomainName.Replace(".","-") --resource-group $resourceGroupName --session-affinity-enabled Disabled --session-affinity-ttl 0
 }
 
 #Add custom domain to routing rules
-az network front-door routing-rule update --front-door-name $frontDoorName --name "$frontDoorName-routing" --resource-group $resourceGroupName --frontend-endpoints "$frontDoorName-azurefd-net".Replace(".","-") $customDomain.Replace(".","-")
+az network front-door routing-rule update --front-door-name $frontDoorName --name "$frontDoorName-routing" --resource-group $resourceGroupName --frontend-endpoints "$frontDoorName-azurefd-net".Replace(".","-") $frontDoorDomainName.Replace(".","-")
 #Debugging stuff for the routing
 #$routingRulesJson = az network front-door routing-rule list --front-door-name $frontDoorName --resource-group $resourceGroupName
 #$routingRules = $routingRulesJson  | ConvertFrom-Json 

@@ -6,6 +6,8 @@ parameters: # defaults for any parameters that aren't specified
   redisCacheConnectionString: '***secret'
 
 jobs:
+
+
   - job: BuildDotNet31
     displayName: 'Build .NET Core 3.1 job'
     pool:
@@ -85,7 +87,7 @@ jobs:
       inputs:
         targetType: FilePath
         filePath: SamLearnsAzure/BuildVersion.ps1
-        arguments: -ProjectFile "SamLearnsAzure/SamLearnsAzure2.Web/SamLearnsAzure2.Web.csproj"
+        arguments: -ProjectFile "SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj"
     - task: UseDotNet@2
       displayName: 'Install .Net 5 SDK'
       inputs:
@@ -96,7 +98,8 @@ jobs:
       inputs:
         command: restore
         projects: |
-         SamLearnsAzure/SamLearnsAzure2.Web/SamLearnsAzure2.Web.csproj
+         SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
+         SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
         vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
     - task: DotNetCoreCLI@2
       displayName: 'Publish dotnet 5 projects'
@@ -104,7 +107,8 @@ jobs:
         command: publish
         publishWebProjects: false
         projects: |
-         SamLearnsAzure/SamLearnsAzure2.Web/SamLearnsAzure2.Web.csproj
+         SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
+         SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
         arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory) -p:Version=$(buildNumber) --self-contained true --runtime win-x86'
         zipAfterPublish: true
     - task: PublishBuildArtifacts@1
@@ -143,6 +147,7 @@ jobs:
         vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3' 
       enabled: false
 
+
   - job: BuildFunctional
     displayName: 'Build and publish functional tests job'
     pool:
@@ -177,6 +182,7 @@ jobs:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
 
+
   - job: BuildARMTemplates
     displayName: 'Build Copy ARM templates job'
     pool:
@@ -192,6 +198,7 @@ jobs:
       displayName: 'Publish Artifact'
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
+
 
   - job: BuildDotNetFramework
     displayName: 'Build .NET Framework job'
@@ -214,3 +221,4 @@ jobs:
       displayName: 'Publish Artifact'
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
+

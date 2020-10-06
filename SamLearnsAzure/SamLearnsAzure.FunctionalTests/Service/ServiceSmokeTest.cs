@@ -17,6 +17,7 @@ namespace SamLearnsAzure.FunctionalTests.Service
         private ChromeDriver _driver;
         private TestContext _testContextInstance;
         private string _serviceUrl = null;
+        private string _service2Url = null;
         //private string _environment = null;
 
         [TestMethod]
@@ -29,6 +30,28 @@ namespace SamLearnsAzure.FunctionalTests.Service
 
             //Act
             string serviceURL = _serviceUrl + "api/values";
+            Console.WriteLine(serviceURL);
+            _driver.Navigate().GoToUrl(serviceURL);
+            serviceLoaded = (_driver.Url == serviceURL);
+            OpenQA.Selenium.IWebElement data = _driver.FindElementByXPath(@"/html/body/pre");
+
+
+            //Assert
+            Assert.IsTrue(serviceLoaded);
+            Assert.IsTrue(data != null);
+            Assert.AreEqual(data.Text, "[\"value1\",\"value2\"]");
+        }
+
+        [TestMethod]
+        [TestCategory("SkipWhenLiveUnitTesting")]
+        [TestCategory("SmokeTest")]
+        public void GotoSamLearnsAzureService2ValuesTest()
+        {
+            //Arrange
+            bool serviceLoaded;
+
+            //Act
+            string serviceURL = _service2Url + "api/values";
             Console.WriteLine(serviceURL);
             _driver.Navigate().GoToUrl(serviceURL);
             serviceLoaded = (_driver.Url == serviceURL);
@@ -77,11 +100,13 @@ namespace SamLearnsAzure.FunctionalTests.Service
             if (TestContext.Properties == null || TestContext.Properties.Count == 0)
             {
                 _serviceUrl = "https://samsapp-dev-eu-service.azurewebsites.net/";
+                _service2Url = "https://samsapp-dev2-eu-service.azurewebsites.net/";
                 //_environment = "dev";
             }
             else
             {
                 _serviceUrl = TestContext.Properties["ServiceUrl"].ToString();
+                _service2Url = TestContext.Properties["Service2Url"].ToString();
                 // _environment = TestContext.Properties["TestEnvironment"].ToString();
             }
         }
