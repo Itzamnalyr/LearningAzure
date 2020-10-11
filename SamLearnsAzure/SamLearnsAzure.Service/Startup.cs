@@ -72,6 +72,9 @@ namespace SamLearnsAzure.Service
             services.AddScoped<ISetImagesRepository, SetImagesRepository>();
             services.AddScoped<IThemesRepository, ThemesRepository>();
             services.AddScoped<IPartImagesRepository, PartImagesRepository>();
+            services.AddScoped<IBrowseThemesRepository, BrowseThemesRepository>();
+            services.AddScoped<IBrowseYearsRepository, BrowseYearsRepository>();
+            services.AddScoped<IBrowseSetsRepository, BrowseSetsRepository>();
 
             //Application insights initialization
             services.AddApplicationInsightsTelemetry(); 
