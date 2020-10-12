@@ -163,6 +163,48 @@ namespace SamLearnsAzure.Web.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Browse(int? themeId, int? year)
+        {
+            //About upgrade feature flag
+            bool featureFlagResult = false;
+            if (_featureFlagsServiceApiClient != null)
+            {
+                featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("Browse", _configuration["AppSettings:Environment"].ToString());
+            }
+
+            List<BrowseThemes> themes = await _ServiceApiClient.GetBrowseThemes(year);
+            List<BrowseYears> years = await _ServiceApiClient.GetBrowseYears(themeId);
+            List<BrowseSets> sets = await _ServiceApiClient.GetBrowseSets(themeId, year);
+
+            BrowseViewModel model = new BrowseViewModel
+            (
+                environment: _configuration["AppSettings:Environment"],
+                themes: themes,
+                years: years,
+                sets: sets
+            )
+            {
+                BrowseFeatureFlag = featureFlagResult
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public IActionResult BrowsePost(BrowseViewModel model)
+        {
+            if (model != null) //(ModelState.IsValid)
+            {
+                return RedirectToAction("Browse", new { themeId = model.ThemeId, year = model.Year });
+            }
+
+            // If we got this far, something failed; redisplay form.
+            return View(model);
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> About()
         {
             ViewData["Message"] = "Sam Learns Azure.";

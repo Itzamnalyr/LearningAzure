@@ -95,6 +95,9 @@
     <Build Include="dbo\Stored Procedures\GetPartImages.sql" />
     <Build Include="dbo\Stored Procedures\GetPartRelationships.sql" />
     <Build Include="dbo\Stored Procedures\GetColors.sql" />
+    <Build Include="dbo\Stored Procedures\GetBrowseSets.sql" />
+    <Build Include="dbo\Stored Procedures\GetBrowseThemes.sql" />
+    <Build Include="dbo\Stored Procedures\GetBrowseYears.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
