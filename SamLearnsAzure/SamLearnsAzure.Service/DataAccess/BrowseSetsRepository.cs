@@ -22,8 +22,8 @@ namespace SamLearnsAzure.Service.DataAccess
 
         public async Task<IEnumerable<BrowseSets>> GetBrowseSets(IRedisService redisService, bool useCache, int? themeId, int? year)
         {
-            string cacheKeyName = "BrowseSets-all";
-            TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
+            string cacheKeyName = "BrowseSets-" + themeId + "-" + year;
+            TimeSpan cacheExpirationTime = new TimeSpan(0, 5, 0);
             IEnumerable<BrowseSets> result;
 
             //Check the cache
@@ -61,6 +61,6 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             return result ?? new List<BrowseSets>();
         }
-       
+
     }
 }

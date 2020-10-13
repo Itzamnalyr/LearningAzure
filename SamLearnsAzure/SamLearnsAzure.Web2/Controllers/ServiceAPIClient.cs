@@ -160,6 +160,24 @@ namespace SamLearnsAzure.Web.Controllers
             return await ReadMessageList<PartImages>(url);
         }
 
+        public async Task<List<BrowseThemes>> GetBrowseThemes(int? year)
+        {
+            Uri url = new Uri($"api/BrowseThemes/GetBrowseThemes?year=" + year, UriKind.Relative);
+            return await ReadMessageList<BrowseThemes>(url);
+        }
+
+        public async Task<List<BrowseYears>> GetBrowseYears(int? themeId)
+        {
+            Uri url = new Uri($"api/BrowseYears/GetBrowseYears?themeId=" + themeId, UriKind.Relative);
+            return await ReadMessageList<BrowseYears>(url);
+        }
+
+        public async Task<List<BrowseSets>> GetBrowseSets(int? themeId, int? year)
+        {
+            Uri url = new Uri($"api/BrowseSets/GetBrowseSets?themeId=" + themeId + "&year=" + year, UriKind.Relative);
+            return await ReadMessageList<BrowseSets>(url);
+        }
+
         private async Task<List<T>> ReadMessageList<T>(Uri url)
         {
             HttpResponseMessage response = await _client.GetAsync(url);

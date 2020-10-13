@@ -38,11 +38,8 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             Assert.IsTrue(set.Name == "def");
             Assert.IsTrue(set.NumParts == 1);
             Assert.IsTrue(set.ThemeId == 2);
+            Assert.IsTrue(set.ThemeName == "ghi");
             Assert.IsTrue(set.Year == 3);
-            Assert.IsTrue(set.Theme != null);
-            Assert.IsTrue(set.Inventories != null);
-            Assert.IsTrue(set.InventorySets != null);
-            Assert.IsTrue(set.OwnerSets != null);
         }
 
         private IEnumerable<BrowseSets> GetBrowseSetsTestData()
@@ -69,8 +66,8 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
                 Name = "def",
                 NumParts = 1,
                 ThemeId = 2,
-                Year = 3,
-                Theme = Theme
+                ThemeName = "ghi",
+                Year = 3
             };
         }
 

@@ -20,6 +20,9 @@ namespace SamLearnsAzure.Web.Controllers
         Task<bool> SearchForMissingParts(string setNum);
         Task<List<PartImages>> GetPartImages();
         Task<List<PartImages>> SearchForPotentialPartImages(string partNum, int colorId, string colorName, int resultsToReturn = 1, int resultsToSearch = 1);
+        Task<List<BrowseThemes>> GetBrowseThemes(int? year);
+        Task<List<BrowseYears>> GetBrowseYears(int? themeId);
+        Task<List<BrowseSets>> GetBrowseSets(int? themeId, int? year);
     }
 
 }
