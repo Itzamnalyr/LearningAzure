@@ -37,7 +37,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
         {
             Assert.IsTrue(BrowseThemes.Id == 1);
             Assert.IsTrue(BrowseThemes.Name == "abc");
-            Assert.IsTrue(BrowseThemes.ParentId == 2);
             Assert.IsTrue(BrowseThemes.TopParentId == 3);
             Assert.IsTrue(BrowseThemes.ThemeName == "def");
         }
@@ -57,7 +56,6 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             {
                 Id = 1,
                 Name = "abc",
-                ParentId = 2,
                 TopParentId = 3,
                 ThemeName = "def"
             };
