@@ -4,7 +4,6 @@
     ViewData["Title"] = "Browse";
 }
 
-
 <h3>Browse sets (@Model.Environment environment)</h3>
 @if (Model.BrowseFeatureFlag == true)
 {
@@ -15,7 +14,7 @@
                 <select asp-for="Year" asp-items="Model.Years"></select>
                 <button type="submit">Update</button>
                 <br /><br />
-                <span>Sets: @Model.Sets.Count</span>
+                <span>Sets found: @Model.Sets.Count</span>
             </form>
         </div>
     </div>
@@ -51,7 +50,7 @@
             }
             else
             {
-                <span>There are too many sets. Please use the filters to reduce number: @Model.Sets.Count</span>
+                <span>There are too many sets. Please use the filters to reduce number of results to less than 500</span>
             }
         </div>
     </div>

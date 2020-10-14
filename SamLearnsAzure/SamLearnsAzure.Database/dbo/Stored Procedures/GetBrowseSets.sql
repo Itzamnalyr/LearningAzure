@@ -11,7 +11,7 @@ BEGIN
 
     SELECT s.set_num AS SetNum, s.[name], s.num_parts AS NumParts, s.theme_id AS ThemeId, t.[name] as ThemeName, s.[year]
     FROM [sets] s 
-    JOIN Themes t ON t.id = s.theme_id
+    JOIN themes t ON t.id = s.theme_id
     JOIN #TmpTheme c ON c.theme_id = t.id    
     WHERE (s.[year] = @Year OR @Year IS NULL)
 	ORDER BY s.[year] DESC, s.[name]

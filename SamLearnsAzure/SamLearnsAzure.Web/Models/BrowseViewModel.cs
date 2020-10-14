@@ -15,13 +15,13 @@ namespace SamLearnsAzure.Web.Models
         {
             Environment = environment;
             Themes = new List<SelectListItem>();
-            Themes.Add(new SelectListItem("<Select theme>", null));
+            Themes.Add(new SelectListItem("<All themes>", null));
             foreach (BrowseThemes item in themes)
             {
                 Themes.Add(new SelectListItem(item.ThemeName, item.Id.ToString()));
             }            
             Years = new List<SelectListItem>();
-            Years.Add(new SelectListItem("<Select year>", null));
+            Years.Add(new SelectListItem("<All years>", null));
             foreach (BrowseYears item in years)
             {
                 Years.Add(new SelectListItem(item.YearName, item.Year.ToString()));

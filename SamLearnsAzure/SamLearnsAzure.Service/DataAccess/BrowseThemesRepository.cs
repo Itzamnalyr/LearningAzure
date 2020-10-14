@@ -22,7 +22,7 @@ namespace SamLearnsAzure.Service.DataAccess
      
         public async Task<IEnumerable<BrowseThemes>> GetBrowseThemes(IRedisService redisService, bool useCache, int? year)
         {
-            string cacheKeyName = "BrowseThemes-all";
+            string cacheKeyName = "BrowseThemes-" + year;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
             IEnumerable<BrowseThemes> result;
 

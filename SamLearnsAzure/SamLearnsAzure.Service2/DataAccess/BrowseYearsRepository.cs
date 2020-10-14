@@ -22,7 +22,7 @@ namespace SamLearnsAzure.Service.DataAccess
 
         public async Task<IEnumerable<BrowseYears>> GetBrowseYears(IRedisService redisService, bool useCache, int? themeId)
         {
-            string cacheKeyName = "BrowseYears-all";
+            string cacheKeyName = "BrowseYears-" + themeId;
             TimeSpan cacheExpirationTime = new TimeSpan(24, 0, 0);
             IEnumerable<BrowseYears> result;
 
@@ -57,6 +57,6 @@ namespace SamLearnsAzure.Service.DataAccess
             }
             return result ?? new List<BrowseYears>();
         }
-   
+
     }
 }
