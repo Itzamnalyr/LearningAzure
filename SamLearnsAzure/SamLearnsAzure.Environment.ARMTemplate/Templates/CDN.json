@@ -111,7 +111,8 @@
       "properties": {
         "hostName": "[concat(parameters('storageAccountName'), '.blob.core.windows.net')]",
         "httpPort": 80,
-        "httpsPort": 443
+        "httpsPort": 443,
+        "enabled": true
       }
     }
   ],

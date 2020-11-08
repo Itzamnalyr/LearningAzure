@@ -34,37 +34,65 @@ Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
 
 #Frontdoor ARM template
-az deployment group create --resource-group $resourceGroupName --name $frontDoorName --template-file "$templatesLocation\FrontDoor.json" --parameters frontDoorName=$frontDoorName frontDoorBackEndAddresses=$frontDoorBackEndAddresses
-
-#Add extension to use Azure CLI for front door:
-az extension add --name front-door
-#Add Frontdoor custom domain to frontend-endpoint, checking to see if it exists first
-$FrontDoorFrontEndEndPointsJson = az network front-door frontend-endpoint list --front-door-name $frontDoorName --resource-group $resourceGroupName
-$FrontDoorFrontEndEndPoints = $FrontDoorFrontEndEndPointsJson | ConvertFrom-Json
-$FoundFrontEndPoint = $false
-#We can't create the frontend point if it already exists, so check again
-foreach($FrontDoorFrontEndEndPoint in $FrontDoorFrontEndEndPoints) {
-    if ($FrontDoorFrontEndEndPoint.name -eq $frontDoorDomainName.Replace(".","-"))
-    {
-        $FoundFrontEndPoint = $true
-    }
-}
-if ($FoundFrontEndPoint -eq $false)
+if ($CheckWhatIfs -eq $true)
 {
-    az network front-door frontend-endpoint create --front-door-name $frontDoorName --host-name $frontDoorDomainName --name $frontDoorDomainName.Replace(".","-") --resource-group $resourceGroupName --session-affinity-enabled Disabled --session-affinity-ttl 0
+    $whatifResultsJson = az deployment group what-if --no-pretty-print --only-show-errors --resource-group $resourceGroupName --name $frontDoorName --template-file "$templatesLocation\FrontDoor.json" --parameters frontDoorName=$frontDoorName frontDoorBackEndAddresses=$frontDoorBackEndAddresses
+    $whatifResults = $whatifResultsJson | ConvertFrom-Json 
+    $ChangeResults14 = $whatifResults.changes 
+
+    #Filter out properties
+    for ($i=0; $i -le $ChangeResults14.Count; $i++) 
+    {
+        if ($ChangeResults14[$i].changeType -eq "Modify")
+        {
+            $ChangeResults14[$i].delta = $ChangeResults14[$i].delta | Where-Object { $_.path –notlike "properties.*" }
+            if ($ChangeResults14[$i].delta.Count -eq 0)
+            {
+                $ChangeResults14[$i].changeType = "Ignore"    
+            }
+        }       
+    }
+
+    #$ChangeResults14b = $ChangeResults14 | Where-Object { $_.changeType -eq "Modify" }
+    #$ChangeResults14.delta
 }
+if ($CheckWhatIfs -eq $false -or $ChangeResults14.changeType -eq "Create" -or $ChangeResults14.changeType -eq "Modify")
+{
+    az deployment group create --resource-group $resourceGroupName --name $frontDoorName --template-file "$templatesLocation\FrontDoor.json" --parameters frontDoorName=$frontDoorName frontDoorBackEndAddresses=$frontDoorBackEndAddresses
 
-#Add custom domain to routing rules
-az network front-door routing-rule update --front-door-name $frontDoorName --name "$frontDoorName-routing" --resource-group $resourceGroupName --frontend-endpoints "$frontDoorName-azurefd-net".Replace(".","-") $frontDoorDomainName.Replace(".","-")
-#Debugging stuff for the routing
-#$routingRulesJson = az network front-door routing-rule list --front-door-name $frontDoorName --resource-group $resourceGroupName
-#$routingRules = $routingRulesJson  | ConvertFrom-Json 
-#$routingRules[0].frontendEndpoints
+    #Add extension to use Azure CLI for front door:
+    az extension add --name front-door
+    #Add Frontdoor custom domain to frontend-endpoint, checking to see if it exists first
+    $FrontDoorFrontEndEndPointsJson = az network front-door frontend-endpoint list --front-door-name $frontDoorName --resource-group $resourceGroupName
+    $FrontDoorFrontEndEndPoints = $FrontDoorFrontEndEndPointsJson | ConvertFrom-Json
+    $FoundFrontEndPoint = $false
+    #We can't create the frontend point if it already exists, so check again
+    foreach($FrontDoorFrontEndEndPoint in $FrontDoorFrontEndEndPoints) {
+        if ($FrontDoorFrontEndEndPoint.name -eq $frontDoorDomainName.Replace(".","-"))
+        {
+            $FoundFrontEndPoint = $true
+        }
+    }
+    if ($FoundFrontEndPoint -eq $false)
+    {
+        az network front-door frontend-endpoint create --front-door-name $frontDoorName --host-name $frontDoorDomainName --name $frontDoorDomainName.Replace(".","-") --resource-group $resourceGroupName --session-affinity-enabled Disabled --session-affinity-ttl 0
+    }
 
+    #Add custom domain to routing rules
+    az network front-door routing-rule update --front-door-name $frontDoorName --name "$frontDoorName-routing" --resource-group $resourceGroupName --frontend-endpoints "$frontDoorName-azurefd-net".Replace(".","-") $frontDoorDomainName.Replace(".","-")
+    #Debugging stuff for the routing
+    #$routingRulesJson = az network front-door routing-rule list --front-door-name $frontDoorName --resource-group $resourceGroupName
+    #$routingRules = $routingRulesJson  | ConvertFrom-Json 
+    #$routingRules[0].frontendEndpoints
+}
+else
+{
+    Write-Host "14. Frontdoor CheckWhatIf: $CheckWhatIfs and change type: $($ChangeResults14.changeType) results"
+}
 $timing = -join($timing, "14. Frontdoor created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "14. Frontdoor created: "$stopwatch.Elapsed.TotalSeconds
 
-Write-Host "sqlServerIPAddress: "$sqlServerIPAddress
+
 $timing = -join($timing, "15. All Done: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "15. All Done: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Timing: `n$timing"

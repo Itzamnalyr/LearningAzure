@@ -62,6 +62,7 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
       ],
+      "kind": "app",
       "tags": {
         "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "empty",
         "displayName": "Web Service Webapp"
@@ -134,6 +135,7 @@
           "dependsOn": [
             "[parameters('webSiteName')]"
           ],
+          "kind": "app",
           "properties": {}
         },
         {

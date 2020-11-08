@@ -30,31 +30,15 @@
       "type": "string",
       "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
     },
-    "databaseEdition": {
-      "type": "string",
-      "defaultValue": "Standard",
-      "allowedValues": [
-        "Standard",
-        "Premium"
-      ]
-    },
     "databaseMaxSizeBytes": {
       "type": "string",
       "defaultValue": "1073741824"
     },
-    "databaseSKUName": {
+    "databaseCapacity": {
       "type": "string",
-      "defaultValue": "Basic",
-      "allowedValues": [
-        "Basic",
-        "Standard",
-        "Premium"
-      ],
-      "metadata": {
-        "description": "Describes the SKU name category, Basic, Standard, Premium"
-      }
+      "defaultValue": "5"
     },
-    "databaseSKUTier": {
+    "databaseSKUName": {
       "type": "string",
       "defaultValue": "Basic",
       "allowedValues": [
@@ -65,6 +49,18 @@
         "P1",
         "P2",
         "P3"
+      ],
+      "metadata": {
+        "description": "Describes the SKU name category, Basic, Standard, Premium"
+      }
+    },
+    "databaseSKUTier": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
       ],
       "metadata": {
         "description": "Describes the SKU tier"
@@ -83,11 +79,11 @@
     {
       "name": "[parameters('sqlServerName')]",
       "type": "Microsoft.Sql/servers",
+      "apiVersion": "2019-06-01-preview",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "SqlServer"
       },
-      "apiVersion": "2014-04-01-preview",
       "properties": {
         "administratorLogin": "[parameters('sqlAdministratorLogin')]",
         "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]"
@@ -106,10 +102,10 @@
           ],
           "sku": {
             "name": "[parameters('databaseSKUName')]",
-            "tier": "[parameters('databaseSKUTier')]"
+            "tier": "[parameters('databaseSKUTier')]",
+            "capacity": "[parameters('databaseCapacity')]"
           },
           "properties": {
-            "edition": "[parameters('databaseEdition')]",
             "collation": "[parameters('databaseCollation')]",
             "maxSizeBytes": "[parameters('databaseMaxSizeBytes')]"
           }
@@ -130,7 +126,7 @@
         {
           "type": "administrators",
           "name": "activeDirectory",
-          "apiVersion": "2014-04-01",
+          "apiVersion": "2019-06-01-preview",
           "properties": {
             "administratorType": "ActiveDirectory",
             "login": "[parameters('administratorUserLogin')]",
@@ -150,9 +146,9 @@
           ],
           "properties": {
             "state": "Enabled",
-            "storageEndpoint": "[concat('https://', parameters('storageAccountName'), '.blob.core.windows.net')]",
+            "storageEndpoint": "[concat('https://', parameters('storageAccountName'), '.blob.core.windows.net/')]",
             "storageAccountAccessKey": "[parameters('storageAccountAccessKey')]",
-            "retentionDays": "180",
+            "retentionDays": 180,
             "storageAccountSubscriptionId": "[subscription().subscriptionId]",
             "isStorageSecondaryKeyInUse": false,
             "auditActionsAndGroups": [

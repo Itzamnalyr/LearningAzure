@@ -48,13 +48,29 @@ $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSecon
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
 #SQL
-$sqlOutput = az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=$sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
-$sqlJSON = $sqlOutput | ConvertFrom-Json
-$sqlServerAddress = $sqlJSON.properties.outputs.sqlServerIPAddress.value
-$sqlConnectionStringName = "ConnectionStrings--SamsAppConnectionString$Environment"
-$sqlConnectionStringValue = "Server=tcp:$sqlServerName.database.windows.net,1433;Initial Catalog=$sqlDatabaseName;Persist Security Info=False;User ID=$sqlAdministratorLoginUser;Password=$sqlAdministratorLoginPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-Write-Host "Setting value $sqlConnectionStringValue for $sqlConnectionStringName to key vault"
-az keyvault secret set --vault-name $dataKeyVaultName --name "$sqlConnectionStringName" --value $sqlConnectionStringValue #Upload the secret into the key vault
+if ($CheckWhatIfs -eq $true)
+{
+    $whatifResultsJson = az deployment group what-if --no-pretty-print --only-show-errors --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=$sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
+    $whatifResults = $whatifResultsJson | ConvertFrom-Json 
+    $ChangeResults8 = $whatifResults.changes 
+
+    #$ChangeResults8b = $ChangeResults8 | Where-Object { $_.changeType -eq "Modify" }
+    #$ChangeResults8b.delta
+}
+if ($CheckWhatIfs -eq $false -or $ChangeResults8.changeType -eq "Create" -or $ChangeResults8.changeType -eq "Modify")
+{
+	$sqlOutput = az deployment group create --resource-group $resourceGroupName --name $sqlServerName --template-file "$templatesLocation\SQL.json" --parameters sqlServerName=$sqlServerName databaseName=$sqlDatabaseName sqlAdministratorLogin=$sqlAdministratorLoginUser sqlAdministratorLoginPassword=$sqlAdministratorLoginPassword administratorUserLogin=$administratorUserLogin administratorUserSid=$administratorUserSid storageAccountName=$storageAccountName storageAccountAccessKey=$storageAccountAccessKey
+	$sqlJSON = $sqlOutput | ConvertFrom-Json
+	$sqlServerAddress = $sqlJSON.properties.outputs.sqlServerIPAddress.value
+	$sqlConnectionStringName = "ConnectionStrings--SamsAppConnectionString$Environment"
+	$sqlConnectionStringValue = "Server=tcp:$sqlServerName.database.windows.net,1433;Initial Catalog=$sqlDatabaseName;Persist Security Info=False;User ID=$sqlAdministratorLoginUser;Password=$sqlAdministratorLoginPassword;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+	Write-Host "Setting value $sqlConnectionStringValue for $sqlConnectionStringName to key vault"
+	az keyvault secret set --vault-name $dataKeyVaultName --name "$sqlConnectionStringName" --value $sqlConnectionStringValue #Upload the secret into the key vault
+}
+else
+{
+    Write-Host "8. SQL created CheckWhatIf: $CheckWhatIfs and change type: $($ChangeResults8.changeType) results"
+}
 $timing = -join($timing, "8. SQL created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "8. SQL created: "$stopwatch.Elapsed.TotalSeconds
 

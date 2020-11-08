@@ -48,30 +48,72 @@ $timing = -join($timing, "3. Resource group created: ", $stopwatch.Elapsed.Total
 Write-Host "3. Resource group created: "$stopwatch.Elapsed.TotalSeconds
 
 #key vault
-$results = az keyvault list-deleted  --subscription 07db7d0b-a6cb-4e58-b07e-e1d541c39f5b
-$results = $results | ConvertFrom-Json
-if ($results -ne $null -and $results.Length -gt 0)
+if ($CheckWhatIfs -eq $true)
 {
-    #if we have purged keyvaults, search to see if we've used this name before and purge it
-    foreach($purgedKV in $results) {
-        if ($purgedKV.name -eq $keyVaultName)
-        {
-            Write-Host "Purging existing keyvault" $purgedKV.name         
-            az keyvault purge --name $keyVaultName                     
+    $whatifResultsJson = az deployment group what-if --no-pretty-print --only-show-errors --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
+    $whatifResults = $whatifResultsJson | ConvertFrom-Json 
+    $ChangeResults4 = $whatifResults.changes
+
+    #Filter out access policies from the result - as this is really data, not infrastructure (in my view)
+    $ChangeResults4 = $ChangeResults4 | Where-Object { $_.delta.path -ne "properties.accessPolicies" }
+
+    $ChangeResults4b = $ChangeResults4 | Where-Object { $_.changeType -eq "Modify" }
+    $ChangeResults4b.delta.path
+}
+if ($CheckWhatIfs -eq $false -or $ChangeResults4.changeType -eq "Create" -or $ChangeResults4.changeType -eq "Modify")
+{
+    #Get all deleted key vault names. If it matches, purge it
+    $results = az keyvault list-deleted --subscription 07db7d0b-a6cb-4e58-b07e-e1d541c39f5b
+    $results = $results | ConvertFrom-Json
+    if ($results -ne $null -and $results.Length -gt 0)
+    {
+        #if we have purged keyvaults, search to see if we've used this name before and purge it
+        foreach($purgedKV in $results) {
+            if ($purgedKV.name -eq $keyVaultName)
+            {
+                Write-Host "Purging existing keyvault" $purgedKV.name         
+                az keyvault purge --name $keyVaultName                     
+            }
         }
     }
+    az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
+    if($error)
+    {
+        #purge any existing key vault because of soft delete
+        Write-Host "Purging existing keyvault"
+        az keyvault purge --name $keyVaultName 
+        Write-Host "Creating keyvault, round 2"
+        az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
+        $error.clear()
+    }
 }
-az deployment group create --resource-group $resourceGroupName --name $keyVaultName --template-file "$templatesLocation\KeyVault.json" --parameters keyVaultName=$keyVaultName administratorUserPrincipalId=$administratorUserSid azureDevOpsPrincipalId=$azureDevOpsPrincipalId
+else
+{
+    Write-Host "4. Key vault CheckWhatIf: $CheckWhatIfs and change type: $($ChangeResults4.changeType) results"
+}
 $timing = -join($timing, "4. Key vault created:: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "4. Key vault created: "$stopwatch.Elapsed.TotalSeconds
 
 #storage
-$storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\Storage.json" --parameters storageAccountName=$storageAccountName
-$storageJSON = $storageOutput | ConvertFrom-Json
-$storageAccountAccessKey = $storageJSON.properties.outputs.storageAccountKey.value
-$storageAccountNameKV = "StorageAccountKey$Environment"
-Write-Host "Setting value $storageAccountAccessKey for $storageAccountNameKV to key vault"
-az keyvault secret set --vault-name $dataKeyVaultName --name "$storageAccountNameKV" --value $storageAccountAccessKey #Upload the secret into the key vault
+if ($CheckWhatIfs -eq $true)
+{
+    $whatifResultsJson = az deployment group what-if --no-pretty-print --only-show-errors --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\Storage.json" --parameters storageAccountName=$storageAccountName
+    $whatifResults = $whatifResultsJson | ConvertFrom-Json 
+    $ChangeResults5 = $whatifResults.changes 
+}
+if ($CheckWhatIfs -eq $false -or $ChangeResults5.changeType -eq "Create" -or $ChangeResults5.changeType -eq "Modify")
+{
+    $storageOutput = az deployment group create --resource-group $resourceGroupName --name $storageAccountName --template-file "$templatesLocation\Storage.json" --parameters storageAccountName=$storageAccountName
+    $storageJSON = $storageOutput | ConvertFrom-Json
+    $storageAccountAccessKey = $storageJSON.properties.outputs.storageAccountKey.value
+    $storageAccountNameKV = "StorageAccountKey$Environment"
+    Write-Host "Setting value $storageAccountAccessKey for $storageAccountNameKV to key vault"
+    az keyvault secret set --vault-name $dataKeyVaultName --name "$storageAccountNameKV" --value $storageAccountAccessKey #Upload the secret into the key vault
+}
+else
+{
+    Write-Host "5. Storage CheckWhatIf: $CheckWhatIfs and change type: $($ChangeResults5.changeType) results"
+}
 $timing = -join($timing, "5. Storage created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "5. Storage created: "$stopwatch.Elapsed.TotalSeconds
 

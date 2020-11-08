@@ -37,6 +37,7 @@
       "tags": {
         "displayName": "Web Service Webapp"
       },
+      "kind": "app",
       "properties": {
         "name": "[parameters('serviceAPIName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
@@ -61,7 +62,12 @@
           "dependsOn": [
             "[parameters('serviceAPIName')]"
           ],
-          "properties": {}
+          "kind": "app",
+          "properties": {
+            "siteConfig": {
+              "alwaysOn": true
+            }
+          }
         }
       ]
     }

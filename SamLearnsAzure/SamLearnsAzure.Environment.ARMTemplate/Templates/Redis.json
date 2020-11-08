@@ -57,7 +57,7 @@
       "name": "[parameters('redisCacheName')]",
       "type": "Microsoft.Cache/Redis",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2016-04-01",
+      "apiVersion": "2019-07-01",
       "dependsOn": [],
       "tags": {
         "displayName": "Redis Cache"
@@ -68,6 +68,14 @@
           "family": "[parameters('redisCacheSKUFamily')]",
           "capacity": "[parameters('redisCacheSKUCapacity')]"
         },
+        "enableNonSslPort": false,
+        "minimumTlsVersion": "1.2",
+        //"redisConfiguration": {
+        //  "maxclients": "256",
+        //  "maxmemory-reserved": "2",
+        //  "maxfragmentationmemory-reserved": "12",
+        //  "maxmemory-delta": "2"
+        //},
         "redisVersion": "[parameters('redisCacheRedisVersion')]"
       }
     }

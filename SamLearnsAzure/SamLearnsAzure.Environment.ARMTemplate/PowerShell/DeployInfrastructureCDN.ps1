@@ -34,11 +34,27 @@ $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSecon
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
 #CDN
-az deployment group create --resource-group $resourceGroupName --name $cdnName --template-file "$templatesLocation\CDN.json" --parameters cdnName=$cdnName storageAccountName=$storageAccountName
-$timing = -join($timing, "3. CDN  created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-Write-Host "3. CDN created: "$stopwatch.Elapsed.TotalSeconds
+if ($CheckWhatIfs -eq $true)
+{
+    $whatifResultsJson = az deployment group what-if --no-pretty-print --only-show-errors --resource-group $resourceGroupName --name $cdnName --template-file "$templatesLocation\CDN.json" --parameters cdnName=$cdnName storageAccountName=$storageAccountName
+    $whatifResults = $whatifResultsJson | ConvertFrom-Json 
+    $ChangeResults6 = $whatifResults.changes 
 
-$timing = -join($timing, "4. All Done: ", $stopwatch.Elapsed.TotalSeconds, "`n");
-Write-Host "4. All Done: "$stopwatch.Elapsed.TotalSeconds
+    #$ChangeResults6b = $ChangeResults6 | Where-Object { $_.changeType -eq "Modify" }
+    #$ChangeResults6b.delta.path
+}
+if ($CheckWhatIfs -eq $false -or $ChangeResults6.changeType -eq "Create" -or $ChangeResults6.changeType -eq "Modify")
+{
+    az deployment group create --resource-group $resourceGroupName --name $cdnName --template-file "$templatesLocation\CDN.json" --parameters cdnName=$cdnName storageAccountName=$storageAccountName
+}
+else
+{
+    Write-Host "6. CDN CheckWhatIf: $CheckWhatIfs and change type: $($ChangeResults6.changeType) results"
+}
+$timing = -join($timing, "6. CDN  created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+Write-Host "6. CDN created: "$stopwatch.Elapsed.TotalSeconds
+
+$timing = -join($timing, "15. All Done: ", $stopwatch.Elapsed.TotalSeconds, "`n");
+Write-Host "15. All Done: "$stopwatch.Elapsed.TotalSeconds
 Write-Host "Timing: `n$timing"
 Write-Host "Were there errors? (If the next line is blank, then no!) $error"

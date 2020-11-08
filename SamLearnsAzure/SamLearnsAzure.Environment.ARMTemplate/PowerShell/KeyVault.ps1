@@ -24,7 +24,7 @@ $secrets2 | select name | ft
 
 Write-Host "looking..."
 foreach($secret in $secrets2){
-    if ($secret.name  -like '*Dev2')
+    if ($secret.name  -like '*PR4*')
     #if ($secret.name  -like '*PR4*' -and $secret.name -notlike "*PR456")
     {
         Write-Host "Deleting key $($secret.name)"
