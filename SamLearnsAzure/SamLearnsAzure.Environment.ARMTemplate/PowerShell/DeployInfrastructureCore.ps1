@@ -39,6 +39,7 @@ if ($storageAccountName.Length -gt 24)
     Write-Host "Storage account name must be 3-24 characters in length"
     Break
 }
+$CheckWhatIfs = $true
 $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 

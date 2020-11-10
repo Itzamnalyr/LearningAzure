@@ -29,6 +29,7 @@ $frontDoorName = "$appPrefix-$environment-$resourceGroupLocationShort-frontdoor"
 $webSiteName = "$appPrefix-$environment-$resourceGroupLocationShort-web"
 $webSite2Name = "$appPrefix-$($environment)2-$resourceGroupLocationShort-web"
 $frontDoorBackEndAddresses = "['$webSiteName.azurewebsites.net','$webSite2Name.azurewebsites.net']"  #create an array of strings for each of the back end pool resources
+$CheckWhatIfs = $true
 $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 

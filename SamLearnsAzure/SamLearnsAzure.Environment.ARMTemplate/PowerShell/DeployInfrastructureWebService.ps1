@@ -36,6 +36,7 @@ $webhostingName = "$appPrefix-$environment-$resourceGroupLocationShort-hostingpl
 $actionGroupName = "$appPrefix-$environment-$resourceGroupLocationShort-actionGroup"
 $sqlServerName = "$appPrefix-$environment-$resourceGroupLocationShort-sqlserver"
 $sqlServerAddress = "$sqlServerName.database.windows.net"
+$CheckWhatIfs = $true
 $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 

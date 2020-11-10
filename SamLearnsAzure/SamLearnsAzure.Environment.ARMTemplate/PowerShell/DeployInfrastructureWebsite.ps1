@@ -53,6 +53,7 @@ if ($letsEncryptAppServiceContributerClientSecret -eq $null)
     Write-Host "$letsEncryptAppServiceContributerClientSecret is null. Please set this secret before continuing"
     Break
 }
+$CheckWhatIfs = $true
 $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 

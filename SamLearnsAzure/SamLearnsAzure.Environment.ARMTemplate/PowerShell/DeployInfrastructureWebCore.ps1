@@ -38,6 +38,7 @@ else
 {
 	$websiteDomainName = "samlearnsazure.com"
 }
+$CheckWhatIfs = $true
 $timing = -join($timing, "2. Variables created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "2. Variables created: "$stopwatch.Elapsed.TotalSeconds
 
