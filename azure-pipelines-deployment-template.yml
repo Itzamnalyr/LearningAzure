@@ -519,7 +519,7 @@ jobs:
                -KeyVaultURL "${{parameters.keyVaultURL}}" 
                -KeyVaultClientId "${{parameters.keyVaultClientId}}" 
                -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}"
-            enabled: true  
+            enabled: false  
 
             
   - deployment: DeploySwapServiceAppSlots

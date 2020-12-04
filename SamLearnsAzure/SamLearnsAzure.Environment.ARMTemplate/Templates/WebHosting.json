@@ -70,7 +70,7 @@
             "name": "Default",
             "capacity": {
               "minimum": 1,
-              "maximum": 3,
+              "maximum": 4,
               "default": 1
             },
             "rules": [
@@ -136,7 +136,7 @@
         "scopes": [
           "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
         ],
-        "evaluationFrequency": "PT15M",
+        "evaluationFrequency": "PT5M",
         "windowSize": "PT30M",
         "criteria": {
           "additionalProperties": null,
