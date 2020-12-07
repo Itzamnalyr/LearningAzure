@@ -36,9 +36,6 @@ $serviceAPIName = "$appPrefix-$environment-$locationShort-service"
 $webSiteName = "$appPrefix-$environment-$locationShort-web"
 $websiteDomainName = "$environment.samlearnsazure.com"
 
-$letsEncryptUniqueRoleAssignmentGuid = '6e4cff57-e63a-403e-822c-e98e5ba0484a'
-$letsEncryptAppServiceContributerClientSecret="RSRf?J_z+1t6W*EPpxkVhXTs9Szirku5"
-
 $applicationInsightsName = "$appPrefix-$environment-$locationShort-appinsights"
 $applicationInsightsAvailablityTestName = "$applicationInsightsName-availability-home-page-test"
 
@@ -59,11 +56,6 @@ if ($keyVaultName.Length -gt 24)
 if ($storageAccountName.Length -gt 24)
 {
     Write-Host "Storage account name must be 3-24 characters in length"
-    Break
-}
-if ($letsEncryptAppServiceContributerClientSecret -eq $null)
-{
-    Write-Host "$letsEncryptAppServiceContributerClientSecret is null. Please set this secret before continuing"
     Break
 }
 $CheckWhatIfs = $true
@@ -381,7 +373,7 @@ Write-Host "12a. webservice Alerts created: "$stopwatch.Elapsed.TotalSeconds
 #Web site
 if ($CheckWhatIfs -eq $true)
 {
-    $whatifResultsJson = az deployment group what-if --no-pretty-print --only-show-errors --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptAppServiceContributerClientSecret="$letsEncryptAppServiceContributerClientSecret"
+    $whatifResultsJson = az deployment group what-if --no-pretty-print --only-show-errors --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName 
     $whatifResults = $whatifResultsJson | ConvertFrom-Json 
     $ChangeResults13 = $whatifResults.changes 
 
@@ -412,7 +404,7 @@ if ($CheckWhatIfs -eq $true)
 }
 if ($CheckWhatIfs -eq $false -or $ChangeResults13.changeType -eq "Create" -or $ChangeResults13.changeType -eq "Modify")
 {
-    az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName contactEmailAddress=$contactEmailAddress letsEncryptUniqueRoleAssignmentGuid=$letsEncryptUniqueRoleAssignmentGuid letsEncryptAppServiceContributerClientSecret="$letsEncryptAppServiceContributerClientSecret"
+    az deployment group create --resource-group $resourceGroupName --name $webSiteName --template-file "$templatesLocation\Website.json" --parameters webSiteName=$webSiteName hostingPlanName=$webhostingName storageAccountName=$storageAccountName websiteDomainName=$websiteDomainName 
     #web site managed identity and setting keyvault access permissions
     $websiteProdSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName 
     $websiteStagingSlotIdentity = az webapp identity assign --resource-group $resourceGroupName --name $webSiteName  --slot staging
@@ -428,6 +420,11 @@ else
 {
     Write-Host "13. Website CheckWhatIf: $CheckWhatIfs and change type: $($ChangeResults13.changeType) results"
 }
+#Generate the certificate
+$newCert = az webapp config ssl create --hostname $websiteDomainName --name $webSiteName --resource-group $resourceGroupName --only-show-errors
+$thumbprint = ($newCert | ConvertFrom-Json).thumbprint
+#Bind the certificate to the web app
+az webapp config ssl bind --certificate-thumbprint $thumbprint --ssl-type SNI --name $webSiteName --resource-group $resourceGroupName
 $timing = -join($timing, "13. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "13. Website created: "$stopwatch.Elapsed.TotalSeconds
 

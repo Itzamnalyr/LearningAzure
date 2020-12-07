@@ -10,7 +10,7 @@ schedules:
   branches:
     include: 
     - master
-  always: true
+  always: "true"
 
 #TODO: Remove condition from top level build
 #TODO: Remove enabled: false flag from unit tests
@@ -19,7 +19,7 @@ variables:
 - group: 'SamLearnsAzure KeyVault'
 - name: vmImage #Note this weird name/value syntax if you need to reference a variable group in variables
   value: 'windows-latest'
-
+   
 stages:
 - stage: Build
   displayName: 'Build & Test Stage'
@@ -52,7 +52,6 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationId$(prId))'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKey$(prId))
       applicationInsightsLocation: 'East US'
-      letsEncryptAppServiceContributerClientSecret: '$(appServiceContributerClientSecret)'
       ASPNETCOREEnvironmentSetting: 'Development'
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
@@ -66,8 +65,6 @@ stages:
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
-      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba0$(System.PullRequest.PullRequestId)a'
-      letsEncryptUniqueRoleAssignmentGuid2: '6e4cff57-e63a-403e-822c-e98e5ba0$(System.PullRequest.PullRequestId)b'
       imagesStorageCDNURL: 'https://samsapp-$(prLC)-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsapp$(prLC)eustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringDev)'
@@ -106,7 +103,6 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
       applicationInsightsLocation: 'East US'
-      letsEncryptletsEncryptAppServiceContributerClientSecret: $(appServiceContributerClientSecret)
       ASPNETCOREEnvironmentSetting: 'Development'
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
@@ -120,8 +116,6 @@ stages:
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
-      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba2141a'
-      letsEncryptUniqueRoleAssignmentGuid2: '6e4cff57-e63a-403e-822c-e98e5ba2142b'
       imagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringDev)'
@@ -159,7 +153,6 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdQA)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyQA)
       applicationInsightsLocation: 'East US'
-      letsEncryptAppServiceContributerClientSecret: $(appServiceContributerClientSecret)
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'QA'  
@@ -172,8 +165,6 @@ stages:
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
-      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba2143a'
-      letsEncryptUniqueRoleAssignmentGuid2: '6e4cff57-e63a-403e-822c-e98e5ba2144b'
       imagesStorageCDNURL: 'https://samsapp-qa-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsappqaeustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringQA)'
@@ -211,7 +202,6 @@ stages:
       applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdProd)'
       applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyProd)
       applicationInsightsLocation: 'East US'
-      letsEncryptAppServiceContributerClientSecret: $(appServiceContributerClientSecret)
       captureStartErrors: true
       cognitiveServicesSubscriptionKey: $(cognitiveServicesSubscriptionKey)
       environment: 'Prod'  
@@ -224,8 +214,6 @@ stages:
       godaddy_secret: $(GoDaddyAPISecret)
       keyVaultClientId: '$(KeyVaultClientId)'
       keyVaultClientSecret: '$(KeyVaultClientSecret)'
-      letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba2145a'
-      letsEncryptUniqueRoleAssignmentGuid2: '6e4cff57-e63a-403e-822c-e98e5ba2146b'
       imagesStorageCDNURL: 'https://samsapp-prod-eu-cdnendpoint.azureedge.net/'
       imagesStorageURL: 'https://samsappprodeustorage.blob.core.windows.net/'
       redisCacheConnectionString: '$(AppSettings--RedisCacheConnectionStringProd)'

@@ -3,7 +3,6 @@ parameters: # defaults for any parameters that aren't specified
   applicationInsightsApplicationId: '$(ApplicationInsights--ApplicationIdDev)'
   applicationInsightsInstrumentationKey: $(ApplicationInsights--InstrumentationKeyDev)
   applicationInsightsLocation: 'East US'
-  letsEncryptAppServiceContributerClientSecret: '***secret'
   ASPNETCOREEnvironmentSetting: 'Release'
   cognitiveServicesSubscriptionKey: '***secret'
   environment: 'Dev'  
@@ -19,8 +18,6 @@ parameters: # defaults for any parameters that aren't specified
   keyVaultURL: 'https://samsapp-data-eu-keyvault.vault.azure.net/'
   keyVaultClientId: '***secret'
   keyVaultClientSecret: '***secret'
-  letsEncryptUniqueRoleAssignmentGuid: '6e4cff57-e63a-403e-822c-e98e5ba02145'
-  letsEncryptUniqueRoleAssignmentGuid2: '6e4cff57-e63a-403e-822c-e98e5ba02146'
   imagesStorageCDNURL: 'https://samsapp-dev-eu-cdnendpoint.azureedge.net/partimages'
   imagesStorageURL: 'https://samsappdeveustorage.blob.core.windows.net/partimages'
   partImagesContainerName: 'partimages'
@@ -373,7 +370,7 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebsite.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}"  -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptUniqueRoleAssignmentGuid "${{parameters.letsEncryptUniqueRoleAssignmentGuid}}" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}"  -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" 
             enabled: true
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: website'
@@ -430,7 +427,7 @@ jobs:
               azureSubscription: 'SamLearnsAzure connection to Azure Portal'
               scriptType: ps
               scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebsite.ps1
-              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}2" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com" -letsEncryptUniqueRoleAssignmentGuid "${{parameters.letsEncryptUniqueRoleAssignmentGuid2}}" -letsEncryptAppServiceContributerClientSecret "${{parameters.letsEncryptAppServiceContributerClientSecret}}" 
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}2" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" -dataKeyVaultName "${{parameters.keyVaultName}}" -templatesLocation "$(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\Templates" -contactEmailAddress "samsmithnz@gmail.com"
             enabled: true
           - task: AzureRmWebAppDeployment@3
             displayName: 'Azure App Service Deploy: website'
