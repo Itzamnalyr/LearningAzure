@@ -95,6 +95,7 @@ else
 {
     Write-Host "13. Website CheckWhatIf: $CheckWhatIfs and change type: $($ChangeResults13.changeType) results"
 }
+
 #Generate the certificate
 $newCert = az webapp config ssl create --hostname $websiteDomainName --name $webSiteName --resource-group $resourceGroupName --only-show-errors
 $thumbprint = ($newCert | ConvertFrom-Json).thumbprint
@@ -102,7 +103,8 @@ Write-Host "Thumbprint id: $thumbprint"
 Write-Host "Cmd: az webapp config ssl create --hostname $websiteDomainName --name $webSiteName --resource-group $resourceGroupName"
 Write-Host $newCert
 #Bind the certificate to the web app
-az webapp config ssl bind --certificate-thumbprint "$thumbprint" --ssl-type SNI --name $webSiteName --resource-group $resourceGroupName
+az webapp config ssl bind --certificate-thumbprint $thumbprint --ssl-type SNI --name $webSiteName --resource-group $resourceGroupName
+
 $timing = -join($timing, "13. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "13. Website created: "$stopwatch.Elapsed.TotalSeconds
 
