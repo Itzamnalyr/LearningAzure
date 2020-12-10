@@ -66,7 +66,7 @@ namespace SamLearnsAzure.Service.Controllers
             //1. Service looks in database to see if image exists?
             SetImages setImage = await _repo.GetSetImage(_redisService, useCache, setNum);
 
-            if (setImage == null || forceBingSearch == true)
+            if (setImage == null || setImage.SetImage == null || forceBingSearch == true)
             {
                 string tagFilter = "lego";
                 string cognitiveServicesSubscriptionKey = _configuration["CognitiveServicesSubscriptionKey"]; // The subscription key is coming from key vault

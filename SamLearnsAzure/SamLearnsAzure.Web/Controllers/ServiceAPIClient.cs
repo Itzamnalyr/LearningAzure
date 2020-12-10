@@ -151,7 +151,6 @@ namespace SamLearnsAzure.Web.Controllers
         {
             Uri url = new Uri($"api/PartImages/GetPartImages?useCache=false", UriKind.Relative);
             return await ReadMessageList<PartImages>(url);
-
         }
 
         public async Task<List<PartImages>> SearchForPotentialPartImages(string partNum, int colorId, string colorName, int resultsToReturn = 1, int resultsToSearch = 1)
