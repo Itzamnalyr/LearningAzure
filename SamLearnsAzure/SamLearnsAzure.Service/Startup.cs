@@ -10,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using SamLearnsAzure.Service.DataAccess;
-//using SamLearnsAzure.Service.EFCore;
 using StackExchange.Redis;
 
 namespace SamLearnsAzure.Service

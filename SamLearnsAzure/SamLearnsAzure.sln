@@ -66,6 +66,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamLearnsAzure.Service2", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamLearnsAzure.Web2", "SamLearnsAzure.Web2\SamLearnsAzure.Web2.csproj", "{1CF9BE5E-B275-4F88-85BA-32273DA61689}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarking.App", "Benchmarking.App\Benchmarking.App.csproj", "{17D17401-40C4-40F0-A6B0-A98993FEB547}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,6 +128,10 @@ Global
 		{1CF9BE5E-B275-4F88-85BA-32273DA61689}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CF9BE5E-B275-4F88-85BA-32273DA61689}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CF9BE5E-B275-4F88-85BA-32273DA61689}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17D17401-40C4-40F0-A6B0-A98993FEB547}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17D17401-40C4-40F0-A6B0-A98993FEB547}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17D17401-40C4-40F0-A6B0-A98993FEB547}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17D17401-40C4-40F0-A6B0-A98993FEB547}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +151,7 @@ Global
 		{90991A8C-4013-4F0D-B7AA-E68762691260} = {FA6F78C9-24DC-4C17-B529-2A94CEF2BA1E}
 		{EA269D20-BD5E-49C3-AEEA-87D8B8981FEC} = {B307C0F9-E5A1-4486-9700-9F03FC1AF6B7}
 		{1CF9BE5E-B275-4F88-85BA-32273DA61689} = {B307C0F9-E5A1-4486-9700-9F03FC1AF6B7}
+		{17D17401-40C4-40F0-A6B0-A98993FEB547} = {FA6F78C9-24DC-4C17-B529-2A94CEF2BA1E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE0C1147-8732-43B2-9F0E-E52D337C8BA3}
