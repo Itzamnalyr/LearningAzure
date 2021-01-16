@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
-    [TestCategory("RedisTest")]
+    [TestCategory("ServiceIntegrationTestA")]
     public class OwnersServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
@@ -23,7 +23,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners?useCache=true");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<Owners> items = await response.Content.ReadAsAsync<IEnumerable<Owners>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<Owners> items = JsonConvert.DeserializeObject<IEnumerable<Owners>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -44,7 +45,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowners?useCache=false");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<Owners> items = await response.Content.ReadAsAsync<IEnumerable<Owners>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<Owners> items = JsonConvert.DeserializeObject<IEnumerable<Owners>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -66,7 +68,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=true");
                 response.EnsureSuccessStatusCode();
-                Owners item = await response.Content.ReadAsAsync<Owners>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                Owners item = JsonConvert.DeserializeObject<Owners>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -87,7 +90,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/owners/getowner?ownerId=" + ownerId.ToString() + "&useCache=false");
                 response.EnsureSuccessStatusCode();
-                Owners item = await response.Content.ReadAsAsync<Owners>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                Owners item = JsonConvert.DeserializeObject<Owners>(bodyContent);
                 response.Dispose();
 
                 //Assert

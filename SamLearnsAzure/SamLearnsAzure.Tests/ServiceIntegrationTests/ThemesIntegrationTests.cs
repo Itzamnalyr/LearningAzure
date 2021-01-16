@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using SamLearnsAzure.Service.DataAccess;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
-    [TestCategory("RedisTest")]
+    [TestCategory("ServiceIntegrationTestB")]
     public class ThemesServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
@@ -29,7 +29,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/themes/getthemes?useCache=true");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<Themes> items = await response.Content.ReadAsAsync<IEnumerable<Themes>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<Themes> items = JsonConvert.DeserializeObject<IEnumerable<Themes>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -50,7 +51,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/themes/getthemes?useCache=false");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<Themes> items = await response.Content.ReadAsAsync<IEnumerable<Themes>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<Themes> items = JsonConvert.DeserializeObject<IEnumerable<Themes>>(bodyContent);
                 response.Dispose();
 
                 //Assert

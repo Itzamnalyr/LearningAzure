@@ -8,8 +8,8 @@ parameters: # defaults for any parameters that aren't specified
 jobs:
 
 
-  - job: BuildDotNet31
-    displayName: 'Build .NET Core 3.1 job'
+  - job: BuildDotNet5
+    displayName: 'Build .NET 5 apps'
     pool:
       vmImage: ${{parameters.vmImage}}
     variables:
@@ -23,6 +23,12 @@ jobs:
         targetType: FilePath
         filePath: SamLearnsAzure/BuildVersion.ps1
         arguments: -ProjectFile "SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj"
+    - task: PowerShell@2
+      displayName: 'Generate build version number'
+      inputs:
+        targetType: FilePath
+        filePath: SamLearnsAzure/BuildVersion.ps1
+        arguments: -ProjectFile "SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj"
     - task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
       displayName: 'Prepare analysis on SonarCloud'
       inputs:
@@ -30,21 +36,25 @@ jobs:
         organization: samsmithnz
         projectKey: SamLearnsAzure
     - task: DotNetCoreCLI@2
-      displayName: 'Restore dotnet core 3.1 projects'
+      displayName: 'Restore dotnet 5 projects'
       inputs:
         command: restore
         projects: |
          SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
+         SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
          SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
+         SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
         vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
     - task: DotNetCoreCLI@2
-      displayName: 'Publish dotnet core 3.1 projects'
+      displayName: 'Publish dotnet 5 projects'
       inputs:
         command: publish
         publishWebProjects: false
         projects: |
          SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
+         SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
          SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
+         SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
         arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory) -p:Version=$(buildNumber)'
         zipAfterPublish: true
     - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
@@ -72,60 +82,15 @@ jobs:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
 
-
-  - job: BuildDotNet5
-    displayName: 'Build .NET 5 job'
+  - job: BuildUnitTest
+    displayName: 'Run unit tests'
     pool:
       vmImage: ${{parameters.vmImage}}
     variables:
       buildNumber: '1.0.0.0'
     steps:
-    - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
-      displayName: 'Show all build variables in build output.'
-    - task: PowerShell@2
-      displayName: 'Generate build version number'
-      inputs:
-        targetType: FilePath
-        filePath: SamLearnsAzure/BuildVersion.ps1
-        arguments: -ProjectFile "SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj"
-    - task: UseDotNet@2
-      displayName: 'Install .Net 5 SDK'
-      inputs:
-        packageType: 'sdk'
-        version: '5.0.100'
     - task: DotNetCoreCLI@2
       displayName: 'Restore dotnet 5 projects'
-      inputs:
-        command: restore
-        projects: |
-         SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
-         SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
-        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish dotnet 5 projects'
-      inputs:
-        command: publish
-        publishWebProjects: false
-        projects: |
-         SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
-         SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
-        arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory) -p:Version=$(buildNumber) --self-contained true --runtime win-x86'
-        zipAfterPublish: true
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact'
-      inputs:
-        PathtoPublish: '$(build.artifactstagingdirectory)'
-
-
-  - job: BuildTest
-    displayName: 'Tests .NET Core projects job'
-    pool:
-      vmImage: ${{parameters.vmImage}}
-    variables:
-      buildNumber: '1.0.0.0'
-    steps:
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore dotnet core projects'
       inputs:
         command: restore
         projects: |
@@ -138,32 +103,122 @@ jobs:
         $a.AppSettings.RedisCacheConnectionString = "${{parameters.redisCacheConnectionString}}"
         $a | ConvertTo-Json | set-content $pathToJson   
     - task: DotNetCoreCLI@2
-      displayName: 'Test dotnet code projects'
+      displayName: 'Test dotnet 5 projects'
       inputs:
         command: test
         projects: |
          SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
-        arguments: '--configuration ${{parameters.buildConfiguration}} --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
+        arguments: '--configuration ${{parameters.buildConfiguration}} --filter TestCategory=UnitTest --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
         vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3' 
-      enabled: false
+      enabled: true
 
-
-  - job: BuildFunctional
-    displayName: 'Build and publish functional tests job'
+  - job: BuildServiceAIntegrationTest
+    displayName: 'Service int tests part A'
     pool:
       vmImage: ${{parameters.vmImage}}
     variables:
       buildNumber: '1.0.0.0'
     steps:
     - task: DotNetCoreCLI@2
-      displayName: 'Restore dotnet core projects'
+      displayName: 'Restore dotnet 5 projects'
+      inputs:
+        command: restore
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
+    - powershell: |  
+        $pathToJson = "SamLearnsAzure/SamLearnsAzure.Tests/appsettings.json"
+        $a = Get-Content $pathToJson | ConvertFrom-Json
+        $a.AppSettings.ClientSecret = "${{parameters.clientSecret}}"
+        $a.AppSettings.RedisCacheConnectionString = "${{parameters.redisCacheConnectionString}}"
+        $a | ConvertTo-Json | set-content $pathToJson   
+    - task: DotNetCoreCLI@2
+      displayName: 'Test dotnet 5 projects'
+      inputs:
+        command: test
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+        arguments: '--configuration ${{parameters.buildConfiguration}} --filter TestCategory=ServiceIntegrationTestA --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3' 
+      enabled: true
+
+  - job: BuildServiceBIntegrationTest
+    displayName: 'Service int tests part B'
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    variables:
+      buildNumber: '1.0.0.0'
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore dotnet 5 projects'
+      inputs:
+        command: restore
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
+    - powershell: |  
+        $pathToJson = "SamLearnsAzure/SamLearnsAzure.Tests/appsettings.json"
+        $a = Get-Content $pathToJson | ConvertFrom-Json
+        $a.AppSettings.ClientSecret = "${{parameters.clientSecret}}"
+        $a.AppSettings.RedisCacheConnectionString = "${{parameters.redisCacheConnectionString}}"
+        $a | ConvertTo-Json | set-content $pathToJson   
+    - task: DotNetCoreCLI@2
+      displayName: 'Test dotnet 5 projects'
+      inputs:
+        command: test
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+        arguments: '--configuration ${{parameters.buildConfiguration}} --filter TestCategory=ServiceIntegrationTestB --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3' 
+      enabled: true
+
+  - job: BuildWebIntegrationTest
+    displayName: 'Website integration tests'
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    variables:
+      buildNumber: '1.0.0.0'
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore dotnet 5 projects'
+      inputs:
+        command: restore
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
+    - powershell: |  
+        $pathToJson = "SamLearnsAzure/SamLearnsAzure.Tests/appsettings.json"
+        $a = Get-Content $pathToJson | ConvertFrom-Json
+        $a.AppSettings.ClientSecret = "${{parameters.clientSecret}}"
+        $a.AppSettings.RedisCacheConnectionString = "${{parameters.redisCacheConnectionString}}"
+        $a | ConvertTo-Json | set-content $pathToJson   
+    - task: DotNetCoreCLI@2
+      displayName: 'Test dotnet 5 projects'
+      inputs:
+        command: test
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Tests/SamLearnsAzure.Tests.csproj
+        arguments: '--configuration ${{parameters.buildConfiguration}} --filter TestCategory=WebIntegrationTest --logger trx --collect "Code coverage" --settings:$(Build.SourcesDirectory)\SamLearnsAzure\SamLearnsAzure.Tests\CodeCoverage.runsettings'
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3' 
+      enabled: false
+
+
+  - job: BuildFunctional
+    displayName: 'Run functional tests'
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    variables:
+      buildNumber: '1.0.0.0'
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore dotnet 5 projects'
       inputs:
         command: restore
         projects: |
          SamLearnsAzure/SamLearnsAzure.FunctionalTests/SamLearnsAzure.FunctionalTests.csproj
         vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
     - task: DotNetCoreCLI@2
-      displayName: 'Publish dotnet core functional tests project'
+      displayName: 'Publish dotnet 5 functional tests project'
       inputs:
         command: publish
         publishWebProjects: false
@@ -174,7 +229,7 @@ jobs:
     - task: CopyFiles@2
       displayName: 'Copy Selenium Files to: $(build.artifactstagingdirectory)/FunctionalTests/SamLearnsAzure.FunctionalTests'
       inputs:
-        SourceFolder: 'SamLearnsAzure/SamLearnsAzure.FunctionalTests/bin/${{parameters.buildConfiguration}}/netcoreapp3.1'
+        SourceFolder: 'SamLearnsAzure/SamLearnsAzure.FunctionalTests/bin/${{parameters.buildConfiguration}}/net5.0'
         Contents: '*chromedriver.exe*'
         TargetFolder: '$(build.artifactstagingdirectory)/FunctionalTests/SamLearnsAzure.FunctionalTests'
     - task: PublishBuildArtifacts@1
@@ -184,7 +239,7 @@ jobs:
 
 
   - job: BuildARMTemplates
-    displayName: 'Build Copy ARM templates job'
+    displayName: 'Build ARM templates'
     pool:
       vmImage: ${{parameters.vmImage}}
     steps:
@@ -201,7 +256,7 @@ jobs:
 
 
   - job: BuildDotNetFramework
-    displayName: 'Build .NET Framework job'
+    displayName: 'Build .NET Framework'
     pool:
       vmImage: ${{parameters.vmImage}}
     steps:

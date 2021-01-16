@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using SamLearnsAzure.Service.DataAccess;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
-    [TestCategory("RedisTest")]
+    [TestCategory("ServiceIntegrationTestA")]
     public class OwnerSetsServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
@@ -30,7 +30,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/getownersets?ownerid=" + ownerId + "&useCache=true");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<OwnerSets> items = await response.Content.ReadAsAsync<IEnumerable<OwnerSets>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<OwnerSets> items = JsonConvert.DeserializeObject<IEnumerable<OwnerSets>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -58,7 +59,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/getownersets?ownerid=" + ownerId + "&useCache=false");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<OwnerSets> items = await response.Content.ReadAsAsync<IEnumerable<OwnerSets>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<OwnerSets> items = JsonConvert.DeserializeObject<IEnumerable<OwnerSets>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -89,7 +91,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/ownersets/SaveOwnerSet?setnum=" + setNum + "&ownerid=" + ownerId + "&owned=" + owned + "&wanted=" + wanted);
                 response.EnsureSuccessStatusCode();
-                bool result = await response.Content.ReadAsAsync<bool>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                bool result = JsonConvert.DeserializeObject<bool>(bodyContent);
                 response.Dispose();
 
                 //Assert

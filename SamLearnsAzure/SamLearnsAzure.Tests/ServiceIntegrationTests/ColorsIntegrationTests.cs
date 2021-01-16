@@ -1,5 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using SamLearnsAzure.Models;
+using SamLearnsAzure.Service.Controllers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -9,8 +11,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
-    [TestCategory("RedisTest")]
+    [TestCategory("ServiceIntegrationTestA")]
     public class ColorsServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
@@ -24,7 +25,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/colors/getcolors?useCache=true");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<Colors> items = await response.Content.ReadAsAsync<IEnumerable<Colors>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<Colors> items = JsonConvert.DeserializeObject<IEnumerable<Colors>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -45,7 +47,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/colors/getcolors?useCache=false");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<Colors> items = await response.Content.ReadAsAsync<IEnumerable<Colors>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<Colors> items = JsonConvert.DeserializeObject<IEnumerable<Colors>>(bodyContent);
                 response.Dispose();
 
                 //Assert

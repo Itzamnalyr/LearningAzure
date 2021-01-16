@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -8,7 +9,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
+    [TestCategory("ServiceIntegrationTestB")]
     public class ValuesIntegrationTest : BaseIntegrationTest
     {
         [TestMethod]
@@ -21,7 +22,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/values");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<string> items = await response.Content.ReadAsAsync<IEnumerable<string>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<string> items = JsonConvert.DeserializeObject<IEnumerable<string>>(bodyContent);
                 response.Dispose();
 
                 //Assert

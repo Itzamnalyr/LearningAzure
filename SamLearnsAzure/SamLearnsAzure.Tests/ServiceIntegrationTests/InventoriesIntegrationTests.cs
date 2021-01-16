@@ -10,12 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using SamLearnsAzure.Service.DataAccess;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
+    [TestCategory("ServiceIntegrationTestA")]
     public class InventoriesServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
@@ -28,7 +29,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/inventories/getinventories");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<Inventories> items = await response.Content.ReadAsAsync<IEnumerable<Inventories>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<Inventories> items = JsonConvert.DeserializeObject<IEnumerable<Inventories>>(bodyContent);
                 response.Dispose();
 
                 //Assert

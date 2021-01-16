@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
-    [TestCategory("RedisTest")]
+    [TestCategory("ServiceIntegrationTestA")]
     public class BrowseSetsServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
@@ -26,7 +26,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/browsesets/getBrowseSets?useCache=true&themeId=" + themeId + "&year=" + year);
                 response.EnsureSuccessStatusCode();
-                IEnumerable<BrowseSets> items = await response.Content.ReadAsAsync<IEnumerable<BrowseSets>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<BrowseSets> items = JsonConvert.DeserializeObject<IEnumerable<BrowseSets>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -49,7 +50,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/browsesets/getBrowseSets?useCache=false&themeId=" + themeId + "&year=" + year);
                 response.EnsureSuccessStatusCode();
-                IEnumerable<BrowseSets> items = await response.Content.ReadAsAsync<IEnumerable<BrowseSets>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<BrowseSets> items = JsonConvert.DeserializeObject<IEnumerable<BrowseSets>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -73,7 +75,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/browsesets/getBrowseSets?useCache=true&themeId=" + themeId + "&year=" + year);
                 response.EnsureSuccessStatusCode();
-                IEnumerable<BrowseSets> items = await response.Content.ReadAsAsync<IEnumerable<BrowseSets>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<BrowseSets> items = JsonConvert.DeserializeObject<IEnumerable<BrowseSets>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -96,7 +99,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/browsesets/getBrowseSets?useCache=false&themeId=" + themeId + "&year=" + year);
                 response.EnsureSuccessStatusCode();
-                IEnumerable<BrowseSets> items = await response.Content.ReadAsAsync<IEnumerable<BrowseSets>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<BrowseSets> items = JsonConvert.DeserializeObject<IEnumerable<BrowseSets>>(bodyContent);
                 response.Dispose();
 
                 //Assert

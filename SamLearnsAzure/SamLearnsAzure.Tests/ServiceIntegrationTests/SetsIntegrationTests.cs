@@ -3,14 +3,14 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using SamLearnsAzure.Models;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
-    [TestCategory("RedisTest")]
+    [TestCategory("ServiceIntegrationTestB")]
     public class SetsServiceIntegrationTests : BaseIntegrationTest
     {
 
@@ -24,7 +24,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getsets");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<Sets> items = await response.Content.ReadAsAsync<IEnumerable<Sets>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<Sets> items = JsonConvert.DeserializeObject<IEnumerable<Sets>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -46,7 +47,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getset?setnum=" + setNum + "&useCache=true");
                 response.EnsureSuccessStatusCode();
-                Sets set = await response.Content.ReadAsAsync<Sets>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                Sets set = JsonConvert.DeserializeObject<Sets>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -67,7 +69,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/sets/getset?setnum=" + setNum + "&useCache=false");
                 response.EnsureSuccessStatusCode();
-                Sets set = await response.Content.ReadAsAsync<Sets>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                Sets set = JsonConvert.DeserializeObject<Sets>(bodyContent);
                 response.Dispose();
 
                 //Assert

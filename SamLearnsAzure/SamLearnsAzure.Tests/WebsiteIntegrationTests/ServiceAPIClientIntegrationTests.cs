@@ -9,7 +9,7 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
+    [TestCategory("WebIntegrationTest")]
     public class ServiceApiClientIntegrationTests : BaseIntegrationTest
     {
 
@@ -82,19 +82,19 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             Assert.IsTrue(setImage != null);
         }
 
-        [TestMethod]
-        public async Task GetSetPartsServiceApiIntegrationTest()
-        {
-            //Arrange
-            ServiceApiClient client = new ServiceApiClient(base.Configuration);
-            string setNum = "75218-1";
+        //[TestMethod]
+        //public async Task GetSetPartsServiceApiIntegrationTest()
+        //{
+        //    //Arrange
+        //    ServiceApiClient client = new ServiceApiClient(base.Configuration);
+        //    string setNum = "75218-1";
 
-            //Act
-            List<SetParts> setParts = await client.GetSetParts(setNum);
+        //    //Act
+        //    List<SetParts> setParts = await client.GetSetParts(setNum);
 
-            //Assert
-            Assert.IsTrue(setParts.Any());
-        }
+        //    //Assert
+        //    Assert.IsTrue(setParts.Any());
+        //}
 
         [TestMethod]
         public async Task GetThemesServiceApiIntegrationTest()
@@ -122,21 +122,21 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
             Assert.IsTrue(partImages.Any());
         }
 
-        [TestMethod]
-        public async Task GetSetImagesServiceApiIntegrationTest()
-        {
-            //Arrange
-            ServiceApiClient client = new ServiceApiClient(base.Configuration);
-            string setNum = "75218-1";
-            int resultsToReturn = 2;
-            int resultsToSearch = 4;
+        //[TestMethod]
+        //public async Task GetSetImagesServiceApiIntegrationTest()
+        //{
+        //    //Arrange
+        //    ServiceApiClient client = new ServiceApiClient(base.Configuration);
+        //    string setNum = "75218-1";
+        //    int resultsToReturn = 2;
+        //    int resultsToSearch = 4;
 
-            //Act
-            List<SetImages> setImages = await client.GetSetImages(setNum, resultsToReturn, resultsToSearch);
+        //    //Act
+        //    List<SetImages> setImages = await client.GetSetImages(setNum, resultsToReturn, resultsToSearch);
 
-            //Assert
-            Assert.IsTrue(setImages.Any());
-        }
+        //    //Assert
+        //    Assert.IsTrue(setImages.Any());
+        //}
 
         [TestMethod]
         public async Task SaveSetImageServiceApiIntegrationTest()

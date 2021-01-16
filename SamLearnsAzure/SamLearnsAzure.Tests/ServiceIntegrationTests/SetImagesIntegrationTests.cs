@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using SamLearnsAzure.Service.DataAccess;
 using System.Net.Http;
+using Newtonsoft.Json;
 //using SamLearnsAzure.Service.EFCore;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
-    [TestCategory("RedisTest")]
+    [TestCategory("ServiceIntegrationTestB")]
     public class SetImagesIntegrationTests : BaseIntegrationTest
     {
 
@@ -32,7 +32,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimage?setnum=" + setNum + "&useCache=true");
                 response.EnsureSuccessStatusCode();
-                SetImages setImage = await response.Content.ReadAsAsync<SetImages>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                SetImages setImage = JsonConvert.DeserializeObject<SetImages>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -53,7 +54,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimage?setnum=" + setNum + "&useCache=false");
                 response.EnsureSuccessStatusCode();
-                SetImages setImage = await response.Content.ReadAsAsync<SetImages>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                SetImages setImage = JsonConvert.DeserializeObject<SetImages>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -74,7 +76,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimage?setnum=" + setNum + "&useCache=false&forceBingSearch=true");
                 response.EnsureSuccessStatusCode();
-                SetImages setImage = await response.Content.ReadAsAsync<SetImages>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                SetImages setImage = JsonConvert.DeserializeObject<SetImages>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -97,7 +100,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimages?setnum=" + setNum + "&resultsToReturn=" + resultsToReturn + "&resultsToSearch=" + resultsToSearch);
                 response.EnsureSuccessStatusCode();
-                List<SetImages> setImages = await response.Content.ReadAsAsync<List<SetImages>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                List<SetImages> setImages = JsonConvert.DeserializeObject<List<SetImages>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -120,7 +124,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/savesetimage?setnum=" + setNum + "&imageUrl=" + imageUrl);
                 response.EnsureSuccessStatusCode();
-                SetImages setImage = await response.Content.ReadAsAsync<SetImages>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                SetImages setImage = JsonConvert.DeserializeObject<SetImages>(bodyContent);
                 response.Dispose();
 
                 //Assert

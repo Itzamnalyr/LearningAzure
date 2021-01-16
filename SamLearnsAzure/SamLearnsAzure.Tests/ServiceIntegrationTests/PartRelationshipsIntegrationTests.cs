@@ -10,12 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using SamLearnsAzure.Service.DataAccess;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
+    [TestCategory("ServiceIntegrationTestB")]
     public class PartRelationshipsServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
@@ -28,7 +29,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/partrelationships/getpartrelationships");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<PartRelationships> items = await response.Content.ReadAsAsync<IEnumerable<PartRelationships>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<PartRelationships> items = JsonConvert.DeserializeObject<IEnumerable<PartRelationships>>(bodyContent);
                 response.Dispose();
 
                 //Assert

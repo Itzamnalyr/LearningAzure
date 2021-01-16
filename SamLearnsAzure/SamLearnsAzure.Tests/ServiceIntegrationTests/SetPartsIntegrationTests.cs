@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using SamLearnsAzure.Service.DataAccess;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
-    [TestCategory("RedisTest")]
+    [TestCategory("ServiceIntegrationTestB")]
     public class SetPartsIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
@@ -30,7 +30,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/setparts/getsetparts?setnum=" + setNum + "&useCache=true");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<SetParts> items = await response.Content.ReadAsAsync<IEnumerable<SetParts>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<SetParts> items = JsonConvert.DeserializeObject<IEnumerable<SetParts>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -52,7 +53,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/setparts/getsetparts?setnum=" + setNum + "&useCache=false");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<SetParts> items = await response.Content.ReadAsAsync<IEnumerable<SetParts>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<SetParts> items = JsonConvert.DeserializeObject<IEnumerable<SetParts>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -75,7 +77,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/setparts/SearchForMissingParts?setnum=" + setNum);
                 response.EnsureSuccessStatusCode();
-                bool result = await response.Content.ReadAsAsync<bool>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                bool result = JsonConvert.DeserializeObject<bool>(bodyContent);
                 response.Dispose();
 
                 //Assert

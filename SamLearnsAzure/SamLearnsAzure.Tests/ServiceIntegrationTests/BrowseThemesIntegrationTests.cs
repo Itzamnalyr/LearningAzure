@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using SamLearnsAzure.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
-    [TestCategory("RedisTest")]
+    [TestCategory("ServiceIntegrationTestA")]
     public class BrowseThemesServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
@@ -25,7 +25,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/BrowseThemes/getBrowseThemes?useCache=true&year=" + year);
                 response.EnsureSuccessStatusCode();
-                IEnumerable<BrowseThemes> items = await response.Content.ReadAsAsync<IEnumerable<BrowseThemes>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<BrowseThemes> items = JsonConvert.DeserializeObject<IEnumerable<BrowseThemes>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -47,7 +48,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/BrowseThemes/getBrowseThemes?useCache=false&year=" + year);
                 response.EnsureSuccessStatusCode();
-                IEnumerable<BrowseThemes> items = await response.Content.ReadAsAsync<IEnumerable<BrowseThemes>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<BrowseThemes> items = JsonConvert.DeserializeObject<IEnumerable<BrowseThemes>>(bodyContent);
                 response.Dispose();
 
                 //Assert

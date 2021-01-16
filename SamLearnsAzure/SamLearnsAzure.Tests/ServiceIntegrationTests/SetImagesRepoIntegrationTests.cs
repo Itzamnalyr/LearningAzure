@@ -9,7 +9,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
+    [TestCategory("ServiceIntegrationTestB")]
     public class SetImagesRepoIntegrationTests : BaseRepoIntegrationTest
     {
 

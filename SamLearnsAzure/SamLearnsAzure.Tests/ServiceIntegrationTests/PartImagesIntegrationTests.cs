@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using SamLearnsAzure.Service.DataAccess;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("IntegrationTest")]
-    [TestCategory("RedisTest")]
+    [TestCategory("ServiceIntegrationTestB")]
     public class PartImagesIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]
@@ -29,7 +29,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimages?useCache=true");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<PartImages> items = await response.Content.ReadAsAsync<IEnumerable<PartImages>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<PartImages> items = JsonConvert.DeserializeObject<IEnumerable<PartImages>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -50,7 +51,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimages?useCache=false");
                 response.EnsureSuccessStatusCode();
-                IEnumerable<PartImages> items = await response.Content.ReadAsAsync<IEnumerable<PartImages>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                IEnumerable<PartImages> items = JsonConvert.DeserializeObject<IEnumerable<PartImages>>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -72,7 +74,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimage?useCache=false&partNum=" + partNum);
                 response.EnsureSuccessStatusCode();
-                PartImages item = await response.Content.ReadAsAsync<PartImages>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                PartImages item = JsonConvert.DeserializeObject<PartImages>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -93,7 +96,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/getpartimage?useCache=true&partNum=" + partNum);
                 response.EnsureSuccessStatusCode();
-                PartImages item = await response.Content.ReadAsAsync<PartImages>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                PartImages item = JsonConvert.DeserializeObject<PartImages>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -116,7 +120,8 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
                 //Act
                 HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/savepartimage?partNum=" + partNum + "&sourceImage=" + sourceImage + "&colorId=" + colorId);
                 response.EnsureSuccessStatusCode();
-                PartImages item = await response.Content.ReadAsAsync<PartImages>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                PartImages item = JsonConvert.DeserializeObject<PartImages>(bodyContent);
                 response.Dispose();
 
                 //Assert
@@ -142,7 +147,7 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
         //        //Act
         //        HttpResponseMessage response = await base.Client.GetAsync("/api/partimages/SearchForPotentialPartImages?partNum=" + partNum + "&colorId=" + colorId + "&colorName=" + colorName + "&resultsToReturn=" + resultsToReturn + "&resultsToSearch=" + resultsToSearch);
         //        response.EnsureSuccessStatusCode();
-        //        List<PartImages> partImages = await response.Content.ReadAsAsync<List<PartImages>>();
+        //        List<PartImages> partImages = JsonConvert.DeserializeObject<List<PartImages>>();
         //        response.Dispose();
 
         //        //Assert

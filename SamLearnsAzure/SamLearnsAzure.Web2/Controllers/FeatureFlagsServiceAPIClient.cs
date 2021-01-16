@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using SamLearnsAzure.Models;
 using System;
 using System.Collections.Generic;
@@ -54,7 +55,8 @@ namespace SamLearnsAzure.Web.Controllers
             }
             else
             {
-                return await response.Content.ReadAsAsync<bool>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<bool>(bodyContent);
             }
         }
     }

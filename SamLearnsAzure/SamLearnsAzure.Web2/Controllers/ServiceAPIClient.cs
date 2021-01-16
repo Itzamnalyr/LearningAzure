@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
-using SamLearnsAzure.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using SamLearnsAzure.Models;
 
 namespace SamLearnsAzure.Web.Controllers
 {
@@ -183,10 +183,12 @@ namespace SamLearnsAzure.Web.Controllers
             HttpResponseMessage response = await _client.GetAsync(url);
             if (response.IsSuccessStatusCode == true)
             {
-                return await response.Content.ReadAsAsync<List<T>>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<T>>(bodyContent);
             }
             else
             {
+                response.EnsureSuccessStatusCode();
                 //Handle when the url is missing, preventing a 400 error.
 #pragma warning disable CS8603 // Possible null reference return.
                 return default;
@@ -199,10 +201,12 @@ namespace SamLearnsAzure.Web.Controllers
             HttpResponseMessage response = await _client.GetAsync(url);
             if (response.IsSuccessStatusCode == true)
             {
-                return await response.Content.ReadAsAsync<T>();
+                string bodyContent = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<T>(bodyContent);
             }
             else
             {
+                response.EnsureSuccessStatusCode();
                 //Handle when the url is missing, preventing a 400 error.
 #pragma warning disable CS8603 // Possible null reference return.
 #pragma warning disable CS8653 // A default expression introduces a null value for a type parameter.
