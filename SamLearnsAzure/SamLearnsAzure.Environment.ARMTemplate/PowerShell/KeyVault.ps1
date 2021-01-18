@@ -22,20 +22,32 @@ $secrets = az keyvault secret list --vault-name $KeyVaultName
 $secrets2 = $secrets | ConvertFrom-Json
 $secrets2 | select name | ft
 
-Write-Host "looking..."
+$i = 0
 foreach($secret in $secrets2){
-    if ($secret.name  -like '*PR4*')
-    #if ($secret.name  -like '*PR4*' -and $secret.name -notlike "*PR456")
+    $i++
+    Write-Host "looking... $i"
+    if ($secret.name  -like '*PR5*')
     {
         Write-Host "Deleting key $($secret.name)"
         az keyvault secret delete --name $secret.name --vault-name samsapp-data-eu-keyvault 
     }
-    else
-    {
-       # Write-Host "Found nothing"
-    }
 }
     
+Write-Host "purging old secrets"
+$secretsDeleted = az keyvault secret list-deleted --vault-name samsapp-data-eu-keyvault
+$secretsDeleted2 = $secretsDeleted | ConvertFrom-Json
+$secretsDeleted2 | select name | ft
+
+$i = 0
+foreach($secret in $secretsDeleted2){
+    $i++
+    Write-Host "looking... $i"
+    if ($secret.name -like '*PR4*')
+    {
+        Write-Host "Purging key $($secret.name)"
+        az keyvault secret purge --name $secret.name --vault-name samsapp-data-eu-keyvault 
+    }
+}
 
 Write-Host "Setting key vault secrets"
 #Get the application insights instrumentation key from the ARM Template outputs

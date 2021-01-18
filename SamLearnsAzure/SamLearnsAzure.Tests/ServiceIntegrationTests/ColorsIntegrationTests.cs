@@ -1,17 +1,21 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using SamLearnsAzure.Models;
 using SamLearnsAzure.Service.Controllers;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+using SamLearnsAzure.Service.DataAccess;
+using StackExchange.Redis;
 
 namespace SamLearnsAzure.Tests.ServiceIntegrationTests
 {
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [TestClass]
-    [TestCategory("ServiceIntegrationTestA")]
+    [TestCategory("ServiceIntegrationTestA"), TestCategory("Colors")]
     public class ColorsServiceIntegrationTests : BaseIntegrationTest
     {
         [TestMethod]

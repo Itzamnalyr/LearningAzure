@@ -55,7 +55,7 @@ jobs:
          SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
          SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
          SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
-        arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory) -p:Version=$(buildNumber)'
+        arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory) -p:Version=$(buildNumber) --self-contained true --runtime win-x86'
         zipAfterPublish: true
     - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
       displayName: 'Run Code Analysis on SonarCloud'

@@ -18,7 +18,7 @@ namespace SamLearnsAzure.Service.DataAccess
         public async Task<string?> GetAsync(string key)
         {
             string? result = null;
-            if (_database.IsConnected(key))
+            if (_database != null && _database.IsConnected(key))
             {
                 result = await _database.StringGetAsync(key);
                 if (string.IsNullOrEmpty(result) == false)
@@ -32,7 +32,7 @@ namespace SamLearnsAzure.Service.DataAccess
         public async Task<bool> SetAsync(string key, string data, TimeSpan expirationTime)
         {
             bool result = false;
-            if (_database.IsConnected(key))
+            if (_database != null && _database.IsConnected(key))
             {
                 Debug.WriteLine("Setting item into cache: " + key);
                 result = await _database.StringSetAsync(key, data, expirationTime);
