@@ -26,11 +26,7 @@ namespace SamLearnsAzure.Web.Controllers
 
         public async Task<bool> CheckFeatureFlag(string name, string environment)
         {
-            if (environment.ToLower().StartsWith("pr") == true)
-            {
-                environment = "pr";
-            }
-            else if (environment.ToLower().StartsWith("dev") == true)
+            if (environment.ToLower().StartsWith("dev") == true)
             {
                 environment = "dev";
             }
@@ -42,7 +38,11 @@ namespace SamLearnsAzure.Web.Controllers
             {
                 environment = "prod";
             }
-            Uri url = new Uri($"api/FeatureFlags/CheckFeatureFlag?name=" + name + "&environment=" + environment, UriKind.Relative);
+            else if (environment.ToLower().StartsWith("pr") == true) //last so that it doesn't trigger with prod. :P
+            {
+                environment = "pr";
+            }
+                Uri url = new Uri($"api/FeatureFlags/CheckFeatureFlag?name=" + name + "&environment=" + environment, UriKind.Relative);
             return await ReadMessageItem(url);
         }
 
