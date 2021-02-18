@@ -23,12 +23,6 @@ jobs:
         targetType: FilePath
         filePath: SamLearnsAzure/BuildVersion.ps1
         arguments: -ProjectFile "SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj"
-    - task: PowerShell@2
-      displayName: 'Generate build version number'
-      inputs:
-        targetType: FilePath
-        filePath: SamLearnsAzure/BuildVersion.ps1
-        arguments: -ProjectFile "SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj"
     - task: SonarSource.sonarcloud.14d9cde6-c1da-4d55-aa01-2965cd301255.SonarCloudPrepare@1
       displayName: 'Prepare analysis on SonarCloud'
       inputs:
@@ -41,9 +35,7 @@ jobs:
         command: restore
         projects: |
          SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-         SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
          SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
-         SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
         vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
     - task: DotNetCoreCLI@2
       displayName: 'Publish dotnet 5 projects'
@@ -52,9 +44,7 @@ jobs:
         publishWebProjects: false
         projects: |
          SamLearnsAzure/SamLearnsAzure.Service/SamLearnsAzure.Service.csproj
-         SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
          SamLearnsAzure/SamLearnsAzure.Web/SamLearnsAzure.Web.csproj
-         SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
         arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory) -p:Version=$(buildNumber) --self-contained true --runtime win-x86'
         zipAfterPublish: true
     - task: SonarSource.sonarcloud.ce096e50-6155-4de8-8800-4221aaeed4a1.SonarCloudAnalyze@1
@@ -81,6 +71,51 @@ jobs:
       displayName: 'Publish Artifact'
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
+
+
+  - job: BuildDotNet6
+    displayName: 'Build .NET 6 apps'
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    variables:
+      buildNumber: '1.0.0.0'
+    steps:
+    - task: dutchworkz.DisplayAllVariables.DisplayAllVariables.DutchWorkzToolsAllVariables@1
+      displayName: 'Show all build variables in build output.'
+    - task: PowerShell@2
+      displayName: 'Generate build version number'
+      inputs:
+        targetType: FilePath
+        filePath: SamLearnsAzure/BuildVersion.ps1
+        arguments: -ProjectFile "SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj"
+    - task: UseDotNet@2
+      displayName: 'Install .NET 6 SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '6.0.100-preview.1.21103.13'
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore dotnet 6 projects'
+      inputs:
+        command: restore
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
+         SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
+        vstsFeed: '030a758a-428f-4445-bce8-2c19ad9a56b3'
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish dotnet 6 projects'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: |
+         SamLearnsAzure/SamLearnsAzure.Service2/SamLearnsAzure.Service2.csproj
+         SamLearnsAzure/SamLearnsAzure.Web2/SamLearnsAzure.Web2.csproj
+        arguments: '--configuration ${{parameters.buildConfiguration}} --output $(build.artifactstagingdirectory) -p:Version=$(buildNumber) --self-contained true --runtime win-x86'
+        zipAfterPublish: true
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+
 
   - job: BuildUnitTest
     displayName: 'Run unit tests'
