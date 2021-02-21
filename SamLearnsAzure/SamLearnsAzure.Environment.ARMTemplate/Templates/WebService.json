@@ -68,35 +68,6 @@
               "alwaysOn": true
             }
           }
-        },
-        {
-          "name": "logs",
-          "type": "config",
-          "apiVersion": "2015-08-01",
-          "dependsOn": [ "[resourceId('Microsoft.Web/sites', parameters('serviceAPIName'))]" ],
-          "tags": {
-            "displayName": "websiteLogs"
-          },
-          "properties": {
-            "applicationLogs": {
-              "fileSystem": {
-                "level": "On"
-              }
-            },
-            "httpLogs": {
-              "fileSystem": {
-                "retentionInMb": 35,
-                "retentionInDays": null,
-                "enabled": true
-              }
-            },
-            "failedRequestsTracing": {
-              "enabled": true
-            },
-            "detailedErrorMessages": {
-              "enabled": true
-            }
-          }
         }
       ]
     }

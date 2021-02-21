@@ -25,7 +25,7 @@
       "properties": {
         "description": "[concat(parameters('webAppName'), ' has some server errors, status code 5xx.')]",
         "severity": 3,
-        "enabled": true,
+        "enabled": false,
         "scopes": [
           "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
         ],
@@ -41,7 +41,7 @@
               "monitorTemplateType": 8,
               "name": "Metric1",
               "operator": "GreaterThan",
-              "threshold": 10.0,
+              "threshold": 100.0,
               "timeAggregation": "Total"
             }
           ],
