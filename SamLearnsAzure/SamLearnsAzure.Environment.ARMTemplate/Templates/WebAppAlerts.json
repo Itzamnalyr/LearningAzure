@@ -41,7 +41,7 @@
               "monitorTemplateType": 8,
               "name": "Metric1",
               "operator": "GreaterThan",
-              "threshold": 100.0,
+              "threshold": 10.0,
               "timeAggregation": "Total"
             }
           ],

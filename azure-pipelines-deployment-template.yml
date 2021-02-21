@@ -286,8 +286,6 @@ jobs:
     environment: ${{parameters.environment}}
     dependsOn: 
     - DeployInfrastructureWebCore
-    - DeployDatabase
-    - DeployRedis
     pool:
       vmImage: windows-latest        
     variables:
@@ -479,6 +477,7 @@ jobs:
     - DeployCDN 
     - DeployRedis
     - DeployDatabase
+    - DeployInfrastructureWebCore
     - DeployWebServiceApp
     - DeployWebService2App
     - DeployWebsiteApp
