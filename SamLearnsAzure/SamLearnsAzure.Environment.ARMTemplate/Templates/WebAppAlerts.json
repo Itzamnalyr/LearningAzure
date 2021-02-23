@@ -20,7 +20,7 @@
       "dependsOn": [
       ],
       "tags": {
-        "displayName": "Web Service Server Errors Alert Rule"
+        "displayName": "Web app Server Errors Alert Rule"
       },
       "properties": {
         "description": "[concat(parameters('webAppName'), ' has some server errors, status code 5xx.')]",
