@@ -24,7 +24,7 @@ namespace SamLearnsAzure.Web.Controllers
             _featureFlagsServiceApiClient = featureFlagsServiceApiClient;
         }
 
-        [HttpGet, HttpHead]        
+        [HttpGet, HttpHead]
         public async Task<IActionResult> Index()
         {
             int ownerId = 1; //Sam
@@ -215,7 +215,10 @@ namespace SamLearnsAzure.Web.Controllers
                 featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("SiteAboutPageUpgrade", _configuration["AppSettings:Environment"].ToString());
             }
 
-            return View(featureFlagResult);
+            string serviceUrl = _configuration["AppSettings:WebServiceURL"];
+            (string, bool) tuple = (serviceUrl, featureFlagResult);
+
+            return View(tuple);
         }
 
 

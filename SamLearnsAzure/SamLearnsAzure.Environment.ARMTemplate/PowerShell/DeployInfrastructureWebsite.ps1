@@ -90,6 +90,15 @@ if ($CheckWhatIfs -eq $false -or $ChangeResults13.changeType -eq "Create" -or $C
     Write-Host "Started access policy 2 for key vault"
     $policy2 = az keyvault set-policy --name $dataKeyVaultName --object-id $websiteStagingSlotIdentityPrincipalId --secret-permissions list get
     Write-Host "Finished access policy 2 for key vault"
+
+    #Get application insights from key vault
+    $applicationInsightsName = "ApplicationInsights--InstrumentationKey$environment"
+    Write-Host "Getting value application insights $applicationInsightsName secret from key vault"
+    $applicationInsightsJson = az keyvault secret show --vault-name $dataKeyVaultName --name $applicationInsightsName 
+    $applicationInsightsKey = ($applicationInsightsJson | ConvertFrom-Json).value
+    #Set secrets into appsettings 
+    Write-Host "Setting appsettings $applicationInsightsName connectionString: $applicationInsightsKey"
+    az webapp config appsettings set --resource-group $resourceGroupName --name $webSiteName --slot staging --settings "APPINSIGHTS_INSTRUMENTATIONKEY=$applicationInsightsKey" 
 }
 else
 {

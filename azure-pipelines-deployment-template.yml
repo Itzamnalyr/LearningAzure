@@ -344,7 +344,7 @@ jobs:
       AppSettings.PartImagesContainerName: ${{parameters.partImagesContainerName}}
       AppSettings.SetImagesContainerName: ${{parameters.setImagesContainerName}}
       AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
-      AppSettings.WebServiceURL: ${{parameters.serviceURL}}
+      AppSettings.WebServiceURL: ${{parameters.serviceStagingUrl}}
       AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
       AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
       AppSettings.CaptureStartErrors: ${{parameters.captureStartErrors}}
@@ -382,7 +382,7 @@ jobs:
               RenameFilesFlag: true
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
-              ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
+              ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKey) '
 
 
   - deployment: DeployWebsite2App
@@ -401,7 +401,7 @@ jobs:
       AppSettings.PartImagesContainerName: ${{parameters.partImagesContainerName}}
       AppSettings.SetImagesContainerName: ${{parameters.setImagesContainerName}}
       AppSettings.RedisCacheConnectionString: ${{parameters.redisCacheConnectionString}}
-      AppSettings.WebServiceURL: ${{parameters.service2URL}}
+      AppSettings.WebServiceURL: ${{parameters.service2StagingUrl}}
       AppSettings.StorageAccountName: ${{parameters.storageAccountName}}
       AppSettings.CognitiveServicesSubscriptionKey: ${{parameters.cognitiveServicesSubscriptionKey}}
       AppSettings.CaptureStartErrors: ${{parameters.captureStartErrors}}
@@ -439,7 +439,7 @@ jobs:
               RenameFilesFlag: true
               JSONFiles: '**/appsettings.json'
               AppSettings: '-ASPNETCORE_ENVIRONMENT "${{parameters.ASPNETCOREEnvironmentSetting}}"'
-              ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKeyOutput)'
+              ConfigurationSettings: '-ApplicationInsights.InstrumentationKey $(applicationInsightsInstrumentationKey) '
 
               
   - deployment: DeployFrontDoor
@@ -513,7 +513,7 @@ jobs:
                -KeyVaultURL "${{parameters.keyVaultURL}}" 
                -KeyVaultClientId "${{parameters.keyVaultClientId}}" 
                -KeyVaultClientSecret "${{parameters.keyVaultClientSecret}}"
-            enabled: false  
+            enabled: true  
 
             
   - deployment: DeploySwapServiceAppSlots

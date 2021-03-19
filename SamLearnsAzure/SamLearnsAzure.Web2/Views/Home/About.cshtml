@@ -1,6 +1,6 @@
 ﻿@using System.Reflection;
 @using System.IO;
-@model bool
+@model (string, bool)
 @{
     ViewData["Title"] = "About";
 }
@@ -8,7 +8,7 @@
 
 <p>Visit the <a href="https://samlearnsazure.blog" target="_blank">SamLearnsAzure Blog</a> for more information about what purpose this site was created for.</p>
 
-@if (Model == true)
+@if (Model.Item2 == true)
 {
     //OS platform
     string osPlatform = System.Runtime.InteropServices.RuntimeInformation.OSDescription;
@@ -40,4 +40,6 @@
     <span><strong>ASP.NET Core version:</strong> @aspDotnetVersion</span>
     <br />
     <span><strong>Current application version:</strong> @appVersion (Last built: @appAssemblyLastBuildDate)</span>
+    <br />
+    <span><strong>Current web service URL:</strong> @Model.Item1</span>
 }

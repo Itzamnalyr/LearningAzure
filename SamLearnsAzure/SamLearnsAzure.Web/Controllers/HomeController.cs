@@ -216,7 +216,10 @@ namespace SamLearnsAzure.Web.Controllers
                 featureFlagResult = await _featureFlagsServiceApiClient.CheckFeatureFlag("SiteAboutPageUpgrade", _configuration["AppSettings:Environment"].ToString());
             }
 
-            return View(featureFlagResult);
+            string serviceUrl = _configuration["AppSettings:WebServiceURL"];
+            (string, bool) tuple = (serviceUrl, featureFlagResult);
+
+            return View(tuple);
         }
 
 

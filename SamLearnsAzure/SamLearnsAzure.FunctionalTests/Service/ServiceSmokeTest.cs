@@ -18,7 +18,6 @@ namespace SamLearnsAzure.FunctionalTests.Service
         private TestContext _testContextInstance;
         private string _serviceUrl = null;
         private string _service2Url = null;
-        //private string _environment = null;
 
         [TestMethod]
         [TestCategory("SkipWhenLiveUnitTesting")]
