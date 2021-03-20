@@ -58,11 +58,10 @@ if ($secretsMessage.Count -gt 0) {
 
     $i = 0
     Write-Host "looking for secrets for $($secretsMessage.Content)"
-    foreach($secret in $secrets2){
+    foreach($secret in $secrets2) {
         $i++
         Write-Host "looking for secret... $i"
-        if ($secret.name -like "*$($secretsMessage.Content)*")
-        {
+        if ($secret.name -like "*$($secretsMessage.Content)*") {
             Write-Host "Deleting key $($secret.name)"
             az keyvault secret delete --name $secret.name --vault-name $KeyVaultName
         }
@@ -75,11 +74,10 @@ if ($secretsMessage.Count -gt 0) {
 
     $i = 0
     Write-Host "looking for purged secrets for $($secretsMessage.Content)"
-    foreach($secret in $secretsDeleted2){
+    foreach($secret in $secretsDeleted2) {
         $i++
         Write-Host "looking for purge... $i"
-        if ($secret.name -like "*$($secretsMessage.Content)*")
-        {
+        if ($secret.name -like "*$($secretsMessage.Content)*") {
             Write-Host "Purging key $($secret.name)"
             az keyvault secret purge --name $secret.name --vault-name $KeyVaultName
         }
