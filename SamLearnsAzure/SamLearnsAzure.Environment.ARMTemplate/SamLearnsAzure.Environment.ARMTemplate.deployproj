@@ -48,12 +48,18 @@
     <None Include="PowerShell\DeployInfrastructureCore.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="PowerShell\DeployInfrastructureWebConfiguration.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="PowerShell\DeployInfrastructureWebService.ps1" />
     <None Include="PowerShell\DeployInfrastructureWebsite.ps1" />
     <None Include="PowerShell\GoDaddyDNSSetup.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="PowerShell\DeploymentCleanup.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="PowerShell\KeyVault - Copy.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="PowerShell\KeyVault.ps1">

@@ -594,3 +594,58 @@ jobs:
               WebAppName: '${{parameters.website2Name}}'
               ResourceGroupName: '${{parameters.resourceGroupName}}'
               SourceSlot: '${{parameters.stagingSlotName}}'
+
+
+  - deployment: DeployAppConfigurationUpdates
+    displayName: "Deploy website configuration"
+    environment: ${{parameters.environment}}
+    dependsOn: 
+    - DeploySwapWebsiteAppSlots
+    pool:
+      vmImage: windows-latest        
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download the build artifacts'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(build.artifactstagingdirectory)'
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebConfiguration.ps1
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" 
+            enabled: true
+
+  - deployment: DeployAppConfigurationUpdates2
+    displayName: "Deploy website2 configuration"
+    environment: ${{parameters.environment}}
+    dependsOn: 
+    - DeploySwapWebsite2AppSlots
+    pool:
+      vmImage: windows-latest        
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Download the build artifacts'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(build.artifactstagingdirectory)'
+          - task: AzureCLI@2
+            displayName: 'Deploy infrastructure with ARM templates'
+            inputs:
+              azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+              scriptType: ps
+              scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\DeployInfrastructureWebConfiguration.ps1
+              arguments: -appPrefix "samsapp" -environment "${{parameters.environmentLowercase}}" -webAppEnvironment "${{parameters.environmentLowercase}}2" -resourceGroupName "${{parameters.resourceGroupName}}" -resourceGroupLocation "${{parameters.resourceGroupLocation}}" -resourceGroupLocationShort "${{parameters.resourceGroupLocationShort}}" 
+            enabled: true

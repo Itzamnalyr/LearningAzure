@@ -11,7 +11,6 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class BaseIntegrationTest
     {
-        private TestServer? _server;
         public HttpClient? Client;
         public IConfigurationRoot? Configuration;
 
@@ -38,11 +37,11 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             //Database = connectionMultiplexer.GetDatabase(0); //TODO: do we need the 0?
 
             //Setup the test server
-            _server = new TestServer(WebHost.CreateDefaultBuilder()
+            TestServer? _server = new TestServer(WebHost.CreateDefaultBuilder()
                 .UseConfiguration(Configuration)
                 .UseStartup<SamLearnsAzure.Service.Startup>());
             Client = _server.CreateClient();
-            Client.BaseAddress = new Uri(Configuration["AppSettings:WebServiceURL"]);
+            //Client.BaseAddress = new Uri(Configuration["AppSettings:WebServiceURL"]);
         }
     }
 }
