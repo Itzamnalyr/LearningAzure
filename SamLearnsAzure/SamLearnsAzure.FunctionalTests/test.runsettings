@@ -3,11 +3,11 @@
 
   <!-- Parameters used by tests at runtime -->
   <TestRunParameters>
-    <Parameter name="ServiceUrl" value="https://samsapp-pr548-eu-service-staging.azurewebsites.net/" />
-    <Parameter name="Service2Url" value="https://samsapp-pr5482-eu-service-staging.azurewebsites.net/" />
-    <Parameter name="WebsiteUrl" value="https://samsapp-pr548-eu-web-staging.azurewebsites.net/" />
-    <Parameter name="Website2Url" value="https://samsapp-pr5482-eu-web-staging.azurewebsites.net/" />
-    <Parameter name="TestEnvironment" value="pr548" />
+    <Parameter name="ServiceUrl" value="https://samsapp-dev-eu-service-staging.azurewebsites.net/" />
+    <Parameter name="Service2Url" value="https://samsapp-dev2-eu-service-staging.azurewebsites.net/" />
+    <Parameter name="WebsiteUrl" value="https://samsapp-dev-eu-web-staging.azurewebsites.net/" />
+    <Parameter name="Website2Url" value="https://samsapp-dev2-eu-web-staging.azurewebsites.net/" />
+    <Parameter name="TestEnvironment" value="Dev" />
     <Parameter name="KeyVaultURL" value="https://samsapp-data-eu-keyvault.vault.azure.net/" />
     <Parameter name="KeyVaultClientId" value="2553a023-5f98-4331-a3ad-ed45f1d74ec9" />
     <Parameter name="KeyVaultClientSecret" value="" />
