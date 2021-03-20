@@ -59,7 +59,7 @@
     <None Include="PowerShell\DeploymentCleanup.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="PowerShell\KeyVault - Copy.ps1">
+    <None Include="PowerShell\KeyVaultCleanup.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="PowerShell\KeyVault.ps1">

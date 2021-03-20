@@ -32,6 +32,7 @@ stages:
       vmImage: $(vmImage)
       clientSecret: $(AppSettings--ClientSecretDev)
       redisCacheConnectionString: $(AppSettings--RedisCacheConnectionStringDev)
+      storageAccountKey: '$(StorageAccountKeyData)'
 
 - stage: DeployPR
   displayName: 'Deploy PR Stage'

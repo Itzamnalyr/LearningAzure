@@ -4,6 +4,7 @@ parameters: # defaults for any parameters that aren't specified
   vmImage: 'windows-latest'
   clientSecret: '***secret'
   redisCacheConnectionString: '***secret'
+  storageAccountKey: '***secret'
 
 jobs:
 
@@ -312,3 +313,25 @@ jobs:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
 
+  - job: CleanUpKeyVault
+    displayName: 'Clean up key vault'
+    pool:
+      vmImage: ${{parameters.vmImage}}
+    dependsOn: 
+    - BuildARMTemplates
+    steps:
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download the build artifacts'
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(build.artifactstagingdirectory)'
+    - task: AzureCLI@2
+      displayName: 'Clean up key vault'
+      inputs:
+        azureSubscription: 'SamLearnsAzure connection to Azure Portal'
+        scriptType: ps
+        scriptPath: $(build.artifactstagingdirectory)\drop\EnvironmentARMTemplate\PowerShell\KeyVaultCleanup.ps1
+        arguments: -storageAccountKey ${{parameters.storageAccountKey}}
+      enabled: true
