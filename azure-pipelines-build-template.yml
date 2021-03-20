@@ -328,7 +328,7 @@ jobs:
         artifactName: 'drop'
         downloadPath: '$(build.artifactstagingdirectory)'
     - task: AzureCLI@2
-      displayName: 'Deploy infrastructure with ARM templates'
+      displayName: 'Clean up key vault'
       inputs:
         azureSubscription: 'SamLearnsAzure connection to Azure Portal'
         scriptType: ps
