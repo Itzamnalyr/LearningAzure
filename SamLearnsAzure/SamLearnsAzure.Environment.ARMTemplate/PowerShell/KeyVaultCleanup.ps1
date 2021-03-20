@@ -18,7 +18,13 @@ $queueName = "keyvaultcleanupqueue"
 $queue2Name = "keyvaultsecretscleanupqueue"
 $keyVaultName = "samsapp-data-eu-keyvault"
 
-Write-Host "Key vault cleanup"
+Write-Host "subscriptionId $subscriptionId"
+Write-Host "resourceGroupName $resourceGroupName"
+Write-Host "storageAccountName $storageAccountName"
+Write-Host "storageAccountKey $storageAccountKey"
+Write-Host "queueName $queueName"
+Write-Host "queue2Name $queue2Name"
+Write-Host "keyVaultName $keyVaultName"
 
 #Remove old access policies from the key vault
 $messageJson = az storage message get --queue-name $queueName --account-key $storageAccountKey --account-name $storageAccountName
