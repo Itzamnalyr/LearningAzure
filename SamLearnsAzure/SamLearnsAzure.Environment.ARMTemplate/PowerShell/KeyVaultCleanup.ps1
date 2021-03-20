@@ -29,7 +29,7 @@ do {
     if ($message.Count -gt 0) {
         
         #Remove the access policy
-        Write-Host "Removing key vault policy $(message.content)"
+        Write-Host "Removing key vault policy $($message.content)"
         $result = az keyvault delete-policy --name $keyVaultName --object-id $message.content --subscription $subscriptionId --resource-group $resourceGroupName
         
         #Now delete the message from the queue
@@ -38,7 +38,7 @@ do {
 
     $messageJson = az storage message get --queue-name $queueName --account-key $storageAccountKey --account-name $storageAccountName
 
-} while ($messageJson -ne $null)
+} while ($message.Count -gt 0)
 
 #Remove old secrets from the key vault
 $secretsMessageJson = az storage message get --queue-name $queue2Name --account-key $storageAccountKey --account-name $storageAccountName
@@ -51,11 +51,11 @@ if ($secretsMessage.Count -gt 0) {
     $secrets2 | select name | ft
 
     $i = 0
-    Write-Host "looking for secrets for $(secretsMessage.Content)"
+    Write-Host "looking for secrets for $($secretsMessage.Content)"
     foreach($secret in $secrets2){
         $i++
         Write-Host "looking for secret... $i"
-        if ($secret.name -like "*$(secretsMessage.Content)*")
+        if ($secret.name -like "*$($secretsMessage.Content)*")
         {
             Write-Host "Deleting key $($secret.name)"
             az keyvault secret delete --name $secret.name --vault-name $KeyVaultName
@@ -68,11 +68,11 @@ if ($secretsMessage.Count -gt 0) {
     $secretsDeleted2 | select name | ft
 
     $i = 0
-    Write-Host "looking for purged secrets for $(secretsMessage.Content)"
+    Write-Host "looking for purged secrets for $($secretsMessage.Content)"
     foreach($secret in $secretsDeleted2){
         $i++
         Write-Host "looking for purge... $i"
-        if ($secret.name -like "*$(secretsMessage.Content)*")
+        if ($secret.name -like "*$($secretsMessage.Content)*")
         {
             Write-Host "Purging key $($secret.name)"
             az keyvault secret purge --name $secret.name --vault-name $KeyVaultName
