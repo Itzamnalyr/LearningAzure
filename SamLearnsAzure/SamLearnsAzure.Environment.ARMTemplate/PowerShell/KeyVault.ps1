@@ -26,7 +26,7 @@ $i = 0
 foreach($secret in $secrets2){
     $i++
     Write-Host "looking... $i"
-    if ($secret.name  -like '*PR5*')
+    if ($secret.name -like '*PR5*')
     {
         Write-Host "Deleting key $($secret.name)"
         az keyvault secret delete --name $secret.name --vault-name $KeyVaultName
