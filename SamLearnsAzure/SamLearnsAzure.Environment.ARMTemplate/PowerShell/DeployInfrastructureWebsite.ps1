@@ -114,6 +114,18 @@ Write-Host $newCert
 #Bind the certificate to the web app
 az webapp config ssl bind --certificate-thumbprint $thumbprint --ssl-type SNI --name $webSiteName --resource-group $resourceGroupName
 
+#if it's the apex domain, we need to create a second certificate for the naked domain name
+if ($websiteDomainName -eq "prod.samlearnsazure.com") {
+    $websiteDomainName = "samlearnsazure.com"
+    $newCert = az webapp config ssl create --hostname $websiteDomainName --name $webSiteName --resource-group $resourceGroupName --only-show-errors
+    $thumbprint = ($newCert | ConvertFrom-Json).thumbprint
+    Write-Host "Thumbprint id: $thumbprint"
+    Write-Host "Cmd: az webapp config ssl create --hostname $websiteDomainName --name $webSiteName --resource-group $resourceGroupName"
+    Write-Host $newCert
+    #Bind the certificate to the web app
+    az webapp config ssl bind --certificate-thumbprint $thumbprint --ssl-type SNI --name $webSiteName --resource-group $resourceGroupName
+}
+
 $timing = -join($timing, "13. Website created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "13. Website created: "$stopwatch.Elapsed.TotalSeconds
 
