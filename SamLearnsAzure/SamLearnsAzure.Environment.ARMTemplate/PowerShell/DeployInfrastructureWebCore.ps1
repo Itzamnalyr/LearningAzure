@@ -83,6 +83,9 @@ else
 {
     Write-Host "10. Application insights CheckWhatIf: $CheckWhatIfs and change type: $($ChangeResults10.changeType) results"
 }
+#Add myself to both Application Insights Snapshot Debugger roles to enable the feature
+az role assignment create --assignee samsmit@microsoft.com --role "Application Insights Snapshot Debugger" --scope "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/$resourceGroupName/providers/microsoft.insights/components/$applicationInsightsName"
+az role assignment create --assignee samsmithnz@gmail.com --role "Application Insights Snapshot Debugger" --scope "/subscriptions/07db7d0b-a6cb-4e58-b07e-e1d541c39f5b/resourceGroups/$resourceGroupName/providers/microsoft.insights/components/$applicationInsightsName"
 $timing = -join($timing, "10. Application created: ", $stopwatch.Elapsed.TotalSeconds, "`n");
 Write-Host "10. Application insights created: "$stopwatch.Elapsed.TotalSeconds
 

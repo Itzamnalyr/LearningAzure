@@ -26,6 +26,7 @@
     <PackageReference Include="AspNetCore.KeyVault" Version="1.0.6" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.SnapshotCollector" Version="1.3.7.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.0-preview.1.21103.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.0-preview.1.21103.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.0-preview.1.21103.6" />

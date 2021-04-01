@@ -28,18 +28,21 @@ namespace SamLearnsAzure.Tests.ServiceUnitTests
             IEnumerable<Colors> results = await controller.GetColors();
 
             //Assert
-            //Assert.IsTrue(results != null);
-            Assert.IsTrue(results.Count() == 1);
-            TestColors(results.FirstOrDefault());
+            Assert.IsTrue(results != null);
+            Assert.IsTrue(results?.Count() == 1);
+            TestColors(results?.FirstOrDefault());
         }
 
-        private void TestColors(Colors Colors)
+        private void TestColors(Colors? colors)
         {
-            Assert.IsTrue(Colors.Id == 1);
-            Assert.IsTrue(Colors.Name == "abc");
-            Assert.IsTrue(Colors.Rgb == "def");
-            Assert.IsTrue(Colors.IsTrans == false);
-            Assert.IsTrue(Colors.InventoryParts != null);
+            if (colors != null)
+            {
+                Assert.IsTrue(colors.Id == 1);
+                Assert.IsTrue(colors.Name == "abc");
+                Assert.IsTrue(colors.Rgb == "def");
+                Assert.IsTrue(colors.IsTrans == false);
+                Assert.IsTrue(colors.InventoryParts != null);
+        }
         }
 
         private IEnumerable<Colors> GetColorsTestData()
