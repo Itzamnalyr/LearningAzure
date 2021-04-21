@@ -117,6 +117,8 @@ az webapp config ssl bind --certificate-thumbprint $thumbprint --ssl-type SNI --
 #if it's the apex domain, we need to create a second certificate for the naked domain name
 if ($websiteDomainName -eq "prod.samlearnsazure.com") {
     $websiteDomainName = "samlearnsazure.com"
+    #$webSiteName = "samsapp-prod-eu-web"
+    #$resourceGroupName = "SamLearnsAzureProd"
     $newCert = az webapp config ssl create --hostname $websiteDomainName --name $webSiteName --resource-group $resourceGroupName --only-show-errors
     $thumbprint = ($newCert | ConvertFrom-Json).thumbprint
     Write-Host "Thumbprint id: $thumbprint"
