@@ -30,8 +30,8 @@ namespace SamLearnsAzure.Service
                     bool.TryParse(buildConfig["AppSettings:CaptureStartErrors"], out captureStartupErrors);
 
                     //Load a connection to our Azure key vault instance
-                    AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
-                    KeyVaultClient keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
+                    AzureServiceTokenProvider azureServiceTokenProvider = new();
+                    KeyVaultClient keyVaultClient = new(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
                     config.AddAzureKeyVault(buildConfig["AppSettings:KeyVaultURL"], keyVaultClient, new DefaultKeyVaultSecretManager());
                 });
 
