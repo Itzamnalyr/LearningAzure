@@ -65,27 +65,27 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             }
         }
 
-        [TestMethod]
-        public async Task GetSetImageWithoutCacheAndForceBingSearchWith1ResultIntegrationTest()
-        {
-            if (base.Client != null)
-            {
-                //Arrange
-                string setNum = "75218-1";
+        //[TestMethod]
+        //public async Task GetSetImageWithoutCacheAndForceBingSearchWith1ResultIntegrationTest()
+        //{
+        //    if (base.Client != null)
+        //    {
+        //        //Arrange
+        //        string setNum = "75218-1";
 
-                //Act
-                HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimage?setnum=" + setNum + "&useCache=false&forceBingSearch=true");
-                response.EnsureSuccessStatusCode();
-                string bodyContent = await response.Content.ReadAsStringAsync();
-                SetImages setImage = JsonConvert.DeserializeObject<SetImages>(bodyContent);
-                response.Dispose();
+        //        //Act
+        //        HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/getsetimage?setnum=" + setNum + "&useCache=false&forceBingSearch=true");
+        //        response.EnsureSuccessStatusCode();
+        //        string bodyContent = await response.Content.ReadAsStringAsync();
+        //        SetImages setImage = JsonConvert.DeserializeObject<SetImages>(bodyContent);
+        //        response.Dispose();
 
-                //Assert
-                Assert.IsTrue(setImage != null);
-                Assert.IsTrue(setImage?.SetNum == setNum);
-                Assert.IsTrue(setImage?.SetImage != null); //We are including this in the repo, so want to test it specifically
-            }
-        }
+        //        //Assert
+        //        Assert.IsTrue(setImage != null);
+        //        Assert.IsTrue(setImage?.SetNum == setNum);
+        //        Assert.IsTrue(setImage?.SetImage != null); //We are including this in the repo, so want to test it specifically
+        //    }
+        //}
 
         [TestMethod]
         public async Task GetSetImageWithoutCacheAndForceBingSearchWith10ResultsIntegrationTest()
@@ -112,27 +112,27 @@ namespace SamLearnsAzure.Tests.ServiceIntegrationTests
             }
         }
 
-        [TestMethod]
-        public async Task SaveSetImageIntegrationTest()
-        {
-            if (base.Client != null)
-            {
-                //Arrange
-                string setNum = "75218-2";
-                string imageUrl = "https://samlearnsazure.files.wordpress.com/2019/01/microsoft-certified-azure-solutions-architect-expert.png";
+        //[TestMethod]
+        //public async Task SaveSetImageIntegrationTest()
+        //{
+        //    if (base.Client != null)
+        //    {
+        //        //Arrange
+        //        string setNum = "75218-2";
+        //        string imageUrl = "https://samlearnsazure.files.wordpress.com/2019/01/microsoft-certified-azure-solutions-architect-expert.png";
 
-                //Act
-                HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/savesetimage?setnum=" + setNum + "&imageUrl=" + imageUrl);
-                response.EnsureSuccessStatusCode();
-                string bodyContent = await response.Content.ReadAsStringAsync();
-                SetImages setImage = JsonConvert.DeserializeObject<SetImages>(bodyContent);
-                response.Dispose();
+        //        //Act
+        //        HttpResponseMessage response = await base.Client.GetAsync("/api/setimages/savesetimage?setnum=" + setNum + "&imageUrl=" + imageUrl);
+        //        response.EnsureSuccessStatusCode();
+        //        string bodyContent = await response.Content.ReadAsStringAsync();
+        //        SetImages setImage = JsonConvert.DeserializeObject<SetImages>(bodyContent);
+        //        response.Dispose();
 
-                //Assert
-                Assert.IsTrue(setImage != null);
-                Assert.IsTrue(setImage?.SetNum == setNum);
-                Assert.IsTrue(setImage?.SetImage == "75218-2.png"); //We are including this in the repo, so want to test it specifically
-            }
-        }
+        //        //Assert
+        //        Assert.IsTrue(setImage != null);
+        //        Assert.IsTrue(setImage?.SetNum == setNum);
+        //        Assert.IsTrue(setImage?.SetImage == "75218-2.png"); //We are including this in the repo, so want to test it specifically
+        //    }
+        //}
     }
 }

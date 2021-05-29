@@ -138,20 +138,20 @@ namespace SamLearnsAzure.Tests.WebsiteIntegrationTests
         //    Assert.IsTrue(setImages.Any());
         //}
 
-        [TestMethod]
-        public async Task SaveSetImageServiceApiIntegrationTest()
-        {
-            //Arrange
-            ServiceApiClient client = new ServiceApiClient(base.Configuration);
-            string setNum = "75218-2";
-            string imageUrl = "https://samlearnsazure.files.wordpress.com/2019/01/microsoft-certified-azure-solutions-architect-expert.png";
+        //[TestMethod]
+        //public async Task SaveSetImageServiceApiIntegrationTest()
+        //{
+        //    //Arrange
+        //    ServiceApiClient client = new ServiceApiClient(base.Configuration);
+        //    string setNum = "75218-2";
+        //    string imageUrl = "https://samlearnsazure.files.wordpress.com/2019/01/microsoft-certified-azure-solutions-architect-expert.png";
 
-            //Act
-            SetImages setImage = await client.SaveSetImage(setNum, imageUrl);
+        //    //Act
+        //    SetImages setImage = await client.SaveSetImage(setNum, imageUrl);
 
-            //Assert
-            Assert.IsTrue(setImage != null);
-        }
+        //    //Assert
+        //    Assert.IsTrue(setImage != null);
+        //}
 
         [TestMethod]
         public async Task SearchForMissingPartsServiceApiIntegrationTest()
