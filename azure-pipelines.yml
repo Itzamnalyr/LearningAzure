@@ -5,12 +5,12 @@ pr:
     include:
     - '*'  # must quote since "*" is a YAML reserved character; we want a string
 
-schedules:
-- cron: "0 1/2 * * *" #Run every 2 hours, starting at 1am
-  branches:
-    include: 
-    - master
-  always: "true"
+#schedules:
+#- cron: "0 1/2 * * *" #Run every 2 hours, starting at 1am
+#  branches:
+#    include: 
+#    - master
+#  always: "true"
 
 #TODO: Remove condition from top level build
 #TODO: Remove enabled: false flag from unit tests
